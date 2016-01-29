@@ -172,10 +172,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
+            //Find the text fields from the fragment
             TextView x_field = (TextView)findViewById(R.id.x_value);
             TextView y_field = (TextView)findViewById(R.id.y_value);
             TextView z_field = (TextView)findViewById(R.id.z_value);
 
+            //If the text fields exist, then update with the latest values
+            //This null check is here because the sensor may want to update before the fragment inflates
             if((x_field != null) && (y_field != null) && (z_field != null)){
                 x_field.setText(String.valueOf(event.values[0]));
                 y_field.setText(String.valueOf(event.values[1]));
