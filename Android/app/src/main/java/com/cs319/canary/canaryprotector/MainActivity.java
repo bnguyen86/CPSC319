@@ -2,6 +2,10 @@ package com.cs319.canary.canaryprotector;
 
 import java.util.Locale;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -17,8 +21,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.hardware.SensorEventListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener{
+
+    private SensorManager senSensorManager;
+    private Sensor senAccelerometer;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -49,6 +57,17 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        //decalre and register sensors
+        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        //TODO: make SensorManager.SENSOR_DELAY_NORMAL user adjustable
+        /*
+        SENSOR_DELAY_UI      (60,000 microsecond delay)
+        SENSOR_DELAY_FASTEST (0 microsecond delay)
+        SENSOR_DELAY_NORMAL) (200,000 microseconds delay)
+        */
     }
 
 
@@ -144,6 +163,41 @@ public class MainActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
+    }
+
+    //Sensor methods are here
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor mySensor = event.sensor;
+
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+
+            TextView x_field = (TextView)findViewById(R.id.x_value);
+            TextView y_field = (TextView)findViewById(R.id.y_value);
+            TextView z_field = (TextView)findViewById(R.id.z_value);
+
+            if((x_field != null) && (y_field != null) && (z_field != null)){
+                x_field.setText(String.valueOf(event.values[0]));
+                y_field.setText(String.valueOf(event.values[1]));
+                z_field.setText(String.valueOf(event.values[2]));
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    protected void onPause() {
+        super.onPause();
+        //senSensorManager.unregisterListener(this);
+    }
+
+    protected void onResume() {
+        super.onResume();
+        //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
 }
