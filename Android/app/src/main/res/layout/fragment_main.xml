@@ -5,24 +5,42 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$PlaceholderFragment"
-    android:id="@+id/main_fragment">
+    android:id="@+id/home_fragment">
 
     <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="X:"
-        android:id="@+id/x_label"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:text="SOS"
+        android:id="@+id/sos_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/section_label" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="X:"
+        android:id="@+id/x_label"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/sos_button" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="x"
+        android:id="@+id/x_value"
+        android:layout_alignTop="@+id/x_label"
+        android:layout_toEndOf="@+id/x_label" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Y:"
         android:id="@+id/y_label"
         android:layout_below="@+id/x_label"
@@ -31,37 +49,28 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Z"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="y"
+        android:id="@+id/y_value"
+        android:layout_below="@+id/x_value"
+        android:layout_toEndOf="@+id/y_label" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Z:"
         android:id="@+id/z_label"
         android:layout_below="@+id/y_label"
-        android:layout_alignParentStart="true" />
+        android:layout_alignStart="@+id/y_label" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="xx"
-        android:id="@+id/x_value"
-        android:layout_above="@+id/y_value"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="yy"
-        android:id="@+id/y_value"
-        android:layout_above="@+id/z_value"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="zz"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="z"
         android:id="@+id/z_value"
-        android:layout_below="@+id/y_label"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/y_value"
+        android:layout_toEndOf="@+id/z_label" />
 
 </RelativeLayout>

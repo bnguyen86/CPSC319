@@ -1,8 +1,6 @@
 package com.cs319.canary.canaryprotector;
 
-import java.util.Locale;
-
-import android.content.Context;
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
@@ -10,72 +8,114 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.widget.DrawerLayout;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.hardware.SensorEventListener;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener{
+public class MainActivity extends AppCompatActivity
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SensorEventListener {
+
+
+    /**
+     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+     */
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        //decalre and register sensors
+        //Set up accelerometer sensor
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-        //TODO: make SensorManager.SENSOR_DELAY_NORMAL user adjustable
-        /*
-        SENSOR_DELAY_UI      (60,000 microsecond delay)
-        SENSOR_DELAY_FASTEST (0 microsecond delay)
-        SENSOR_DELAY_NORMAL) (200,000 microseconds delay)
-        */
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
+        // update the main content by replacing fragments
+        Fragment fragment;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        System.out.println("Position: " + position);
+        switch(position) {
+            default:
+            case 0:
+                fragment = PlaceholderFragment.newInstance(position + 1);
+                break;
+            case 1:
+                fragment = AdjustCollection.newInstance();
+                break;
+            case 2:
+                fragment = AdjustTransfer.newInstance();
+                break;
+        }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
+    }
+
+    public void onSectionAttached(int number) {
+        switch (number) {
+            case 1:
+                mTitle = getString(R.string.title_section1);
+                break;
+            case 2:
+                mTitle = getString(R.string.title_section2);
+                break;
+            case 3:
+                mTitle = getString(R.string.title_section3);
+                break;
+        }
+    }
+
+    public void restoreActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(mTitle);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            // Only show items in the action bar relevant to this screen
+            // if the drawer is not showing. Otherwise, let the drawer
+            // decide what to show in the action bar.
+            getMenuInflater().inflate(R.menu.main, menu);
+            restoreActionBar();
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -91,45 +131,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-            }
-            return null;
-        }
     }
 
     /**
@@ -163,29 +164,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            ((MainActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));
+        }
     }
 
-    //Sensor methods are here
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
-            //Find the text fields from the fragment
-            TextView x_field = (TextView)findViewById(R.id.x_value);
-            TextView y_field = (TextView)findViewById(R.id.y_value);
-            TextView z_field = (TextView)findViewById(R.id.z_value);
+            TextView xValue = (TextView)findViewById(R.id.x_value);
+            TextView yValue = (TextView)findViewById(R.id.y_value);
+            TextView zValue = (TextView)findViewById(R.id.z_value);
 
-            //If the text fields exist, then update with the latest values
-            //This null check is here because the sensor may want to update before the fragment inflates
-            if((x_field != null) && (y_field != null) && (z_field != null)){
-                x_field.setText(String.valueOf(event.values[0]));
-                y_field.setText(String.valueOf(event.values[1]));
-                z_field.setText(String.valueOf(event.values[2]));
+            if((xValue != null) && (yValue != null) && (zValue != null)){
+                xValue.setText(String.valueOf(event.values[0]));
+                yValue.setText(String.valueOf(event.values[1]));
+                zValue.setText(String.valueOf(event.values[2]));
             }
-        }
 
+        }
     }
 
     @Override
@@ -193,8 +197,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    //Main class methods
     protected void onPause() {
         super.onPause();
+        //We don't want to unregister this, since we need it working the background
         //senSensorManager.unregisterListener(this);
     }
 
