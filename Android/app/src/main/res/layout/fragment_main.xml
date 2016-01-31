@@ -12,7 +12,8 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="150px"
+        android:background="#FF0000"
         android:text="SOS"
         android:id="@+id/sos_button"
         android:layout_alignParentEnd="true"
