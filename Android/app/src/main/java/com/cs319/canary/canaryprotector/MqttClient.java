@@ -18,8 +18,6 @@ public class MqttClient {
     private static int transmissionInterval = 1;
     private static MqttAndroidClient client;
 
-    //private String clientId = android.telephony.TelephonyManager.getDeviceId();
-
     public static void connect(Context context, String serverURI, int portNum, String clientId){
         String uri = "tcp://" + serverURI + ":" + String.valueOf(portNum);
 
@@ -35,6 +33,7 @@ public class MqttClient {
         }
     }
 
+    //We might need to pass in the topic as a parameter instead of hardcoding
     public static void subscribe(){
         try {
             client.subscribe("canary/protector", 2);
@@ -44,6 +43,7 @@ public class MqttClient {
         }
     }
 
+    //We might need to pass in the topic as a parameter instead of hardcoding
     public static void publish(String data){
         try{
             client.publish("canary/protector", data.getBytes(),2,true);
@@ -67,6 +67,7 @@ public class MqttClient {
 
 }
 
+//We need to change this callback class to something useful
 class TestCallBackClass implements IMqttActionListener {
 
     public TestCallBackClass(){
@@ -75,6 +76,8 @@ class TestCallBackClass implements IMqttActionListener {
 
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
+
+        //On successful connection to the server, we just send out the test method
         MqttClient.publish("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("*****SENDING MESSAGE******");
     }
