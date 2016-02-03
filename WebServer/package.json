@@ -1,0 +1,23 @@
+{
+  "name": "canary_webserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bnguyen86/CPSC319.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bnguyen86/CPSC319/issues"
+  },
+  "homepage": "https://github.com/bnguyen86/CPSC319#readme",
+  "dependencies": {
+    "mqtt": "^1.7.0"
+  }
+}
