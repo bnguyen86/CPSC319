@@ -36,7 +36,7 @@ public class MqttClient {
     //We might need to pass in the topic as a parameter instead of hardcoding
     public static void subscribe(){
         try {
-            client.subscribe("canary/protector", 2);
+            client.subscribe("team-mat", 2);
         } catch (MqttException e) {
             System.out.println("Error subscribing to topic: " + e.getMessage());
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class MqttClient {
     //We might need to pass in the topic as a parameter instead of hardcoding
     public static void publish(String data){
         try{
-            client.publish("canary/protector", data.getBytes(),2,true);
+            client.publish("team-mat", data.getBytes(),0,true);
         } catch(Exception e){
             System.out.println("Error sending message: " + e.getMessage());
             e.printStackTrace();
