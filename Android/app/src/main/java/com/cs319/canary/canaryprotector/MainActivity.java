@@ -1,31 +1,24 @@
 package com.cs319.canary.canaryprotector;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.hardware.SensorEventListener;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, SensorEventListener {
-
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -36,9 +29,6 @@ public class MainActivity extends AppCompatActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
-    private SensorManager senSensorManager;
-    private Sensor senAccelerometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +45,18 @@ public class MainActivity extends AppCompatActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         //Set up accelerometer sensor
-        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        SensorManager senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         //Connect to MQTT Server
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), "broker.mqttdashboard.com", 1883, clientId);
+
+        //Start sending data
+        Intent backgroundServicesIntent = new Intent(this, BackgroundServices.class);
+        this.startService(backgroundServicesIntent);
 
     }
 
@@ -144,6 +138,7 @@ public class MainActivity extends AppCompatActivity
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
+        MqttClient.setAccelValues(event.values);
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             TextView xValue = (TextView)findViewById(R.id.x_value);

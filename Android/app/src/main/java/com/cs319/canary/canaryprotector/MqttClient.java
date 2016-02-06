@@ -5,11 +5,8 @@ import android.content.Context;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.util.Arrays;
 
 /**
  * Created by Benjamin on 2016-02-02.
@@ -17,6 +14,7 @@ import java.util.Arrays;
 public class MqttClient {
     private static int transmissionInterval = 1;
     private static MqttAndroidClient client;
+    private static float[] accelValues = new float[3];
 
     public static void connect(Context context, String serverURI, int portNum, String clientId){
         String uri = "tcp://" + serverURI + ":" + String.valueOf(portNum);
@@ -36,7 +34,7 @@ public class MqttClient {
     //We might need to pass in the topic as a parameter instead of hardcoding
     public static void subscribe(){
         try {
-            client.subscribe("team-mat", 2);
+            client.subscribe("team-mat-canary", 0);
         } catch (MqttException e) {
             System.out.println("Error subscribing to topic: " + e.getMessage());
             e.printStackTrace();
@@ -45,11 +43,14 @@ public class MqttClient {
 
     //We might need to pass in the topic as a parameter instead of hardcoding
     public static void publish(String data){
-        try{
-            client.publish("team-mat", data.getBytes(),0,true);
-        } catch(Exception e){
-            System.out.println("Error sending message: " + e.getMessage());
-            e.printStackTrace();
+
+        if(client != null && client.isConnected()){
+            try{
+                client.publish("team-mat-canary", data.getBytes(),0,true);
+            } catch(Exception e){
+                System.out.println("Error sending message: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
 
 
@@ -61,6 +62,14 @@ public class MqttClient {
 
     public static int getTransmissionInterval(){
         return transmissionInterval;
+    }
+
+    public static void setAccelValues(float[] values){
+        accelValues = values;
+    }
+
+    public static float[] getAccelValues(){
+        return accelValues;
     }
 
 
@@ -77,8 +86,6 @@ class TestCallBackClass implements IMqttActionListener {
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
 
-        //On successful connection to the server, we just send out the test method
-        MqttClient.publish("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println("*****SENDING MESSAGE******");
     }
 

@@ -25,7 +25,7 @@ var mqtt = require('mqtt');
 var client = mqtt.connect('mqtt://broker.mqttdashboard.com', options);
  
 client.on('connect', function () {
-  client.subscribe('team-mat');
+  client.subscribe('team-mat-canary');
   console.log('connected');
 });
  
@@ -33,10 +33,10 @@ client.on('connect', function () {
 client.on('message', function (topic, message) {
   // message is Buffer 
   console.log(message.toString());
-  var messageJSON = JSON.parse(message.toString());
+  // var messageJSON = JSON.parse(message.toString());
   
-  if (messageJSON.hasOwnProperty("status") && messageJSON.status === "disconnect"){
-      console.log("Intention to exit was logged");
-      client.end();
-  }
+  // if (messageJSON.hasOwnProperty("status") && messageJSON.status === "disconnect"){
+  //     console.log("Intention to exit was logged");
+  //     client.end();
+  // }
 });
