@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity
      */
     private CharSequence mTitle;
 
+
+    private int timer1 = 0;
+    private int timer2 = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +57,9 @@ public class MainActivity extends AppCompatActivity
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), "broker.mqttdashboard.com", 1883, clientId);
+
+        // Initialize LocalDataManager
+        LocalDataManager.DataManagerInitialize(getApplicationContext(), "CanaryTestFile.txt");
 
         //Start sending data
         Intent backgroundServicesIntent = new Intent(this, BackgroundServices.class);
@@ -138,6 +145,9 @@ public class MainActivity extends AppCompatActivity
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
+        timer1++;
+        timer2++;
+
         MqttClient.setAccelValues(event.values);
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
@@ -150,6 +160,22 @@ public class MainActivity extends AppCompatActivity
                 yValue.setText(String.valueOf(event.values[1]));
                 zValue.setText(String.valueOf(event.values[2]));
             }
+
+            // Uncomment to test LocalDataManager
+            // TODO delete this and timer1, timer2 later
+            /*
+            if(timer1 >= 10)
+            {
+                timer1 = 0;
+                LocalDataManager.WriteToFile("X: " + event.values[0] + " Y: " + event.values[1] + " Z: " + event.values[2]);
+            }
+
+            if(timer2 >= 200)
+            {
+                timer2 = 0;
+                LocalDataManager.ReadFile();
+            }
+            */
         }
     }
 
