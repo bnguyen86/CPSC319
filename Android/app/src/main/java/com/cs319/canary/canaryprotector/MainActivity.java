@@ -13,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         //Connect to MQTT Server
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String clientId = tm.getDeviceId();
-        MqttClient.connect(getApplicationContext(), "broker.mqttdashboard.com", 1883, clientId);
+        MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
 
         // Initialize LocalDataManager
         LocalDataManager.DataManagerInitialize(getApplicationContext(), "CanaryTestFile.txt");
