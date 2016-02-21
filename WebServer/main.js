@@ -22,7 +22,7 @@ var options = {
 
 console.log('Started MQTT Websocket');
 var mqtt = require('mqtt');
-var client = mqtt.connect('mqtt://broker.mqttdashboard.com', options);
+var client = mqtt.connect('mqtt://45.55.1.125', options);
  
 client.on('connect', function () {
   client.subscribe('team-mat-canary');

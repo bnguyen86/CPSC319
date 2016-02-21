@@ -25,6 +25,7 @@
     </string-array>
 
     <string name="broker_url">45.55.1.125</string>
+    <string name="data_topic">team-mat-canary</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
