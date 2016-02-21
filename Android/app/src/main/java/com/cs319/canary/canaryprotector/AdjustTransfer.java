@@ -1,12 +1,13 @@
 package com.cs319.canary.canaryprotector;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 
 /**
@@ -17,7 +18,7 @@ import android.view.ViewGroup;
  * Use the {@link AdjustTransfer#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AdjustTransfer extends Fragment {
+public class AdjustTransfer extends Fragment implements AdapterView.OnItemSelectedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -56,13 +57,24 @@ public class AdjustTransfer extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_adjust_transfer, container, false);
+        View currentView = inflater.inflate(R.layout.fragment_adjust_transfer, container, false);
+
+        String intervalValue = String.valueOf(BackgroundServices.getDataTransferInterval());
+
+        Spinner selectMenu = (Spinner) currentView.findViewById(R.id.adjust_transfer_select);
+        selectMenu.setOnItemSelectedListener(this);
+        selectMenu.setSelection(Util.getIndex(selectMenu, intervalValue));
+
+        return currentView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -77,6 +89,22 @@ public class AdjustTransfer extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        //TODO: this method is duplicated in AdjustCollection.java, move to Util class
+        String item = (String)parent.getItemAtPosition(position);
+        System.out.println("Current Transfer Rate: " + item);
+
+        int itemValue = Integer.valueOf(item);
+        BackgroundServices.setDataTransferInterval(itemValue);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     /**
