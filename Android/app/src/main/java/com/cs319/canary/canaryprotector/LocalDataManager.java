@@ -55,7 +55,7 @@ public class LocalDataManager {
 
     public static void WriteToFile(String stringToWrite)
     {
-        System.out.println("TRYING TO WRITE " + stringToWrite);
+        //System.out.println("TRYING TO WRITE " + stringToWrite);
 
         if(file.length() > 50 * 1024) // 50kb max
         {

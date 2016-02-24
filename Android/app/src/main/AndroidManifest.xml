@@ -25,7 +25,7 @@
         <!-- Mqtt Service -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service android:name=".BackgroundServices" android:exported="false"/>
-
+        <service android:name=".DataCollectorService" android:exported="false"/>
 
     </application>
 

@@ -16,13 +16,16 @@
 
     <string-array name="interval_array">
         <item>1</item>
-        <item>5</item>
         <item>10</item>
-        <item>50</item>
         <item>100</item>
         <item>500</item>
         <item>1000</item>
+        <item>2000</item>
+        <item>5000</item>
+        <item>10000</item>
     </string-array>
+
+    <string name="broker_url">45.55.1.125</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
