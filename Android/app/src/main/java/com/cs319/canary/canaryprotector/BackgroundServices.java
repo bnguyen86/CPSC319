@@ -19,6 +19,7 @@ public class BackgroundServices extends IntentService {
 
     private static Timer transferTimer;
     private static Timer collectionTimer;
+    private static Timer reconnectTimer;
 
     private static String clientId;
     private static final String topic = "team-mat-canary";
@@ -52,8 +53,9 @@ public class BackgroundServices extends IntentService {
         clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
 
-        setDataCollectionTimer(clientId, getDataCollectionInterval());
+        //setDataCollectionTimer(clientId, getDataCollectionInterval());
         setDataTransferTimer(clientId, getDataTransferInterval());
+        setReconnectTimer();
     }
 
     private static void setDataTransferTimer(String clientId, int interval){
@@ -66,20 +68,20 @@ public class BackgroundServices extends IntentService {
         transferTimer = new Timer();
 
         transferTimer.scheduleAtFixedRate(new TimerTask() {
-                      @Override
-                      public void run() {
-                          Time now = new Time();
-                          now.setToNow();
+                                              @Override
+                                              public void run() {
+                                                  Time now = new Time();
+                                                  now.setToNow();
 
-                          String payload = createJsonData(cId,
-                                  String.valueOf(now.toMillis(true)),
-                                  DataCollectorService.getAccelValues(),
-                                  DataCollectorService.getBatteryPct());
+                                                  String payload = createJsonData(cId,
+                                                          String.valueOf(now.toMillis(true)),
+                                                          DataCollectorService.getAccelValues(),
+                                                          DataCollectorService.getBatteryPct());
 
-                          //TODO: need to pull items off of local data store and send those instead
-                          MqttClient.publish(topic, payload);
-                      }
-                  },
+                                                  //TODO: need to pull items off of local data store and send those instead
+                                                  MqttClient.publish(topic, payload);
+                                              }
+                                          },
                 //Set how long before to start calling the TimerTask (in milliseconds)
                 0,
                 //Set the amount of time between each execution (in milliseconds)
@@ -115,6 +117,30 @@ public class BackgroundServices extends IntentService {
                 0,
                 //Set the amount of time between each execution (in milliseconds)
                 interval);
+    }
+
+    private void setReconnectTimer(){
+
+        if(reconnectTimer != null){
+            reconnectTimer.cancel();
+        }
+
+        reconnectTimer = new Timer();
+
+        reconnectTimer.scheduleAtFixedRate(new TimerTask()
+                                           {
+                                               @Override
+                                               public void run() {
+                                                   if(MqttClient.client == null || MqttClient.client.isConnected() == false)
+                                                   {
+                                                       MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
+                                                   }
+                                               }
+                                           },
+                //Set how long before to start calling the TimerTask (in milliseconds)
+                0,
+                //Set the amount of time between each execution (in milliseconds)
+                10000);
     }
 
     public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct){
