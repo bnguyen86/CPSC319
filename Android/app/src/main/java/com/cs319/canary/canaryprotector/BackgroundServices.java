@@ -9,6 +9,7 @@ import android.text.format.Time;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +21,7 @@ public class BackgroundServices extends IntentService {
     private static Timer transferTimer;
     private static Timer collectionTimer;
     private static Timer reconnectTimer;
+    private static Timer localTransferTimer;
 
     private static String clientId;
     private static final String topic = "team-mat-canary";
@@ -56,6 +58,7 @@ public class BackgroundServices extends IntentService {
         //setDataCollectionTimer(clientId, getDataCollectionInterval());
         setDataTransferTimer(clientId, getDataTransferInterval());
         setReconnectTimer();
+        setLocalDataTransferTimer(clientId);
     }
 
     private static void setDataTransferTimer(String clientId, int interval){
@@ -142,6 +145,44 @@ public class BackgroundServices extends IntentService {
                 //Set the amount of time between each execution (in milliseconds)
                 10000);
     }
+
+    private static void setLocalDataTransferTimer(String clientId){
+        final String cId = clientId;
+
+        if(localTransferTimer != null){
+            localTransferTimer.cancel();
+        }
+
+        localTransferTimer = new Timer();
+
+        localTransferTimer.scheduleAtFixedRate(new TimerTask() {
+                                              @Override
+                                              public void run() {
+                                                  if(MqttClient.client != null && MqttClient.client.isConnected())
+                                                  {
+                                                      List<String> stringList = LocalDataManager.ReadFile();
+                                                      if(!stringList.isEmpty())
+                                                      {
+                                                          System.out.println("STRING LIST IS NOT EMPTY");
+                                                          for(int i = 0; i < stringList.size(); i++)
+                                                          {
+                                                              MqttClient.publish(topic, stringList.get(i));
+                                                          }
+                                                          LocalDataManager.ClearFile();
+                                                      }
+                                                      else
+                                                      {
+                                                          System.out.println("STRING LIST IS EMPTY");
+                                                      }
+                                                  }
+                                              }
+                                          },
+                //Set how long before to start calling the TimerTask (in milliseconds)
+                0,
+                //Set the amount of time between each execution (in milliseconds)
+                60000);
+    }
+
 
     public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct){
         JSONObject payload = new JSONObject();

@@ -5,9 +5,13 @@ import android.content.Context;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Joseph on 05/02/2016.
@@ -74,8 +78,9 @@ public class LocalDataManager {
         }
     }
 
-    public static void ReadFile()
+    public static List<String> ReadFile()
     {
+        List<String> stringList = new ArrayList<String>();
         System.out.println("TRYING TO READ FILE");
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
@@ -83,10 +88,26 @@ public class LocalDataManager {
             while((line = bufferedReader.readLine()) != null)
             {
                 System.out.println(line);
+                stringList.add(line);
             }
             bufferedReader.close();
         } catch (IOException e) {
             System.out.println("ERROR READING FILE");
+            e.printStackTrace();
+        }
+        return stringList;
+    }
+
+    public static void ClearFile()
+    {
+        System.out.println("TRYING TO CLEAR FILE");
+        try {
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            writer.close();
+            System.out.println("FILE CLEARED");
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR CLEARING FILE, FILE NOT FOUND");
             e.printStackTrace();
         }
     }
