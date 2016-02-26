@@ -38,31 +38,29 @@ client.on('message', function (topic, message) {
   // console.log(messageJSON);
 
   // console.log(message);
-  	 	var id = generateUUID();
-  	 	var stringMessage = message.toString();
+	var id = generateUUID();
+  	var stringMessage = message.toString();
 			
-	 	//the following block will log the hearbeat to elasticsearch
+ 	//the following block will log the hearbeat to elasticsearch
+ 	//TODO: uncomment this when the android client sends the proper JSON
+ 	// if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
 
-	 	// if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
-
-		 	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
-		 	console.log(URL);
-
-		 	var request = require('request');
-			request({
-	    		url: URL, 
-	    		method: 'PUT',
-	    		body: stringMessage 
-			}, 
-
-			function(error, response, body){
-	    		if(error) {
-	        		console.log(error);
-	    		} else {
-	        		console.log(body);
-	    		}
-			});
-		// }
+ 	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
+	 	
+ 	var request = require('request');
+	request({
+		url: URL, 
+		method: 'PUT',
+		body: stringMessage 
+	}, //the callback function when something is successfully stored in elasticsearch
+		function(error, response, body){
+			if(error) {
+	    		console.log(error);
+			} else {
+	    		console.log(body);
+			}
+		});
+	// }
 
 
 
@@ -142,8 +140,9 @@ client.on('message', function (topic, message) {
   // }
 });
 
+getHeartbeatResponses(1456464385000,1456464387000);
 
-
+//**HELPER FUNCTIONS BELOW***
 function generateUUID() {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -153,3 +152,59 @@ function generateUUID() {
     });
     return uuid;
 };
+
+function getHeartbeatResponses(start, end){
+	var payload = {
+		"size": 5000,
+		"sort": [
+		    {
+		        "datetime": 
+		            {"order":"desc"}
+            }
+	    ],
+		"query": {
+	    	"filtered": {
+	      		"query": {
+	       			"match_all": {}
+	      		},
+		      	"filter": {
+		        	"range": {
+		          		"datetime": {
+		            		"to": end,
+		            		"from": start
+		          		}
+		        	}			
+		    	}
+	    	}
+	  	}
+	}
+
+	var payloadString = JSON.stringify(payload);
+	var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+	var request = require('request');
+	request({
+		url: URL, 
+		method: 'POST',
+		body: payloadString 
+	}, //the callback function when something is successfully retrieved
+		function(error, response, body){
+			if(error) {
+	    		console.log(error);
+			} else {
+	    		console.log(body);
+			}
+		});
+	// }
+
+}
+
+function isJSON(message){
+try {
+    JSON.parse(message);
+} catch (e) {
+    return false;
+}
+return true;
+}
+
+getHeartbeatResponses(0, "now");
