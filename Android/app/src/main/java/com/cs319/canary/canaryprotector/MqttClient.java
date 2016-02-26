@@ -41,13 +41,30 @@ public class MqttClient {
 
     //We might need to pass in the topic as a parameter instead of hardcoding
     public static void publish(String topic, String data){
+        if(client == null)
+        {
+            System.out.println("TRYING TO PUBLISH, CLIENT IS NULL!");
+        }
+        else
+        {
+            System.out.println("TRYING TO PUBLISH, CLIENT STATUS IS " + client.isConnected());
+        }
 
-        if(client != null && client.isConnected()){
-            try{
-                client.publish(topic, data.getBytes(),0,true);
-            } catch(Exception e){
-                System.out.println("Error sending message: " + e.getMessage());
-                e.printStackTrace();
+        if(client != null)
+        {
+            if(client.isConnected())
+            {
+                try
+                {
+                    client.publish(topic, data.getBytes(),0,true);
+                } catch(Exception e){
+                    System.out.println("Error sending message: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                LocalDataManager.WriteToFile(data);
             }
         }
 
