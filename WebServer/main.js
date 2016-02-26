@@ -153,6 +153,8 @@ function generateUUID() {
     return uuid;
 };
 
+
+//@Wes: use this function to retrun all the heartbeats that fall within the start and end times
 function getHeartbeatResponses(start, end){
 	var payload = {
 		"size": 5000,
