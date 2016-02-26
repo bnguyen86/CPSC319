@@ -4,14 +4,6 @@
  * and open the template in the editor.
  */
 
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 //to run, you will need to npm install mqtt -g (sudo access might be required
 var mqtt = require('mqtt');
 var options = {
@@ -82,7 +74,16 @@ client.on('message', function (topic, message) {
 // var io = require('socket.io')(app);
 // var fs = require('fs');
 
+//SocketIO Server-side
+var express = require("express");
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var port = 9000;
+
+
 // app.listen(80);
+app.use('/', express.static(__dirname + '/'));
 
 // function handler (req, res) {
 //   fs.readFile(__dirname + '/index.html',
@@ -96,6 +97,14 @@ client.on('message', function (topic, message) {
 //     res.end(data);
 //   });
 // }
+app.get('/', function(req, res) {
+  res.sendFile(__dirname+'/index.html');
+  });
+  
+http.listen(port, function(){
+  console.log('listening on *:9000');
+});
+
 
 // io.on('connection', function (socket) {
 //   socket.emit('news', { hello: 'world' });
@@ -103,10 +112,48 @@ client.on('message', function (topic, message) {
 //     console.log(data);
 //   });
 // });
+io.on('connection',function(socket){
+  console.log('a user connected');
+  //display all users
+  socket.emit('users','{"users":["abc","xyz","ghi"]}');
+
+  //once user is selected, display data
+  socket.on('user', function(data){
+    var curr_user;
+    console.log(data);
+    console.log(curr_user);
+    if(data == curr_user){
+      setInterval(function(){
+      socket.emit('real_time_data',
+        {
+          'user':curr_user,
+          'curr':[32.0,64.0,128.0]
+        });
+      }, 6000);
+      
+    }
+  });
+  
+
+  socket.on('battery',function(data){
+
+  });
+
+  socket.on('accel', function(data){
+
+  });
+
+  socket.on('pos', function(data){
+
+  });
+  // socket.on('data request',function(data){
+  //  console.log(data);
+  // });
+});
 
 
 
-  if(isJSON(message)){
+if(isJSON(message)){
     var inputJSON = JSON.parse(message);
     var inputDateTime = inputJSON.datetime;
     var inputAccelX = inputJSON.accelX;
@@ -124,7 +171,7 @@ client.on('message', function (topic, message) {
     console.log('Not a JSON message')
   }
 
-  function isJSON(message){
+function isJSON(message){
     try {
         JSON.parse(message);
     } catch (e) {
@@ -198,15 +245,15 @@ function getHeartbeatResponses(start, end){
 		});
 	// }
 
-}
+};
 
 function isJSON(message){
-try {
-    JSON.parse(message);
-} catch (e) {
-    return false;
-}
-return true;
-}
+    try {
+        JSON.parse(message);
+    } catch (e) {
+        return false;
+    }
+    return true;
+};
 
 getHeartbeatResponses(0, "now");
