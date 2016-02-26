@@ -38,6 +38,33 @@ client.on('message', function (topic, message) {
   // console.log(messageJSON);
 
   // console.log(message);
+  	 	var id = generateUUID();
+  	 	var stringMessage = message.toString();
+			
+	 	//the following block will log the hearbeat to elasticsearch
+
+	 	// if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
+
+		 	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
+		 	console.log(URL);
+
+		 	var request = require('request');
+			request({
+	    		url: URL, 
+	    		method: 'PUT',
+	    		body: stringMessage 
+			}, 
+
+			function(error, response, body){
+	    		if(error) {
+	        		console.log(error);
+	    		} else {
+	        		console.log(body);
+	    		}
+			});
+		// }
+
+
 
 
 
@@ -114,3 +141,15 @@ client.on('message', function (topic, message) {
   //     client.end();
   // }
 });
+
+
+
+function generateUUID() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+};
