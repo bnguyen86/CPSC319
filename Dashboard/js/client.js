@@ -1,39 +1,84 @@
 var socket = io();
-// socket.on('news', function(data){
-// 	console.log(data);
-//     // socket.emit('data request',{client: 'data'});
-// });
-
-// returns the user selected
-function userSelection(id){
-	console.log("selected user: " + id);
-	socket.emit('user','{"user": '+ id +'}');
-};
-
-
-// displays the selected users real-time accel data
-socket.on('real_time_data',function(data){
-	console.log(data);
-});
-
-// displays the users available
-function userButtonCreation(parsed){
-	for(i = 0; i < parsed.users.length; i++){
-		console.log("parsed length: " + parsed.users.length);
-		var element = document.createElement("button");
-		var id  =  parsed.users[i];
-		element.id = id;
-		element.innerHTML = id;
-		element.addEventListener("click", function(){
-			userSelection(this.id);
-		}, false);
-		var dis_loc = document.getElementById("user_dis");
-		dis_loc.appendChild(element);
-	}
-
-}
-socket.on('users',function(data){
+var curr_ID;
+var rDateTime = '[{"start":"2010-01-01","finish":"2014-01-01"}]';
+//parse the clientIDs into buttons
+socket.on('clientIDs',function(data){
 	console.log(data);
 	var parsed = JSON.parse(data);
 	userButtonCreation(parsed);
 });
+
+// displays the users available
+function userButtonCreation(parsed){
+	for(i = 0; i < parsed.clientIDs.length; i++){
+		// console.log("parsed length: " + parsed.clientIDs.length);
+		var element = document.createElement("button");
+		var id  =  parsed.clientIDs[i];
+		element.id = id;
+		element.innerHTML = id;
+		element.addEventListener("click", function(){
+			userSelection(this.id);
+		});
+		var dis_loc = document.getElementById("user_dis");
+		dis_loc.appendChild(element);
+	}
+
+};
+// returns the user selected
+function userSelection(id){
+	curr_ID = id;
+	console.log("selected clientID: " + id);
+	var message = '{"clientID":"'+ id +'"}';
+	socket.emit('clientID',message);
+};
+
+
+// displays the selected users real-time accel data
+socket.on('real_time',function(data){
+	console.log(data);
+});
+
+
+//query function
+function query(event){
+	var message = '{"clientID":"'+curr_ID+
+					'", "datetime":'+rDateTime+'}';
+	switch(event){
+		case 'battery':
+			socket.emit('battery',message);
+			break;
+		case 'accel':
+			socket.emit('accel',message);
+			break;
+		case 'pos':
+			socket.emit('pos',message);
+			break;
+	}
+}
+
+//display/render data;
+socket.on('rBatt');
+socket.on('rAccel');
+// socket.on('rPos');
+
+
+// //battery query function
+// function battQ(){
+// 	var message = '{"clientID":"'+curr_ID+
+// 					'", "datetime":'+rDateTime+'}';
+// 	socket.emit('battery',message);
+// }
+
+// //accel query function
+// function accelQ(){
+// 	var message = '{"clientID":"'+curr_ID+
+// 					'", "datetime":'+rDateTime+'}';
+// 	socket.emit('accel',message);
+// }
+
+// //pos query function
+// function posQ(){
+// 	var message = '{"clientID":"'+curr_ID+
+// 					'", "datetime":'+rDateTime+'}';
+// 	socket.emit('pos',message);
+// }
