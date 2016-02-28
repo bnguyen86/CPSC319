@@ -60,8 +60,6 @@ public class AdjustTransfer extends Fragment implements AdapterView.OnItemSelect
 
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

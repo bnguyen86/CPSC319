@@ -23,6 +23,14 @@ public class BackgroundServices extends IntentService {
     private static Timer reconnectTimer;
     private static Timer localTransferTimer;
 
+    public static String getClientId() {
+        return clientId;
+    }
+
+    public static void setClientId(String clientId) {
+        BackgroundServices.clientId = clientId;
+    }
+
     private static String clientId;
     private static final String topic = "team-mat-canary";
 
@@ -188,6 +196,7 @@ public class BackgroundServices extends IntentService {
         JSONObject payload = new JSONObject();
 
         try{
+            payload.put("type","heartbeat");
             payload.put("datetime", datetime);
             payload.put("accelX", accelValues[0]);
             payload.put("accelY", accelValues[1]);
@@ -199,6 +208,21 @@ public class BackgroundServices extends IntentService {
         }
 
         return payload.toString();
+    }
+
+    public static void sendMessage(String message, String datetime, String clientId){
+        JSONObject payload = new JSONObject();
+
+        try{
+            payload.put("type","sos");
+            payload.put("datetime", datetime);
+            payload.put("message", message);
+            payload.put("clientId", clientId);
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        MqttClient.publish(topic,payload.toString());
     }
 
     public static int getDataCollectionInterval() {
