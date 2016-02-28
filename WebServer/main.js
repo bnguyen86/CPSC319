@@ -21,7 +21,8 @@ client.on('connect', function () {
   console.log('connected');
 });
  
- //called when a message event is received
+
+//called when a message event is received
 client.on('message', function (topic, message) {
   // message is Buffer 
   console.log(message.toString());
@@ -50,9 +51,10 @@ client.on('message', function (topic, message) {
 	    		console.log(error);
 			} else {
 	    		console.log(body);
-			}
-		});
-	// }
+		  }
+	   }
+    );
+};
 
 
 
@@ -135,7 +137,7 @@ io.on('connection',function(socket){
     // }
 
 
-    
+
     //once clientID is selected, display data
     //input: '{"clientID":String}'
     //output: '{"clientID":String, "accelX":int, "accelY":int, "accelZ"int}'
@@ -149,7 +151,7 @@ io.on('connection',function(socket){
             var message = realTimeQ(curr_ID);
             currIntervalID = setInterval(function(){
                 socket.emit('real_time',message);
-                }, 5000);
+                }, 1000);
         } else{
             console.log("real-time socket JSON incorrect");
             console.log(data);
@@ -160,11 +162,16 @@ io.on('connection',function(socket){
     //input: '{"clientID":String, "datetime"Array[]}'
     //output: '{"clientID":String, "datetime":Array[], "battery":Array[]}'
     socket.on('battery',function(data){
+        if(currIntervalID != null){
+            clearInterval(currIntervalID)
+        };
         if(isJSON(data)){
+            console.log(data);
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
             var rDateTime = parsed.datetime;
+            console.log(rDateTime);
             //function to query server
             var message = batteryQuery(curr_ID, rDateTime);
             socket.emit('rBatt',message);
@@ -178,6 +185,9 @@ io.on('connection',function(socket){
     //input: '{"clientID":String, "datetime"Array[]}'
     //output: '{"clientID":"abc", "datetime":Array[], "accelX":Array[], "accelY":Array[], "accelZ"Array[]}'
     socket.on('accel', function(data){
+        if(currIntervalID != null){
+            clearInterval(currIntervalID)
+        };
         if(isJSON(data)){
             //input & output values
             var parsed = JSON.parse(data);  
@@ -214,28 +224,29 @@ function realTimeQ(curr_ID){
 }
 
 function batteryQuery(curr_ID, rDateTime){
-    var rBatt = [100,90,60,40,30,20]
-    var message = '{"clientID":'+curr_ID+
-                    ', "datetime":'+rDateTime+
-                    ', "battery":'+rBatt+'}';
+    var rBatt = [{per:100},{per:60},{per:30},{per:20}];
+    var message = '{"clientID":'+JSON.stringify(curr_ID)+
+                    ', "datetime":'+JSON.stringify(rDateTime)+
+                    ', "battery":'+JSON.stringify(rBatt)+'}';
     console.log(message);
     return message;
 };
 
 function accelQuery(curr_ID,rDateTime){
-    var rX = [0,0,0,0];
-    var rY = [3,3,3,3];
-    var rZ = [1,2,3,4];
-    var message = '{"clientID":'+curr_ID+
-                    ', "datetime":'+rDateTime+
-                    ', "accelX":'+rX+
-                    ', "accelY":'+rY+
-                    ', "accelZ":'+rZ+'}';
+    var rX = [{x:0},{x:0},{x:0},{x:0}];
+    var rY = [{y:3},{y:3},{y:3},{y:3}];
+    var rZ = [{z:1},{z:2},{z:3},{z:4}];
+    var message = '{"clientID":'+JSON.stringify(curr_ID)+
+                    ', "datetime":'+JSON.stringify(rDateTime)+
+                    ', "accelX":'+JSON.stringify(rX)+
+                    ', "accelY":'+JSON.stringify(rY)+
+                    ', "accelZ":'+JSON.stringify(rZ)+'}';
     console.log(message);
     return message;
 };
 
-//socketIO code termination
+
+//=-=socketIO code termination=-=//
 
 
 if(isJSON(message)){
