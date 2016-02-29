@@ -82,7 +82,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = 9000;
-
+var path = require('path');
 
 // app.listen(80);
 app.use('/', express.static(__dirname + '/'));
@@ -100,7 +100,8 @@ app.use('/', express.static(__dirname + '/'));
 //   });
 // }
 app.get('/', function(req, res) {
-  res.sendFile(__dirname+'/../Dashboard'+'/index.html');
+  // path.resolve('/../Dashboard/index.html');
+  res.sendFile(__dirname+path.normalize('/../Dashboard/index.html'));
   });
   
 http.listen(port, function(){
