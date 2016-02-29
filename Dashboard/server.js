@@ -9,7 +9,7 @@ var port = 9000;
 app.use('/', express.static(__dirname + '/'));
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname+'../index.html');
+    res.sendFile(__dirname+'../Dashboard'+'/index.html');
 	});
 	
 http.listen(port, function(){
