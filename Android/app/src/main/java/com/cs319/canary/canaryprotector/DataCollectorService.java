@@ -1,7 +1,6 @@
 package com.cs319.canary.canaryprotector;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,13 +14,10 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-
-import java.util.List;
 
 /**
  * Created by Zoe on 2016-02-09.
@@ -192,6 +188,10 @@ public class DataCollectorService extends IntentService implements SensorEventLi
         }
 
         Log.d("Location Set", String.format("Lat:%.2f,Lon:%.2f",latlon[0],latlon[1]));
+    }
+
+    public static double[] getLocation(){
+        return latlon;
     }
 
 
