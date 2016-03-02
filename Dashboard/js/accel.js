@@ -1,7 +1,7 @@
 //battery JSON object into graph
 //input: '{"clientID":String, "datetime":Array[], "battery":Array[]}'
-//output: battery percentage graph
-function batteryDisplay(data){
+//output: accel graph
+function accelDisplay(data){
 	var margin = {
 		top: 20,
 		right: 50,
@@ -42,7 +42,7 @@ function batteryDisplay(data){
 			.range([0, width]);
 		//y axis (percentage)
 		var y = d3.scale.linear()
-			.domain([0,1])
+			.domain([-10,10])
 			// .domain(d3.extent(data,function(d){
 			// 	return d.battery;
 			// }))
@@ -55,25 +55,49 @@ function batteryDisplay(data){
 			.orient('bottom')
 			.ticks(3)
 			.tickFormat(d3.time.format("%x %X"));
+			
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient('left')
 			.ticks(3);
 
 
-		var line = d3.svg.line()
+		var lineX = d3.svg.line()
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
 				return x(new Date(parseInt(d.datetime)));
 			})
 			.y(function(d){
 				// console.log(y(d.battery));
-				return y(d.battery);
+				return y(d.accelX);
 			})
 			.interpolate("line");
 
-			
-		var svg = d3.select('#batt_graph')
+		var lineY = d3.svg.line()
+			.x(function(d){
+				// console.log(x(new Date(parseInt(d.datetime))));
+				return x(new Date(parseInt(d.datetime)));
+			})
+			.y(function(d){
+				// console.log(y(d.battery));
+				return y(d.accelY);
+			})
+			.interpolate("line");
+
+		var lineZ = d3.svg.line()
+			.x(function(d){
+				// console.log(x(new Date(parseInt(d.datetime))));
+				return x(new Date(parseInt(d.datetime)));
+			})
+			.y(function(d){
+				// console.log(y(d.battery));
+				return y(d.accelZ);
+			})
+			.interpolate("line");
+
+
+		//Drawing			
+		var svg = d3.select('#accel_graph')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
@@ -96,13 +120,30 @@ function batteryDisplay(data){
 			// .style("text-anchor", "end")
 			// .text("Date");
 
+			//AccelX
 			svg.append('path')
 			.attr("class", "line")
-			.attr("d", line(data))
+			.attr("d", lineX(data))
 			.attr("stroke", "blue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 			.attr('transform','translate(50,20)');
+			//AccelY
+			svg.append('path')
+			.attr("class", "line")
+			.attr("d", lineY(data))
+			.attr("stroke", "green")
+			.attr("stroke-width", 1)
+			.attr("fill", "none")
+			.attr('transform','translate(50,20)');
+			//AccelZ
+			svg.append('path')
+			.attr("class", "line")
+			.attr("d", lineZ(data))
+			.attr("stroke", "red")
+			.attr("stroke-width", 1)
+			.attr("fill", "none")
+			.attr('transform','translate(50,20)');			
 
 //UPDATE GRAPH INSTEAD OF REDRAWING. 
 // if(document.getElementById("user_dis").childNodes.length == 1){
@@ -110,7 +151,7 @@ function batteryDisplay(data){
 // 	}
 
 	} else{
-		console.log("batteryDisplay JSON incorrect");
+		console.log("accelDisplay JSON incorrect");
 		console.log(data);
 	}
 };

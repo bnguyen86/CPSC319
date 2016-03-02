@@ -75,8 +75,8 @@ socket.on('rBatt',function(data){
 });
 
 socket.on('rAccel',function(data){
-	// accelDisplay(data);
-	console.log(data);
+	accelDisplay(data);
+	// console.log(data);
 });
 
 // socket.on('rPos');
