@@ -45,6 +45,8 @@ socket.on('real_time',function(data){
 function query(event){
 	var message = '{"clientID":"'+curr_ID+
 					'", "datetime":'+rDateTime+'}';
+					
+	console.log(event);
 	switch(event){
 		case 'clientID':
 			socket.emit('clientID',message);
@@ -71,7 +73,14 @@ socket.on('rAccel',function(data){
 });
 
 // socket.on('rPos');
-
+function isJSON(message){
+    try {
+        JSON.parse(message);
+    } catch (e) {
+        return false;
+    }
+    return true;
+};
 
 
 // //battery query function

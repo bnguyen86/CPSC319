@@ -87,7 +87,8 @@ public class BackgroundServices extends IntentService {
                                                   String payload = createJsonData(cId,
                                                           String.valueOf(now.toMillis(true)),
                                                           DataCollectorService.getAccelValues(),
-                                                          DataCollectorService.getBatteryPct());
+                                                          DataCollectorService.getBatteryPct(),
+                                                          DataCollectorService.getLocation());
 
                                                   //TODO: need to pull items off of local data store and send those instead
                                                   MqttClient.publish(topic, payload);
@@ -118,7 +119,8 @@ public class BackgroundServices extends IntentService {
                           String payload = createJsonData(cId,
                                   String.valueOf(now.toMillis(true)),
                                   DataCollectorService.getAccelValues(),
-                                  DataCollectorService.getBatteryPct());
+                                  DataCollectorService.getBatteryPct(),
+                                  DataCollectorService.getLocation());
 
                           LocalDataManager.WriteToFile(payload);
 
@@ -192,7 +194,7 @@ public class BackgroundServices extends IntentService {
     }
 
 
-    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct){
+    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct, double[] latlon){
         JSONObject payload = new JSONObject();
 
         try{
@@ -203,6 +205,8 @@ public class BackgroundServices extends IntentService {
             payload.put("accelZ", accelValues[2]);
             payload.put("battery", batteryPct);
             payload.put("clientId", clientId);
+            payload.put("lat", latlon[0]);
+            payload.put("lon", latlon[1]);
         } catch(JSONException e){
             e.printStackTrace();
         }
