@@ -1,22 +1,28 @@
 var socket = io();
 var curr_ID;
 //battery var
-var rDateTime = '[{"date":"2010-01-01"},{"date":"2010-02-01"},{"date":"2010-03-01"},{"date":"2010-04-01"}]';
+var qDate = [{"start": "1456869619000", "end": "1456869620500"}];
+// var rDateTime = [{"datetime":"1456869619000"},{"datetime":"1456869619500"},{"datetime":"1456869620000"},{"datetime":"1456869620500"}];
 
 
 //parse the clientIDs into buttons
-socket.on('clientIDs',function(data){
+socket.on('clientIds',function(data){
 	// console.log(data);
 	var parsed = JSON.parse(data);
-	userButtonCreation(parsed);
+	console.log(parsed);
+	if(document.getElementById("user_dis").childNodes.length == 1){
+		userButtonCreation(parsed);
+	}
 });
 
 // displays the users available
 function userButtonCreation(parsed){
-	for(i = 0; i < parsed.clientIDs.length; i++){
-		// console.log("parsed length: " + parsed.clientIDs.length);
+	for(i = 0; i < parsed.clientIds.length; i++){
+		// console.log("parsed length: " + parsed.clientIds.length);
+		// console.log(parsed.clientIds[i].clientId);
 		var element = document.createElement("button");
-		var id  =  parsed.clientIDs[i];
+		var id  =  parsed.clientIds[i].clientId;
+		element.tag = "uid";
 		element.id = id;
 		element.innerHTML = id;
 		element.addEventListener("click", function(){
@@ -30,9 +36,9 @@ function userButtonCreation(parsed){
 // returns the user selected
 function userSelection(id){
 	curr_ID = id;
-	console.log("selected clientID: " + id);
-	var message = '{"clientID":"'+ id +'"}';
-	socket.emit('clientID',message);
+	console.log("selected clientId: " + id);
+	var message = '{"clientId":'+ JSON.stringify(id) +'}';
+	socket.emit('clientId',message);
 };
 
 
@@ -43,13 +49,13 @@ socket.on('real_time',function(data){
 
 //query function
 function query(event){
-	var message = '{"clientID":"'+curr_ID+
-					'", "datetime":'+rDateTime+'}';
+	var message = '{"clientID":'+JSON.stringify(curr_ID)+
+					', "dateTimeRec":'+JSON.stringify(qDate)+'}';
+					// '",'+rDateTime+'}';
 					
-	console.log(event);
 	switch(event){
-		case 'clientID':
-			socket.emit('clientID',message);
+		case 'clientId':
+			socket.emit('clientId',message);
 			break;
 		case 'battery':
 			socket.emit('battery',message);
@@ -70,6 +76,7 @@ socket.on('rBatt',function(data){
 
 socket.on('rAccel',function(data){
 	// accelDisplay(data);
+	console.log(data);
 });
 
 // socket.on('rPos');

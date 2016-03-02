@@ -145,13 +145,13 @@ io.on('connection',function(socket){
     //once clientID is selected, display data
     //input: '{"clientID":String}'
     //output: '{"clientID":String, "accelX":int, "accelY":int, "accelZ"int}'
-    socket.on('clientID', function(data){
+    socket.on('clientId', function(data){
         if(currIntervalID != null){
             clearInterval(currIntervalID)
         };
         if(isJSON(data)){
             var parsed = JSON.parse(data);
-            var curr_ID = parsed.clientID;
+            var curr_ID = parsed.clientId;
             var message = realTimeQ(curr_ID);
             currIntervalID = setInterval(function(){
                 socket.emit('real_time',message);
@@ -170,14 +170,14 @@ io.on('connection',function(socket){
             clearInterval(currIntervalID)
         };
         if(isJSON(data)){
-            console.log(data);
+            // console.log(data);
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
-            var rDateTime = parsed.datetime;
-            console.log(rDateTime);
+            var dateTimeRec = parsed.dateTimeRec;
+            // console.log(dateTimeRec);
             //function to query server
-            var message = batteryQuery(curr_ID, rDateTime);
+            var message = batteryQuery(curr_ID, dateTimeRec);
             socket.emit('rBatt',message);
         } else{
             console.log("battery socket JSON incorrect");
@@ -196,9 +196,9 @@ io.on('connection',function(socket){
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
-            var rDateTime = parsed.datetime;
+            var dateTimeRec = parsed.dateTimeRec;
             //function to query server
-            var message = accelQuery(curr_ID, rDateTime);
+            var message = accelQuery(curr_ID, dateTimeRec);
             socket.emit('rAccel',message);
         } else{
             console.log("accel socket JSON incorrect");
@@ -214,37 +214,44 @@ io.on('connection',function(socket){
 });
 
 //helper mock functions with data
+function userIDs(){
+    var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
+    // console.log(userIDs);
+    return userIDs;
+}
 function realTimeQ(curr_ID){
-    var x = 0;
-    var y = 5;
-    var z = 3;
-    var message = '{"clientID":'+curr_ID+
+    var x = 0.8559271097183228;
+    var y = 0.1041477769613266;
+    var z = 9.460687637329102;
+    var message = '{"clientId":'+curr_ID+
                     ', "accelX":'+x+
                     ', "accelY":'+y+
-                    ', "accelZ":'+z+'}';
+                    ', "accelZ":'+z+'}';    
     console.log(message);
     return message;
 
 }
 
-function batteryQuery(curr_ID, rDateTime){
-    var rBatt = [{per:100},{per:60},{per:30},{per:20}];
-    var message = '{"clientID":'+JSON.stringify(curr_ID)+
-                    ', "datetime":'+JSON.stringify(rDateTime)+
-                    ', "battery":'+JSON.stringify(rBatt)+'}';
+function batteryQuery(curr_ID, dateTimeRec){
+    // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
+    // var message = '{"clientId":'+JSON.stringify(curr_ID)+
+    //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+    //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
+    var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
     console.log(message);
     return message;
 };
 
-function accelQuery(curr_ID,rDateTime){
-    var rX = [{x:0},{x:0},{x:0},{x:0}];
-    var rY = [{y:3},{y:3},{y:3},{y:3}];
-    var rZ = [{z:1},{z:2},{z:3},{z:4}];
-    var message = '{"clientID":'+JSON.stringify(curr_ID)+
-                    ', "datetime":'+JSON.stringify(rDateTime)+
-                    ', "accelX":'+JSON.stringify(rX)+
-                    ', "accelY":'+JSON.stringify(rY)+
-                    ', "accelZ":'+JSON.stringify(rZ)+'}';
+function accelQuery(curr_ID,dateTimeRec){
+// var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
+// var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
+// var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
+//  var message = '{"clientId":'+JSON.stringify(curr_ID)+
+//                  ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+//                  ', "accelXRec":'+JSON.stringify(rX)+
+//                  ', "accelYRec":'+JSON.stringify(rY)+
+//                  ', "accelZRec":'+JSON.stringify(rZ)+'}';
+    var message = '[{"datetime":"1456869619000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":9.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869619500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":8.460687637329102,"clientId":"351559070571963"},{"datetime":"1456869620000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":7.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869620500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":6.460687637329102,"clientId":"351559070571963"}]';
     console.log(message);
     return message;
 };
