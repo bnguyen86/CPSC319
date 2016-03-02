@@ -18,7 +18,7 @@ http.listen(port, function(){
 
 //SocketIO
 io.on('connection',function(socket){
-	var usersJSON = '{"clientIDs":["abc","xyz","ghi"]}';
+	var usersJSON = '{"clientIDs":["351559070571963","xyz","ghi"]}';
 	var currIntervalID;
 	//future implementation: if possible, simplify on by getting event
 	// var events = ['clientID','real_time','battery','rBatt','accel','rAccel','pos'];
@@ -115,9 +115,9 @@ io.on('connection',function(socket){
 
 //helper mock functions with data
 function realTimeQ(curr_ID){
-	var x = 0;
-	var y = 5;
-	var z = 3;
+	var x = 0.8559271097183228;
+	var y = 0.1041477769613266;
+	var z = 9.460687637329102;
 	var message = '{"clientID":'+curr_ID+
 					', "accelX":'+x+
 					', "accelY":'+y+

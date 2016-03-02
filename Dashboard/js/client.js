@@ -94,3 +94,13 @@ socket.on('rAccel',function(data){
 // 					'", "datetime":'+rDateTime+'}';
 // 	socket.emit('pos',message);
 // }
+
+//helper Functions
+// function isJSON(message){
+//     try {
+//         JSON.parse(message);
+//     } catch (e) {
+//         return false;
+//     }
+//     return true;
+// };

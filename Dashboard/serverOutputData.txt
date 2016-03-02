@@ -1,0 +1,29 @@
+var usersJSON = '
+{
+	"clientIDs":[
+		{"clientId":"351559070571963"},
+		{"clientId":"999999999999999"},
+		{"clientId":"000000000000000"},
+		{"clientId":"555555555555555"}
+		]
+}';
+var rDateTime = '
+{
+	"dateTimeRec":[
+		{"datetime":"1456869619000"},
+		{"datetime":"1456869619500"},
+		{"datetime":"1456869620000"},
+		{"datetime":"1456869620500"}
+		]
+}';
+
+{
+	"type":"heartbeat",
+	"datetime":"1456869619000",
+	"accelX":0.8559271097183228,
+	"accelY":0.1041477769613266,
+	"accelZ":9.460687637329102,
+	"battery":0.4699999988079071,
+	"clientId":"351559070571963"
+}
+

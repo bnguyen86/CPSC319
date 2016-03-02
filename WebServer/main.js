@@ -101,12 +101,15 @@ app.use('/', express.static(__dirname + '/'));
 // }
 app.get('/', function(req, res) {
   // path.resolve('/../Dashboard/index.html');
-  res.sendFile(__dirname+path.normalize('/../Dashboard/index.html'));
+  res.sendFile(path.normalize(__dirname+'/../Dashboard/index.html'));
+  console.log(__dirname);
   });
-  
-http.listen(port, function(){
-  console.log('listening on *:9000');
-});
+
+app.listen(port);
+
+// http.listen(port, function(){
+//   console.log('listening on *:9000');
+// });
 
 
 // io.on('connection', function (socket) {
