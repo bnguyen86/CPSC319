@@ -23,6 +23,14 @@ public class BackgroundServices extends IntentService {
     private static Timer reconnectTimer;
     private static Timer localTransferTimer;
 
+    public static String getClientId() {
+        return clientId;
+    }
+
+    public static void setClientId(String clientId) {
+        BackgroundServices.clientId = clientId;
+    }
+
     private static String clientId;
     private static final String topic = "team-mat-canary";
 
@@ -79,7 +87,8 @@ public class BackgroundServices extends IntentService {
                                                   String payload = createJsonData(cId,
                                                           String.valueOf(now.toMillis(true)),
                                                           DataCollectorService.getAccelValues(),
-                                                          DataCollectorService.getBatteryPct());
+                                                          DataCollectorService.getBatteryPct(),
+                                                          DataCollectorService.getLocation());
 
                                                   //TODO: need to pull items off of local data store and send those instead
                                                   MqttClient.publish(topic, payload);
@@ -110,7 +119,8 @@ public class BackgroundServices extends IntentService {
                           String payload = createJsonData(cId,
                                   String.valueOf(now.toMillis(true)),
                                   DataCollectorService.getAccelValues(),
-                                  DataCollectorService.getBatteryPct());
+                                  DataCollectorService.getBatteryPct(),
+                                  DataCollectorService.getLocation());
 
                           LocalDataManager.WriteToFile(payload);
 
@@ -184,21 +194,39 @@ public class BackgroundServices extends IntentService {
     }
 
 
-    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct){
+    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct, double[] latlon){
         JSONObject payload = new JSONObject();
 
         try{
+            payload.put("type","heartbeat");
             payload.put("datetime", datetime);
             payload.put("accelX", accelValues[0]);
             payload.put("accelY", accelValues[1]);
             payload.put("accelZ", accelValues[2]);
             payload.put("battery", batteryPct);
             payload.put("clientId", clientId);
+            payload.put("lat", latlon[0]);
+            payload.put("lon", latlon[1]);
         } catch(JSONException e){
             e.printStackTrace();
         }
 
         return payload.toString();
+    }
+
+    public static void sendMessage(String message, String datetime, String clientId){
+        JSONObject payload = new JSONObject();
+
+        try{
+            payload.put("type","sos");
+            payload.put("datetime", datetime);
+            payload.put("message", message);
+            payload.put("clientId", clientId);
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        MqttClient.publish(topic,payload.toString());
     }
 
     public static int getDataCollectionInterval() {
