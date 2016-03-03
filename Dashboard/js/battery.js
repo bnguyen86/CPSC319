@@ -121,13 +121,13 @@ function batteryDisplay(data){
 		var xMin = new Date(parseInt(d3.min(data,function(d, i){
 				return d.datetime;
 				})));
-		console.log(xMin);
+		// console.log(xMin);
 		//latest date
 		// var xMax = new Date(d3.max(rDateTime,function(d, i){
 		var xMax = new Date(parseInt(d3.max(data,function(d, i){
 				return d.datetime;
 				})));
-		console.log(xMax);
+		// console.log(xMax);
 
 		//x axis (percentage)
 		var x = d3.time.scale()
@@ -138,10 +138,10 @@ function batteryDisplay(data){
 			.range([0, width]);
 		//y axis (percentage)
 		var y = d3.scale.linear()
-			// .domain([0,1])
-			.domain(d3.extent(data,function(d){
-				return d.battery;
-			}))
+			.domain([0,1])
+			// .domain(d3.extent(data,function(d){
+			// 	return d.battery;
+			// }))
 			.range([height, 0]);
 
 
@@ -166,7 +166,7 @@ function batteryDisplay(data){
 				// console.log(y(d.battery));
 				return y(d.battery);
 			})
-			.interpolate("basis");
+			.interpolate("line");
 
 			
 		var svg = d3.select('#batt_graph')
