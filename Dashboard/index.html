@@ -21,10 +21,12 @@
   <script src="./node_modules/d3/d3.js"></script>  
   <!-- <script src="./node_modules/d3/d3.min.js"></script>   -->
   <!-- <script src="./server.js"></script> -->
+ <script src="./js/client.js"></script>
+  <script src="./js/real-time.js"></script>
   <script src="./js/battery.js"></script>
   <script src="./js/accel.js"></script>
+  <script src="./js/maps.js"></script>
   <script src="./js/index.js"></script>
- <script src="./js/client.js"></script>
 </head>
 
 <body ng-app="Dashboard" layout="row" ng-cloak>
@@ -50,11 +52,18 @@
 
 <md-content flex layout="column">
 	<ng-view>TEST CONTENT</ng-view>
-	<div id="user_dis">
+	<div id="user_dis"></div>
+	<br>
+	<div id="date">
+		<!-- <form onsubmit="qDate(this)"> -->
+			<input type="datetime-local" id="start" name"Start Date"/>
+			<input type="datetime-local" id="end" name"End Date"/>
+			<button onclick="submitDateTime()">Submit</button>
+		<!-- </form> -->
 	</div>
 	<div id="batt_graph"></div>
-	</div>
 	<div id="accel_graph"></div>
+	<div id="realtime-graph"></div>
 </md-content>
 
 </body>

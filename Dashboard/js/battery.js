@@ -1,8 +1,10 @@
 //battery JSON object into graph
-//input: '{"clientID":String, "datetime":Array[], "battery":Array[]}'
-//output: battery percentage graph
+//INPUT: JSON Object
+//		ex) '[{"datetime":String, "battery":float, clientID":String},*(__n)]'
+//			where __n is the total number of data points
+//OUTPUT: battery percentage graph
 function batteryDisplay(data){
-	console.log(data);
+	// console.log(data);
 	var margin = {
 		top: 20,
 		right: 50,
@@ -14,36 +16,30 @@ function batteryDisplay(data){
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
-		//console.log(data);
-		var data = data.hits.hits;
-		//console.log("Battery life = ");
+		// var data = data.hits.hits;
 		console.log(data);
-		// var clientId = data.clientId;
-		// var rDateTime = data.dateTimeRec;
-		// console.log(rDateTime);
-		// var rBatt = data.batteryRec;
-		// console.log(rBatt);
 
 		//earliest date
 		// var xMin = new Date(d3.min(rDateTime,function(d, i){
-		var xMin = new Date(parseInt(d3.min(data,function(d, i){
-				return d.fields.datetime;
-				})));
-		 console.log(xMin);
+		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
+		// 		return d.fields.datetime;
+		// 		})));
+		 // console.log(xMin);
 		//latest date
 		// var xMax = new Date(d3.max(rDateTime,function(d, i){
-		var xMax = new Date(parseInt(d3.max(data,function(d, i){
-				return d.fields.datetime;
-				})));
+		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
+		// 		return d.fields.datetime;
+		// 		})));
 		// console.log(xMax);
 
-		//x axis (percentage)
+		//x axis (dateTime)
 		var x = d3.time.scale()
 			// .domain([xMin, xMax])
 			.domain(d3.extent(data,function(d){
 				return d.fields.datetime;
 			}))
 			.range([0, width]);
+			
 		//y axis (percentage)
 		var y = d3.scale.linear()
 			.domain([0,1])

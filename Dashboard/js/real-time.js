@@ -1,9 +1,8 @@
-//accel JSON object into graph
+//real-time JSON object into graph
 //INPUT: JSON Object
-//		ex) '[{"datetime":String, "accelX":float, "accelY":float, "accelZ":float, "clientID":String},*(__n)]'
-//			where __n is the total number of data points
-//OUTPUT: accel graph with all three dimensions
-function accelDisplay(data){
+//		ex) '[{"datetime":String, "battery":float, clientID":String}]'
+//OUTPUT: accel with update graph
+function realTimeDisplay(data){
 	// console.log(data);
 	var margin = {
 		top: 20,
@@ -97,7 +96,7 @@ function accelDisplay(data){
 
 
 		//Drawing			
-		var svg = d3.select('#accel_graph')
+		var svg = d3.select('#realtime-graph')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)

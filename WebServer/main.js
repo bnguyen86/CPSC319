@@ -47,20 +47,9 @@ io.on('connection',function(socket){
     //display all users
     socket.emit('clientIds',usersJSON);
     console.log(usersJSON);
-    // switch(event){
-    //  case 'clientID':
-    //      break;
-    //  case 'battery':
-    //      break;
-    //  case 'accel':
-    //      break;
-    //  case 'pos':
-    //      break;
-    // }
 
 
-
-    //once clientID is selected, display data
+    //once clientID is selected, display accel data
     //input: '{"clientID":String}'
     //output: '{"clientID":String, "accelX":int, "accelY":int, "accelZ"int}'
     socket.on('clientId', function(data){
@@ -92,10 +81,11 @@ io.on('connection',function(socket){
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
-            var dateTimeRec = parsed.dateTimeRec;
+            var start = parsed.start;
+            var end = parsed.end;
             // console.log(dateTimeRec);
             //function to query server
-            batteryQuery(curr_ID, dateTimeRec);
+            batteryQuery(curr_ID, start, end);
         } else{
             console.log("battery socket JSON incorrect");
             //console.log(data);
@@ -115,7 +105,7 @@ io.on('connection',function(socket){
             var curr_ID = parsed.clientID;
             var dateTimeRec = parsed.dateTimeRec;
             //function to query server
-            var message = accelQuery(curr_ID, dateTimeRec);
+            var message = accelQuery(curr_ID, start, end);
             socket.emit('rAccel',message);
         } else{
             console.log("accel socket JSON incorrect");
@@ -128,8 +118,31 @@ io.on('connection',function(socket){
     //output:
     socket.on('pos', function(data){
     });
-	
-function batteryQuery(curr_ID, dateTimeRec){
+
+//helper functions
+
+//returns the list of cliendId
+//OUTPUT:
+function userIDs(){
+    var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
+    console.log(userIDs);
+    return userIDs;
+}
+function realTimeQ(curr_ID){
+    var x = 0.8559271097183228;
+    var y = 0.1041477769613266;
+    var z = 9.460687637329102;
+    var message = '{"clientId":'+curr_ID+
+                    ', "accelX":'+x+
+                    ', "accelY":'+y+
+                    ', "accelZ":'+z+'}';    
+    console.log(message);
+    return message;
+
+}
+
+function batteryQuery(curr_ID, start, end){
+//Mock code with needed input and expected output
     // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
     // var message = '{"clientId":'+JSON.stringify(curr_ID)+
     //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
@@ -183,29 +196,8 @@ function batteryQuery(curr_ID, dateTimeRec){
 	// }
 
 };
-});
 
-//helper mock functions with data
-function userIDs(){
-    var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
-    console.log(userIDs);
-    return userIDs;
-}
-function realTimeQ(curr_ID){
-    var x = 0.8559271097183228;
-    var y = 0.1041477769613266;
-    var z = 9.460687637329102;
-    var message = '{"clientId":'+curr_ID+
-                    ', "accelX":'+x+
-                    ', "accelY":'+y+
-                    ', "accelZ":'+z+'}';    
-    console.log(message);
-    return message;
-
-}
-
-
-function accelQuery(curr_ID,dateTimeRec){
+function accelQuery(curr_ID, start, end){
 // var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
 // var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
 // var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
@@ -218,6 +210,8 @@ function accelQuery(curr_ID,dateTimeRec){
     console.log(message);
     return message;
 };
+});
+
 
 
 //=-=socketIO code termination=-=//

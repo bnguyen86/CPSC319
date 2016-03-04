@@ -1,18 +1,25 @@
 var socket = io('http://45.55.1.125:80/');
+// var socket = io();
 var curr_ID;
-//battery var
-//var start = "Thu Mar 03 2016 12:00:00 GMT-0800 (Pacific Standard Time)"
-//var end = "Thu Mar 03 2016 11:59:59 GMT-0800 (Pacific Standard Time)"
-var qDate = [{"start": "1456869619000", "end": "1456869620500"}];
+var qDate;
+// var qDate = '"start": "1456869619000", "end": "1456869620500"';
 // var rDateTime = [{"datetime":"1456869619000"},{"datetime":"1456869619500"},{"datetime":"1456869620000"},{"datetime":"1456869620500"}];
 
+//set Date values of query onLoad
+window.onload = function(){
+	var d = new Date();
+	document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
+	document.getElementById("end").value = d.toISOString().substring(0,16);
+}
 
-//parse the clientIDs into buttons
+//parse the clientIDs into buttons/lists
+// INPUT: 
+// OUTPUT:
 socket.on('clientIds',function(data){
 	// console.log(data);
 	var parsed = JSON.parse(data);
-	console.log(parsed);
-	if(document.getElementById("user_dis").childNodes.length == 1){
+	// console.log(parsed);
+	if(document.getElementById("user_dis").childNodes.length == 0){
 		userButtonCreation(parsed);
 	}
 });
@@ -49,11 +56,12 @@ socket.on('real_time',function(data){
 	console.log(data);
 });
 
-//query function
+//Query function called by the button
 function query(event){
 	var message = '{"clientID":'+JSON.stringify(curr_ID)+
-					', "dateTimeRec":'+JSON.stringify(qDate)+'}';
+					', '+ qDate+'}';
 					// '",'+rDateTime+'}';
+					// console.log(message);
 					
 	switch(event){
 		case 'clientId':
@@ -81,7 +89,21 @@ socket.on('rAccel',function(data){
 	// console.log(data);
 });
 
-// socket.on('rPos');
+socket.on('rPos',function(data){
+	mapDisplay(data);
+});
+
+
+//Sets the dates to be used to query server/database
+function submitDateTime(){
+	var start = document.getElementById("start").value;
+	var end = document.getElementById("end").value;
+	pStart =Date.parse(start);
+	pEnd = Date.parse(end);
+	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
+	return qDate;
+};
+
 function isJSON(message){
     try {
         JSON.parse(message);
@@ -90,35 +112,3 @@ function isJSON(message){
     }
     return true;
 };
-
-
-// //battery query function
-// function battQ(){
-// 	var message = '{"clientID":"'+curr_ID+
-// 					'", "datetime":'+rDateTime+'}';
-// 	socket.emit('battery',message);
-// }
-
-// //accel query function
-// function accelQ(){
-// 	var message = '{"clientID":"'+curr_ID+
-// 					'", "datetime":'+rDateTime+'}';
-// 	socket.emit('accel',message);
-// }
-
-// //pos query function
-// function posQ(){
-// 	var message = '{"clientID":"'+curr_ID+
-// 					'", "datetime":'+rDateTime+'}';
-// 	socket.emit('pos',message);
-// }
-
-//helper Functions
-// function isJSON(message){
-//     try {
-//         JSON.parse(message);
-//     } catch (e) {
-//         return false;
-//     }
-//     return true;
-// };
