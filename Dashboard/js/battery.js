@@ -16,21 +16,19 @@ function batteryDisplay(data){
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
-		// var data = data.hits.hits;
-		console.log(data);
+		var data = data.hits.hits;
+		// console.log(data);
 
 		//earliest date
-		// var xMin = new Date(d3.min(rDateTime,function(d, i){
-		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));
-		 // console.log(xMin);
+		var xMin = new Date(parseInt(d3.min(data,function(d, i){
+				return d.fields.datetime;
+				})));
+		 console.log(xMin);
 		//latest date
-		// var xMax = new Date(d3.max(rDateTime,function(d, i){
-		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));
-		// console.log(xMax);
+		var xMax = new Date(parseInt(d3.max(data,function(d, i){
+				return d.fields.datetime;
+				})));
+		console.log(xMax);
 
 		//x axis (dateTime)
 		var x = d3.time.scale()
