@@ -5,62 +5,6 @@
  */
 
 //to run, you will need to npm install mqtt -g (sudo access might be required
-var mqtt = require('mqtt');
-var options = {
-    keepalive: 0,
-//    port: 800
-}
-
-
-console.log('Started MQTT Websocket');
-var mqtt = require('mqtt');
-var client = mqtt.connect('mqtt://45.55.1.125', options);
- 
-client.on('connect', function () {
-  client.subscribe('team-mat-canary');
-  console.log('connected to mqtt broker');
-});
- 
-
-//called when a message event is received
-client.on('message', function (topic, message) {
-  // message is Buffer 
-  console.log(message.toString());
-
-  // var messageJSON = JSON.parse(message.toString());
-  // console.log(messageJSON);
-
-  // console.log(message);
-	var id = generateUUID();
-  	var stringMessage = message.toString();
-			
- 	//the following block will log the hearbeat to elasticsearch
- 	//TODO: uncomment this when the android client sends the proper JSON
- 	// if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
-
- 	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
-	 	
- 	var request = require('request');
-	request({
-		url: URL, 
-		method: 'PUT',
-		body: stringMessage 
-	}, //the callback function when something is successfully stored in elasticsearch
-		function(error, response, body){
-			if(error) {
-				console.log("Error occurred");
-	    		console.log(error);
-			} else {
-				console.log("Body contents");
-	    		console.log(body);
-		  }
-	   }
-    );
-//}
-
-
-
-
 
 // !!!  TODO: FOR RECEIVING SOS MESSAGES FROM WATCH
 // if(receiveSOSMessage){
@@ -77,50 +21,20 @@ client.on('message', function (topic, message) {
 //var app = require('http').createServer(handler)
 //var io = require('socket.io')(app);
 //var fs = require('fs');
+var http = require('http'),
+io = require('socket.io');
 
-//SocketIO Server-side
-//var express = require("express");
-//var app = express();
-//var http = require('http').Server(app);
-//var io = require('socket.io')(http);
-//var port = 8888;
-//var path = require('path');
+// Create server & socket
+var server = http.createServer(function(req, res)
+{
+  // Send HTML headers and message
+  res.writeHead(404, {'Content-Type': 'text/html'});
+  res.end("<h1>Sorry, couldn't find anything! 404</h1>");
+});
+server.listen(80);
+io = io.listen(server);
 
-// app.listen(80);
-//app.use('/', express.static(__dirname + '/'));
-
-// function handler (req, res) {
-//   fs.readFile(__dirname + '/index.html',
-//   function (err, data) {
-//     if (err) {
-//       res.writeHead(500);
-//       return res.end('Error loading index.html');
-//     }
-
-//     res.writeHead(200);
-//     res.end(data);
-//   });
-// }
-//app.get('/', function(req, res) {
-  // path.resolve('/../Dashboard/index.html');
-  //res.sendFile(path.normalize(__dirname+'/../Dashboard/index.html'));
-  //console.log(__dirname);
-  //});
-
-//app.listen(port);
-
-// http.listen(port, function(){
-//   console.log('listening on *:9000');
-// });
-
-
-// io.on('connection', function (socket) {
-//   socket.emit('news', { hello: 'world' });
-//   socket.on('my other event', function (data) {
-//     console.log(data);
-//   });
-// });
-var io = require('socket.io')(80);
+//var io = require("socket.io")(80);
 
 io.on('connection',function(socket){
     var usersJSON = userIDs();
@@ -131,7 +45,7 @@ io.on('connection',function(socket){
     console.log('a machine has connected');
 
     //display all users
-    socket.emit('clientIDs',usersJSON);
+    socket.emit('clientIds',usersJSON);
     console.log(usersJSON);
     // switch(event){
     //  case 'clientID':
@@ -162,7 +76,7 @@ io.on('connection',function(socket){
                 }, 1000);
         } else{
             console.log("real-time socket JSON incorrect");
-            console.log(data);
+            //console.log(data);
         }
     });
 
@@ -174,18 +88,17 @@ io.on('connection',function(socket){
             clearInterval(currIntervalID)
         };
         if(isJSON(data)){
-            // console.log(data);
+            console.log("Searching for battery data");
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
             var dateTimeRec = parsed.dateTimeRec;
             // console.log(dateTimeRec);
             //function to query server
-            var message = batteryQuery(curr_ID, dateTimeRec);
-            socket.emit('rBatt',message);
+            batteryQuery(curr_ID, dateTimeRec);
         } else{
             console.log("battery socket JSON incorrect");
-            console.log(data);
+            //console.log(data);
         }
     });
 
@@ -206,7 +119,7 @@ io.on('connection',function(socket){
             socket.emit('rAccel',message);
         } else{
             console.log("accel socket JSON incorrect");
-            console.log(data);
+            //console.log(data);
         }
     });
 
@@ -215,6 +128,61 @@ io.on('connection',function(socket){
     //output:
     socket.on('pos', function(data){
     });
+	
+function batteryQuery(curr_ID, dateTimeRec){
+    // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
+    // var message = '{"clientId":'+JSON.stringify(curr_ID)+
+    //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+    //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
+    //var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
+    //console.log(message);
+	var payload = {
+		"size": 5000,
+		"sort": [
+		    {
+		        "datetime": 
+		            {"order":"desc"}
+            }
+	    ],
+		"fields": ['clientId','datetime', 'battery'],
+		"query": {
+			"term" : { "clientId" : curr_ID }
+	      		}
+//		      	"filter": {
+//		        	"range": {
+		          		// "datetime": {
+		            		// "to": end,
+		            		// "from": start
+		          		// }
+		        	// }			
+		    	// }
+	    	}
+
+	var payloadString = JSON.stringify(payload);
+	var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+	var message;
+	var request = require('request');
+	request({
+		url: URL, 
+		method: 'POST',
+		body: payloadString 
+	}, //the callback function when something is successfully retrieved
+		function(error, response, body){
+			if(error) {
+	    		console.log(error);
+			} else {
+				console.log("Found data");
+				socket.emit('rBatt', body);
+				//console.log(body);
+				//message = body;
+				//console.log(message);
+			}
+		});
+		//console.log("Message = " + body);
+		//return message;
+	// }
+
+};
 });
 
 //helper mock functions with data
@@ -236,15 +204,6 @@ function realTimeQ(curr_ID){
 
 }
 
-function batteryQuery(curr_ID, dateTimeRec){
-    // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
-    // var message = '{"clientId":'+JSON.stringify(curr_ID)+
-    //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
-    //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
-    var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
-    console.log(message);
-    return message;
-};
 
 function accelQuery(curr_ID,dateTimeRec){
 // var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
@@ -262,6 +221,59 @@ function accelQuery(curr_ID,dateTimeRec){
 
 
 //=-=socketIO code termination=-=//
+
+var mqtt = require('mqtt');
+var options = {
+    keepalive: 0,
+	clean: true
+//    port: 800
+}
+
+console.log('Started MQTT Websocket');
+var mqtt = require('mqtt');
+var client = mqtt.connect('mqtt://45.55.1.125', options);
+
+client.on('connect', function() {
+  client.publish('team-mat-canary', null, {retain: true});
+  client.subscribe('team-mat-canary');
+  console.log('connected to mqtt broker');
+}); 
+
+//called when a message event is received
+client.on('message', function (topic, message) {
+  // message is Buffer 
+  console.log("Receiving message");
+
+  var messageJSON = JSON.parse(message.toString());
+  console.log(messageJSON);
+
+  // console.log(message);
+	var id = generateUUID();
+  	var stringMessage = message.toString();
+			
+ 	//the following block will log the hearbeat to elasticsearch
+ 	//TODO: uncomment this when the android client sends the proper JSON
+ 	if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
+	console.log("Logging heartbeat");
+ 	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
+	 	
+ 	var request = require('request');
+	request({
+		url: URL, 
+		method: 'PUT',
+		body: stringMessage
+	}, //the callback function when something is successfully stored in elasticsearch
+		function(error, response, body){
+			if(error) {
+				console.log("Error occurred");
+	    		console.log(error);
+			} else {
+				console.log("Body contents");
+	    		console.log(body);
+		  }
+	   }
+    );
+}
 
 
 if(isJSON(message)){
@@ -298,7 +310,7 @@ function isJSON(message){
   // }
 });
 
-getHeartbeatResponses(1456464385000,1456464387000);
+//getHeartbeatResponses(1456464385000,1456464387000);
 
 //**HELPER FUNCTIONS BELOW***
 function generateUUID() {
@@ -312,7 +324,7 @@ function generateUUID() {
 };
 
 
-//@Wes: use this function to retrun all the heartbeats that fall within the start and end times
+//@Wes: use this function to return all the heartbeats that fall within the start and end times
 function getHeartbeatResponses(start, end){
 	var payload = {
 		"size": 5000,
@@ -351,7 +363,7 @@ function getHeartbeatResponses(start, end){
 			if(error) {
 	    		console.log(error);
 			} else {
-	    		console.log(body);
+	    		//console.log(body);
 			}
 		});
 	// }

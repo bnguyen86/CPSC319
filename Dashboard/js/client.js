@@ -1,6 +1,8 @@
-var socket = io();
+var socket = io('http://45.55.1.125:80/');
 var curr_ID;
 //battery var
+//var start = "Thu Mar 03 2016 12:00:00 GMT-0800 (Pacific Standard Time)"
+//var end = "Thu Mar 03 2016 11:59:59 GMT-0800 (Pacific Standard Time)"
 var qDate = [{"start": "1456869619000", "end": "1456869620500"}];
 // var rDateTime = [{"datetime":"1456869619000"},{"datetime":"1456869619500"},{"datetime":"1456869620000"},{"datetime":"1456869620500"}];
 
