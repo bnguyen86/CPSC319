@@ -4,8 +4,8 @@
 //			where __n is the total number of data points
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
-	console.log(data);
-	document.getElementById("graph").innerHTML="";
+	// console.log(data);
+	clearDiv();
 	var margin = {
 		top: 20,
 		right: 50,
@@ -18,19 +18,23 @@ function accelDisplay(data){
 	if(isJSON(data)){
 		var data = JSON.parse(data);
 		var data = data.hits.hits;
-		console.log(data);
+		// console.log(data);
 
 		//earliest date
-		// var xMin = new Date(d3.min(rDateTime,function(d, i){
-		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
+		var xMin = new Date(parseInt(d3.min(data,function(d, i){
+				return d.fields.datetime;
+				})));
+		// console.log(d3.min(data,function(d, i){
 		// 		return d.fields.datetime;
-		// 		})));
+		// 		}));
 		 // console.log(xMin);
 		//latest date
-		// var xMax = new Date(d3.max(rDateTime,function(d, i){
-		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
+		var xMax = new Date(parseInt(d3.max(data,function(d, i){
+				return d.fields.datetime;
+				})));
+		// console.log(d3.max(data,function(d, i){
 		// 		return d.fields.datetime;
-		// 		})));
+		// 		}));		
 		// console.log(xMax);
 
 		//x axis (dateTime)
@@ -43,7 +47,7 @@ function accelDisplay(data){
 
 		//y axis (range)
 		var y = d3.scale.linear()
-			.domain([-10,10])
+			.domain([-20,20])
 			// .domain(d3.extent(data,function(d){
 			// 	return d.battery;
 			// }))
@@ -88,7 +92,7 @@ function accelDisplay(data){
 		var lineZ = d3.svg.line()
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
-				return x(new Date(parseInt(d.datetime)));
+				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
 				// console.log(y(d.battery));
@@ -98,7 +102,7 @@ function accelDisplay(data){
 
 
 		//Drawing			
-		var svg = d3.select('#graph')
+		var svg = d3.select('#history')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
@@ -115,7 +119,7 @@ function accelDisplay(data){
 
 			svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate(50,'+(height+20)+')')
+			.attr('transform','translate(50,'+(height/2+20)+')')
 			.call(xAxis);
 			// .append("text")
 			// .style("text-anchor", "end")
@@ -145,11 +149,6 @@ function accelDisplay(data){
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 			.attr('transform','translate(50,20)');			
-
-//UPDATE GRAPH INSTEAD OF REDRAWING. 
-// if(document.getElementById("user_dis").childNodes.length == 1){
-// 		userButtonCreation(data);
-// 	}
 
 	} else{
 		console.log("accelDisplay JSON incorrect");

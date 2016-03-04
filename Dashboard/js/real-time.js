@@ -4,7 +4,11 @@
 //OUTPUT: accel with update graph
 function realTimeDisplay(data){
 	// console.log(data);
-	document.getElementById("graph").innerHTML="";	
+	// if(document.getElementById("real-time").innerHTML != ""){
+
+	// }else{
+		// document.getElementsByClassName("graph").innerHTML="";
+	clearDiv();
 	var margin = {
 		top: 20,
 		right: 50,
@@ -13,36 +17,33 @@ function realTimeDisplay(data){
 		};
 	var width = 1000 - margin.left - margin.right;
 	var height = 300 - margin.top - margin.bottom;
-
-	if(isJSON(data)){
+		if(isJSON(data)){
 		var data = JSON.parse(data);
 		var data = data.hits.hits;
-		console.log(data);
+		// console.log(data);
 
-		//earliest date
-		// var xMin = new Date(d3.min(rDateTime,function(d, i){
-		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));
+		// earliest date
+		var xMin = new Date(parseInt(d3.min(data,function(d, i){
+				return d.fields.datetime;
+				})));
 		 // console.log(xMin);
-		//latest date
-		// var xMax = new Date(d3.max(rDateTime,function(d, i){
-		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));
+		// latest date
+		var xMax = new Date(parseInt(d3.max(data,function(d, i){
+				return d.fields.datetime;
+				})));
 		// console.log(xMax);
 
-		//x axis (dateTime)
+			//x axis (dateTime)
 		var x = d3.time.scale()
-			// .domain([xMin, xMax])
-			.domain(d3.extent(data,function(d){
-				return d.fields.datetime;
-			}))
+			.domain([(xMax-60000), xMax])
+			// .domain(d3.extent(data,function(d){
+			// 	return d.fields.datetime;
+			// }))
 			.range([0, width]);
 
 		//y axis (range)
 		var y = d3.scale.linear()
-			.domain([-10,10])
+			.domain([-20,20])
 			// .domain(d3.extent(data,function(d){
 			// 	return d.battery;
 			// }))
@@ -87,9 +88,9 @@ function realTimeDisplay(data){
 		var lineZ = d3.svg.line()
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
-				return x(new Date(parseInt(d.datetime)));
+				return x(new Date(parseInt(d.fields.datetime)));
 			})
-			.y(function(d){
+				.y(function(d){
 				// console.log(y(d.battery));
 				return y(d.fields.accelZ);
 			})
@@ -97,7 +98,7 @@ function realTimeDisplay(data){
 
 
 		//Drawing			
-		var svg = d3.select('#graph')
+		var svg = d3.select('#real-time')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
@@ -114,7 +115,7 @@ function realTimeDisplay(data){
 
 			svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate(50,'+(height+20)+')')
+			.attr('transform','translate(50,'+(height/2+20)+')')
 			.call(xAxis);
 			// .append("text")
 			// .style("text-anchor", "end")
@@ -143,15 +144,10 @@ function realTimeDisplay(data){
 			.attr("stroke", "red")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');			
-
-//UPDATE GRAPH INSTEAD OF REDRAWING. 
-// if(document.getElementById("user_dis").childNodes.length == 1){
-// 		userButtonCreation(data);
-// 	}
-
+			.attr('transform','translate(50,20)');
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);
 	}
+	// }
 };

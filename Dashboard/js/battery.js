@@ -5,7 +5,8 @@
 //OUTPUT: battery percentage graph
 function batteryDisplay(data){
 	// console.log(data);
-	document.getElementById("graph").innerHTML="";
+	document.getElementById("real-time").innerHTML = "";
+	document.getElementById("history").innerHTML = "";
 	var margin = {
 		top: 20,
 		right: 50,
@@ -24,12 +25,12 @@ function batteryDisplay(data){
 		var xMin = new Date(parseInt(d3.min(data,function(d, i){
 				return d.fields.datetime;
 				})));
-		 console.log(xMin);
+		 // console.log(xMin);
 		//latest date
 		var xMax = new Date(parseInt(d3.max(data,function(d, i){
 				return d.fields.datetime;
 				})));
-		console.log(xMax);
+		// console.log(xMax);
 
 		//x axis (dateTime)
 		var x = d3.time.scale()
@@ -72,7 +73,7 @@ function batteryDisplay(data){
 			.interpolate("line");
 
 			
-		var svg = d3.select('#graph')
+		var svg = d3.select('#history')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
@@ -102,12 +103,6 @@ function batteryDisplay(data){
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 			.attr('transform','translate(50,20)');
-
-//UPDATE GRAPH INSTEAD OF REDRAWING. 
-// if(document.getElementById("user_dis").childNodes.length == 1){
-// 		userButtonCreation(data);
-// 	}
-
 	} else{
 		console.log("batteryDisplay JSON incorrect");
 		console.log(data);
