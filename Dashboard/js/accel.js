@@ -4,7 +4,7 @@
 //			where __n is the total number of data points
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
-	// console.log(data);
+	console.log(data);
 	document.getElementById("graph").innerHTML="";
 	var margin = {
 		top: 20,

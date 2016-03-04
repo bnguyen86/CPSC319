@@ -103,10 +103,11 @@ io.on('connection',function(socket){
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
-            var dateTimeRec = parsed.dateTimeRec;
+            var start = parsed.start;
+            var end = parsed.end;
             //function to query server
-            var message = accelQuery(curr_ID, start, end);
-            socket.emit('rAccel',message);
+            accelQuery(curr_ID, start, end);
+            // socket.emit('rAccel',message);
         } else{
             console.log("accel socket JSON incorrect");
             //console.log(data);
@@ -126,7 +127,8 @@ io.on('connection',function(socket){
         var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
         console.log(userIDs);
         return userIDs;
-    }
+    };
+
     function realTimeQ(curr_ID){
         var x = 0.8559271097183228;
         var y = 0.1041477769613266;
@@ -138,10 +140,10 @@ io.on('connection',function(socket){
         console.log(message);
         return message;
 
-    }
+    };
 
     function batteryQuery(curr_ID, start, end){
-    //Mock code with needed input and expected output
+    //Battery mock code with needed input and expected output
         // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
         // var message = '{"clientId":'+JSON.stringify(curr_ID)+
         //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
@@ -160,14 +162,14 @@ io.on('connection',function(socket){
     		"query": {
     			"term" : { "clientId" : curr_ID }
     	      		}
-    		      	"filter": {
-    		        	"range": {
-    		          		"datetime": {
-    		            		"to": end,
-    		            		"from": start
-    		          		}
-    		        	}			
-    		    	}
+    		     //  	"filtered": {
+    		     //    	"range": {
+    		     //      		"datetime": {
+    		     //        		"to": end,
+    		     //        		"from": start
+    		     //      		}
+    		     //    	}			
+    		    	// }
     	    	}
 
     	var payloadString = JSON.stringify(payload);
@@ -197,14 +199,15 @@ io.on('connection',function(socket){
     };
 
     function accelQuery(curr_ID, start, end){
-    // var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
-    // var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
-    // var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
-    //  var message = '{"clientId":'+JSON.stringify(curr_ID)+
-    //                  ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
-    //                  ', "accelXRec":'+JSON.stringify(rX)+
-    //                  ', "accelYRec":'+JSON.stringify(rY)+
-    //                  ', "accelZRec":'+JSON.stringify(rZ)+'}';
+    //Accel mock code with needed input and expected output        
+        // var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
+        // var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
+        // var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
+        //  var message = '{"clientId":'+JSON.stringify(curr_ID)+
+        //                  ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+        //                  ', "accelXRec":'+JSON.stringify(rX)+
+        //                  ', "accelYRec":'+JSON.stringify(rY)+
+        //                  ', "accelZRec":'+JSON.stringify(rZ)+'}';
         // var message = '[{"datetime":"1456869619000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":9.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869619500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":8.460687637329102,"clientId":"351559070571963"},{"datetime":"1456869620000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":7.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869620500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":6.460687637329102,"clientId":"351559070571963"}]';
         // console.log(message);
         // return message;
@@ -220,14 +223,14 @@ io.on('connection',function(socket){
             "query": {
                 "term" : { "clientId" : curr_ID }
                     }
-                 "filter": {
-                     "range": {
-                            "datetime": {
-                                "to": end,
-                                "from": start
-                            }
-                        }            
-                    }
+                 // "filtered": {
+                 //     "range": {
+                 //            "datetime": {
+                 //                "to": end,
+                 //                "from": start
+                 //            }
+                 //        }            
+                 //    }
                 }
 
         var payloadString = JSON.stringify(payload);
@@ -244,7 +247,7 @@ io.on('connection',function(socket){
                     console.log(error);
                 } else {
                     console.log("Found data");
-                    socket.emit('rBatt', body);
+                    socket.emit('rAccel', body);
                     //console.log(body);
                     //message = body;
                     //console.log(message);
