@@ -5,6 +5,7 @@
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
 	// console.log(data);
+	document.getElementById("graph").innerHTML="";
 	var margin = {
 		top: 20,
 		right: 50,
@@ -97,7 +98,7 @@ function accelDisplay(data){
 
 
 		//Drawing			
-		var svg = d3.select('#accel_graph')
+		var svg = d3.select('#graph')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)

@@ -5,6 +5,7 @@
 //OUTPUT: battery percentage graph
 function batteryDisplay(data){
 	// console.log(data);
+	document.getElementById("graph").innerHTML="";
 	var margin = {
 		top: 20,
 		right: 50,
@@ -71,7 +72,7 @@ function batteryDisplay(data){
 			.interpolate("line");
 
 			
-		var svg = d3.select('#batt_graph')
+		var svg = d3.select('#graph')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)

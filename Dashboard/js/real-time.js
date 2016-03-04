@@ -4,6 +4,7 @@
 //OUTPUT: accel with update graph
 function realTimeDisplay(data){
 	// console.log(data);
+	document.getElementById("graph").innerHTML="";	
 	var margin = {
 		top: 20,
 		right: 50,
@@ -96,7 +97,7 @@ function realTimeDisplay(data){
 
 
 		//Drawing			
-		var svg = d3.select('#realtime-graph')
+		var svg = d3.select('#graph')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
