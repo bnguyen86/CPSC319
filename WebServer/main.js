@@ -49,23 +49,28 @@ io.on('connection',function(socket){
     console.log(usersJSON);
 
 
+    socket.on('clientId', function(data){
+        clearInterval(currIntervalID);
+        socket.emit('clientIds',usersJSON);
+        // console.log(usersJOSN);
+    });
+
     //once clientID is selected, display accel data
     //input: '{"clientID":String}'
     //output: '{"clientID":String, "accelX":int, "accelY":int, "accelZ"int}'
-    socket.on('clientId', function(data){
+    socket.on('real-time', function(data){
         if(currIntervalID != null){
-            clearInterval(currIntervalID)
+            clearInterval(currIntervalID);
         };
         if(isJSON(data)){
             var parsed = JSON.parse(data);
             var curr_ID = parsed.clientId;
-            var message = realTimeQ(curr_ID);
             currIntervalID = setInterval(function(){
-                socket.emit('real_time',message);
-                }, 1000);
+                    realTimeQ(curr_ID);
+                }, 500);
         } else{
             console.log("real-time socket JSON incorrect");
-            //console.log(data);
+            console.log(data);
         }
     });
 
@@ -77,7 +82,7 @@ io.on('connection',function(socket){
             clearInterval(currIntervalID)
         };
         if(isJSON(data)){
-            console.log("Searching for battery data");
+            // console.log("Searching for battery data");
             //input & output values
             var parsed = JSON.parse(data);  
             var curr_ID = parsed.clientID;
@@ -124,22 +129,68 @@ io.on('connection',function(socket){
     //returns the list of cliendId
     //OUTPUT:
     function userIDs(){
-        var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
+        var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
         console.log(userIDs);
         return userIDs;
     };
-
     function realTimeQ(curr_ID){
-        var x = 0.8559271097183228;
-        var y = 0.1041477769613266;
-        var z = 9.460687637329102;
-        var message = '{"clientId":'+curr_ID+
-                        ', "accelX":'+x+
-                        ', "accelY":'+y+
-                        ', "accelZ":'+z+'}';    
-        console.log(message);
-        return message;
+    //realTime mock code with needed input and expected output
+        // var x = 0.8559271097183228;
+        // var y = 0.1041477769613266;
+        // var z = 9.460687637329102;
+        // var message = '{"clientId":'+curr_ID+
+        //                 ', "accelX":'+x+
+        //                 ', "accelY":'+y+
+        //                 ', "accelZ":'+z+'}';    
+        // console.log(message);
+        // return message;
 
+        var payload = {
+        "size": 100,
+        "sort": [
+             {
+                 "datetime": 
+                     {"order":"desc"}
+             }
+         ],
+         "fields": ['clientId','datetime', 'accelX', 'accelY', 'accelZ'],
+         "query": {
+             "term" : { "clientId" : curr_ID }
+                 }
+              // "filtered": {
+              //     "range": {
+              //            "datetime": {
+              //                "to": end,
+              //                "from": start
+              //            }
+              //        }            
+              //    }
+             }
+        var payloadString = JSON.stringify(payload);
+        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+        var message;
+        var request = require('request');
+        request({
+            url: URL, 
+            method: 'POST',
+            body: payloadString 
+        }, //the callback function when something is successfully retrieved
+            function(error, response, body){
+                if(error) {
+                    console.log(error);
+                } else {
+                    console.log("Found data");
+                    // currIntervalID = setInterval(function(){
+                    socket.emit('rRealTime',body);
+                    //     }, 1000);
+                    //console.log(body);
+                    //message = body;
+                    //console.log(message);
+                }
+            });
+            //console.log("Message = " + body);
+            //return message;
+        // }
     };
 
     function batteryQuery(curr_ID, start, end){
@@ -255,7 +306,7 @@ io.on('connection',function(socket){
             });
             //console.log("Message = " + body);
             //return message;
-        // }        
+        // }
     };
 });
 
