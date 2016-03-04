@@ -119,97 +119,141 @@ io.on('connection',function(socket){
     socket.on('pos', function(data){
     });
 
-//helper functions
+    //helper functions
+    //returns the list of cliendId
+    //OUTPUT:
+    function userIDs(){
+        var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
+        console.log(userIDs);
+        return userIDs;
+    }
+    function realTimeQ(curr_ID){
+        var x = 0.8559271097183228;
+        var y = 0.1041477769613266;
+        var z = 9.460687637329102;
+        var message = '{"clientId":'+curr_ID+
+                        ', "accelX":'+x+
+                        ', "accelY":'+y+
+                        ', "accelZ":'+z+'}';    
+        console.log(message);
+        return message;
 
-//returns the list of cliendId
-//OUTPUT:
-function userIDs(){
-    var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"}]}';
-    console.log(userIDs);
-    return userIDs;
-}
-function realTimeQ(curr_ID){
-    var x = 0.8559271097183228;
-    var y = 0.1041477769613266;
-    var z = 9.460687637329102;
-    var message = '{"clientId":'+curr_ID+
-                    ', "accelX":'+x+
-                    ', "accelY":'+y+
-                    ', "accelZ":'+z+'}';    
-    console.log(message);
-    return message;
+    }
 
-}
+    function batteryQuery(curr_ID, start, end){
+    //Mock code with needed input and expected output
+        // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
+        // var message = '{"clientId":'+JSON.stringify(curr_ID)+
+        //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+        //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
+        //var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
+        //console.log(message);
+    	var payload = {
+    		"size": 5000,
+    		"sort": [
+    		    {
+    		        "datetime": 
+    		            {"order":"desc"}
+                }
+    	    ],
+    		"fields": ['clientId','datetime', 'battery'],
+    		"query": {
+    			"term" : { "clientId" : curr_ID }
+    	      		}
+    		      	"filter": {
+    		        	"range": {
+    		          		"datetime": {
+    		            		"to": end,
+    		            		"from": start
+    		          		}
+    		        	}			
+    		    	}
+    	    	}
 
-function batteryQuery(curr_ID, start, end){
-//Mock code with needed input and expected output
-    // var rBatt = [{"batt":0.9999999988079071},{"batt":0.6099999988079071},{"batt":0.4699999988079071},{"batt":0.2399999988079071}];
-    // var message = '{"clientId":'+JSON.stringify(curr_ID)+
-    //              ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
-    //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
-    //var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
-    //console.log(message);
-	var payload = {
-		"size": 5000,
-		"sort": [
-		    {
-		        "datetime": 
-		            {"order":"desc"}
-            }
-	    ],
-		"fields": ['clientId','datetime', 'battery'],
-		"query": {
-			"term" : { "clientId" : curr_ID }
-	      		}
-//		      	"filter": {
-//		        	"range": {
-		          		// "datetime": {
-		            		// "to": end,
-		            		// "from": start
-		          		// }
-		        	// }			
-		    	// }
-	    	}
+    	var payloadString = JSON.stringify(payload);
+    	var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+    	var message;
+    	var request = require('request');
+    	request({
+    		url: URL, 
+    		method: 'POST',
+    		body: payloadString 
+    	}, //the callback function when something is successfully retrieved
+    		function(error, response, body){
+    			if(error) {
+    	    		console.log(error);
+    			} else {
+    				console.log("Found data");
+    				socket.emit('rBatt', body);
+    				//console.log(body);
+    				//message = body;
+    				//console.log(message);
+    			}
+    		});
+    		//console.log("Message = " + body);
+    		//return message;
+    	// }
 
-	var payloadString = JSON.stringify(payload);
-	var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
-	var message;
-	var request = require('request');
-	request({
-		url: URL, 
-		method: 'POST',
-		body: payloadString 
-	}, //the callback function when something is successfully retrieved
-		function(error, response, body){
-			if(error) {
-	    		console.log(error);
-			} else {
-				console.log("Found data");
-				socket.emit('rBatt', body);
-				//console.log(body);
-				//message = body;
-				//console.log(message);
-			}
-		});
-		//console.log("Message = " + body);
-		//return message;
-	// }
+    };
 
-};
+    function accelQuery(curr_ID, start, end){
+    // var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
+    // var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
+    // var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
+    //  var message = '{"clientId":'+JSON.stringify(curr_ID)+
+    //                  ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
+    //                  ', "accelXRec":'+JSON.stringify(rX)+
+    //                  ', "accelYRec":'+JSON.stringify(rY)+
+    //                  ', "accelZRec":'+JSON.stringify(rZ)+'}';
+        // var message = '[{"datetime":"1456869619000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":9.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869619500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":8.460687637329102,"clientId":"351559070571963"},{"datetime":"1456869620000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":7.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869620500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":6.460687637329102,"clientId":"351559070571963"}]';
+        // console.log(message);
+        // return message;
+        var payload = {
+            "size": 5000,
+            "sort": [
+                {
+                    "datetime": 
+                        {"order":"desc"}
+                }
+            ],
+            "fields": ['clientId','datetime', 'accelX', 'accelY', 'accelZ'],
+            "query": {
+                "term" : { "clientId" : curr_ID }
+                    }
+                 "filter": {
+                     "range": {
+                            "datetime": {
+                                "to": end,
+                                "from": start
+                            }
+                        }            
+                    }
+                }
 
-function accelQuery(curr_ID, start, end){
-// var rX = [{"accelX":0.8559271097183228},{"accelX":0.9559271097183228},{"accelX":0.8559271097183228},{"accelX":0.9559271097183228}];
-// var rY = [{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266},{"accelY":0.1041477769613266}];
-// var rZ = [{"accelZ":9.4606876373291024},{"accelZ":8.4606876373291024},{"accelZ":7.4606876373291024},{"accelZ":6.4606876373291024}];
-//  var message = '{"clientId":'+JSON.stringify(curr_ID)+
-//                  ', "dateTimeRec":'+JSON.stringify(dateTimeRec)+
-//                  ', "accelXRec":'+JSON.stringify(rX)+
-//                  ', "accelYRec":'+JSON.stringify(rY)+
-//                  ', "accelZRec":'+JSON.stringify(rZ)+'}';
-    var message = '[{"datetime":"1456869619000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":9.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869619500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":8.460687637329102,"clientId":"351559070571963"},{"datetime":"1456869620000","accelX":0.8559271097183228,"accelY":0.1041477769613266,"accelZ":7.4606876373291024,"clientId":"351559070571963"},{"datetime":"1456869620500","accelX":0.9559271097183228,"accelY":0.1041477769613266,"accelZ":6.460687637329102,"clientId":"351559070571963"}]';
-    console.log(message);
-    return message;
-};
+        var payloadString = JSON.stringify(payload);
+        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+        var message;
+        var request = require('request');
+        request({
+            url: URL, 
+            method: 'POST',
+            body: payloadString 
+        }, //the callback function when something is successfully retrieved
+            function(error, response, body){
+                if(error) {
+                    console.log(error);
+                } else {
+                    console.log("Found data");
+                    socket.emit('rBatt', body);
+                    //console.log(body);
+                    //message = body;
+                    //console.log(message);
+                }
+            });
+            //console.log("Message = " + body);
+            //return message;
+        // }        
+    };
 });
 
 
@@ -288,14 +332,14 @@ if(isJSON(message)){
     console.log('Not a JSON message')
   }
 
-function isJSON(message){
-    try {
-        JSON.parse(message);
-    } catch (e) {
-        return false;
-    }
-    return true;
-  }
+// function isJSON(message){
+//     try {
+//         JSON.parse(message);
+//     } catch (e) {
+//         return false;
+//     }
+//     return true;
+//   }
   
 
   // if (messageJSON.hasOwnProperty("status") && messageJSON.status === "disconnect"){
