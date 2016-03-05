@@ -31,7 +31,7 @@ var server = http.createServer(function(req, res)
   res.writeHead(404, {'Content-Type': 'text/html'});
   res.end("<h1>Sorry, couldn't find anything! 404</h1>");
 });
-server.listen(80);
+server.listen(5555);
 io = io.listen(server);
 
 //var io = require("socket.io")(80);
