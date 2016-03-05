@@ -1,4 +1,4 @@
-var socket = io('http://45.55.1.125:80/');
+var socket = io('http://45.55.1.125:5555/');
 // var socket = io();
 var curr_ID;
 var qDate;
