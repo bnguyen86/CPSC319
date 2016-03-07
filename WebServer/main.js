@@ -23,10 +23,6 @@ io = io.listen(server);
 
 io.on('connection',function(socket){
 
-    socket.on('sosEvent', function(){
-        console.log("sosEvent");
-        }, false);
-
     var usersJSON = userIDs();
     var currIntervalID;
     //future implementation: if possible, simplify on by getting event
@@ -60,7 +56,7 @@ io.on('connection',function(socket){
                 }, 500);
         } else{
             console.log("real-time socket JSON incorrect");
-            console.log(data);
+            // console.log(data);
         }
     });
 
@@ -120,7 +116,7 @@ io.on('connection',function(socket){
     //OUTPUT:
     function userIDs(){
         var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
-        console.log(userIDs);
+        // console.log(userIDs);
         return userIDs;
     };
     function realTimeQ(curr_ID){
@@ -331,7 +327,7 @@ client.on('message', function (topic, message) {
   }
 
   var messageJSON = JSON.parse(message.toString());
-  console.log(messageJSON);
+  // console.log(messageJSON);
 
   // console.log(message);
 	var id = generateUUID();
@@ -470,13 +466,19 @@ function isJSON(message){
     return true;
 };
 
+// function sendSOSMessage(source){
+//     if(source=='client'){
+
+//     }
+//     else{
+
+//     }
+//     this.document.postMessage(source, source);
+// }
+
 function sendSOSMessage(source){
-    if(source=='client'){
-
-    }
-    else{
-
-    }
+    io.emit('sos', source);
+    console.log("logging Moki");
 }
 
 getHeartbeatResponses(0, "now");
