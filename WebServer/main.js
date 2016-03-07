@@ -157,14 +157,6 @@ io.on('connection',function(socket){
          "query": {
              "term" : { "clientId" : curr_ID }
                  }
-              // "filtered": {
-              //     "range": {
-              //            "datetime": {
-              //                "to": end,
-              //                "from": start
-              //            }
-              //        }            
-              //    }
              }
         var payloadString = JSON.stringify(payload);
         var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
@@ -201,6 +193,10 @@ io.on('connection',function(socket){
         //              ', "batteryRec":'+JSON.stringify(rBatt)+'}';
         //var message = '[{"datetime":"1456869619000","battery":0.9999999988079071,"clientId":"351559070571963"},{"datetime":"1456869619500","battery":0.6099999988079071,"clientId":"351559070571963"},{"datetime":"1456869620000","battery":0.4699999988079071,"clientId":"351559070571963"},{"datetime":"1456869620500","battery":0.2399999988079071,"clientId":"351559070571963"}]';
         //console.log(message);
+        console.log(curr_ID);
+        console.log(start);
+        console.log(end);
+
     	var payload = {
     		"size": 5000,
     		"sort": [
@@ -211,17 +207,23 @@ io.on('connection',function(socket){
     	    ],
     		"fields": ['clientId','datetime', 'battery'],
     		"query": {
-    			"term" : { "clientId" : curr_ID }
-    	      		}
-    		     //  	"filtered": {
-    		     //    	"range": {
-    		     //      		"datetime": {
-    		     //        		"to": end,
-    		     //        		"from": start
-    		     //      		}
-    		     //    	}			
-    		    	// }
-    	    	}
+    			"filtered":{
+    				"query":{
+		    			"term" : { 
+		    				"clientId" : curr_ID
+		    					}
+		    	      		},
+    		       	"filter": {
+    		         	"range": {
+    		           		"datetime": {
+    		             		"to": end,
+    		             		"from": start
+    		           		}
+    		         	}	
+    		    	}
+    			}
+    		}
+    	}
 
     	var payloadString = JSON.stringify(payload);
     	var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
@@ -271,18 +273,24 @@ io.on('connection',function(socket){
                 }
             ],
             "fields": ['clientId','datetime', 'accelX', 'accelY', 'accelZ'],
-            "query": {
-                "term" : { "clientId" : curr_ID }
-                    }
-                 // "filtered": {
-                 //     "range": {
-                 //            "datetime": {
-                 //                "to": end,
-                 //                "from": start
-                 //            }
-                 //        }            
-                 //    }
-                }
+    		"query": {
+    			"filtered":{
+    				"query":{
+		    			"term" : { 
+		    				"clientId" : curr_ID
+		    					}
+		    	      		},
+    		       	"filter": {
+    		         	"range": {
+    		           		"datetime": {
+    		             		"to": end,
+    		             		"from": start
+    		           		}
+    		         	}	
+    		    	}
+    			}
+    		}
+    	}
 
         var payloadString = JSON.stringify(payload);
         var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
