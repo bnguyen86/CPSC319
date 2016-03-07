@@ -488,7 +488,7 @@ function sendSOSMessage(source, clientId, datetime, lat, lon){
 
 // getHeartbeatResponses(0, "now");
 
-function getServerIDs(){
+function getClientIDs(){
     var payload = {
         "size": 0,
         "aggs" : {
@@ -516,7 +516,6 @@ function getServerIDs(){
             } else {
                 var responseObject = JSON.parse(body);
                 var buckets = responseObject.aggregations.id.buckets;
-                console.log(buckets);
                 var returnArray = []
 
                 for(var i=0;i<buckets.length;i++){
@@ -529,4 +528,4 @@ function getServerIDs(){
 
 
 }
-// getServerIDs();
+getClientIDs();
