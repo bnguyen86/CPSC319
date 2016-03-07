@@ -125,7 +125,6 @@ socket.on('rBatt',function(data){
 
 socket.on('rAccel',function(data){
 	accelDisplay(data);
-	// console.log(data);
 });
 
 socket.on('rPos',function(data){
@@ -144,8 +143,18 @@ function submitDateTime(){
 };
 
 socket.on('sos',function(data){
-	alert('SOS MESSAGE, SEND HELP');
-  	console.log('SOS RECEIVED');
+  	// console.log('SOS RECEIVED');
+  	// if(isJSON(data)){
+  		console.log(data);
+  		// var sosParsed = JSON.parsed(data);
+  		var sosClientId = data.clientId;
+  		var sosDateTime = data.datetime;
+  		var sosLat = data.lat;
+  		var sosLon = data.lon;
+		alert( sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.');
+  	// } else{
+        // console.log("SOS socket JSON incorrect");
+  	// }
 });
 
 
