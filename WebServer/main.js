@@ -6,21 +6,6 @@
 
 //to run, you will need to npm install mqtt -g (sudo access might be required
 
-// !!!  TODO: FOR RECEIVING SOS MESSAGES FROM WATCH
-// if(receiveSOSMessage){
-//   sendSOSToDashboard();
-// }
-
-// !!!  TODO: ADD LOGIC FOR DETECTION OF FALL AND SEND SOS TO DASHBOARD
-// if(detectFALL){
-//   sendSOSToDashboard();
-// }
-
-
-// !!!  TODO: SOCKET CODE BELOW
-//var app = require('http').createServer(handler)
-//var io = require('socket.io')(app);
-//var fs = require('fs');
 var http = require('http'),
 io = require('socket.io');
 
@@ -37,6 +22,7 @@ io = io.listen(server);
 //var io = require("socket.io")(80);
 
 io.on('connection',function(socket){
+
     var usersJSON = userIDs();
     var currIntervalID;
     //future implementation: if possible, simplify on by getting event
@@ -70,7 +56,7 @@ io.on('connection',function(socket){
                 }, 500);
         } else{
             console.log("real-time socket JSON incorrect");
-            console.log(data);
+            // console.log(data);
         }
     });
 
@@ -130,7 +116,7 @@ io.on('connection',function(socket){
     //OUTPUT:
     function userIDs(){
         var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
-        console.log(userIDs);
+        // console.log(userIDs);
         return userIDs;
     };
     function realTimeQ(curr_ID){
@@ -336,12 +322,24 @@ client.on('message', function (topic, message) {
   // message is Buffer 
   console.log("Receiving message");
 
+  if(message.toString()==""){
+    return;
+  }
+
+  if(fallDetected(message)){
+    sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientId, JSON.parse(message).lat, JSON.parse(message).lon);
+  };
+
   var messageJSON = JSON.parse(message.toString());
   console.log(messageJSON);
 
   // console.log(message);
 	var id = generateUUID();
   	var stringMessage = message.toString();
+
+    if(messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos'){
+        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, -1, -1);
+    }
 			
  	//the following block will log the hearbeat to elasticsearch
  	//TODO: uncomment this when the android client sends the proper JSON
@@ -362,30 +360,29 @@ client.on('message', function (topic, message) {
 			} else {
 				console.log("Body contents");
 	    		console.log(body);
-		  }
-	   }
+            }
+        }
     );
 }
+});
 
 
-if(isJSON(message)){
-    var inputJSON = JSON.parse(message);
-    var inputDateTime = inputJSON.datetime;
-    var inputAccelX = inputJSON.accelX;
-    var inputAccelY = inputJSON.accelY;
-    var inputAccelZ = inputJSON.accelZ;
-    var inputbattery = inputJSON.accelZ;
-    var batteryPercent = inputbattery*100;
-    var inputClientId = inputJSON.clientId;
-    
-    if(inputAccelX<1){
-      console.log('fall');
+function fallDetected(message){
+    if(isJSON(message)){
+        var inputJSON = JSON.parse(message);
+        var inputAccelX = inputJSON.accelX;
+        var inputAccelY = inputJSON.accelY;
+        var inputAccelZ = inputJSON.accelZ;
+        var inputClientId = inputJSON.clientId;
+
+        if(inputAccelX<-20 ||inputAccelY<-20 ||inputAccelZ<-20){
+            return true;
+        }
     }
-  }
-  else{
-    console.log('Not a JSON message')
-  }
-
+    else {
+        return false;
+    }
+}
 // function isJSON(message){
 //     try {
 //         JSON.parse(message);
@@ -400,7 +397,6 @@ if(isJSON(message)){
   //     console.log("Intention to exit was logged");
   //     client.end();
   // }
-});
 
 //getHeartbeatResponses(1456464385000,1456464387000);
 
@@ -470,5 +466,16 @@ function isJSON(message){
     }
     return true;
 };
+
+function sendSOSMessage(source, clientId, datetime, lat, lon){
+    var payload = {
+        "clientId": clientId,
+        "datetime": datetime,
+        "lat": lat,
+        "lon": lon
+    }
+    io.emit('sos', payload);
+    console.log("logging sos");
+}
 
 getHeartbeatResponses(0, "now");
