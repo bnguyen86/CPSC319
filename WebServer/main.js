@@ -6,21 +6,6 @@
 
 //to run, you will need to npm install mqtt -g (sudo access might be required
 
-// !!!  TODO: FOR RECEIVING SOS MESSAGES FROM WATCH
-// if(receiveSOSMessage){
-//   sendSOSToDashboard();
-// }
-
-// !!!  TODO: ADD LOGIC FOR DETECTION OF FALL AND SEND SOS TO DASHBOARD
-// if(detectFALL){
-//   sendSOSToDashboard();
-// }
-
-
-// !!!  TODO: SOCKET CODE BELOW
-//var app = require('http').createServer(handler)
-//var io = require('socket.io')(app);
-//var fs = require('fs');
 var http = require('http'),
 io = require('socket.io');
 
@@ -37,6 +22,11 @@ io = io.listen(server);
 //var io = require("socket.io")(80);
 
 io.on('connection',function(socket){
+
+    socket.on('sosEvent', function(){
+        console.log("sosEvent");
+        }, false);
+
     var usersJSON = userIDs();
     var currIntervalID;
     //future implementation: if possible, simplify on by getting event
@@ -336,12 +326,20 @@ client.on('message', function (topic, message) {
   // message is Buffer 
   console.log("Receiving message");
 
+  if(message.toString()==""){
+    return;
+  }
+
   var messageJSON = JSON.parse(message.toString());
   console.log(messageJSON);
 
   // console.log(message);
 	var id = generateUUID();
   	var stringMessage = message.toString();
+
+    if(messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos'){
+        sendSOSMessage("client");
+    }
 			
  	//the following block will log the hearbeat to elasticsearch
  	//TODO: uncomment this when the android client sends the proper JSON
@@ -362,30 +360,32 @@ client.on('message', function (topic, message) {
 			} else {
 				console.log("Body contents");
 	    		console.log(body);
-		  }
-	   }
+            }
+        }
     );
 }
+});
 
 
-if(isJSON(message)){
-    var inputJSON = JSON.parse(message);
-    var inputDateTime = inputJSON.datetime;
-    var inputAccelX = inputJSON.accelX;
-    var inputAccelY = inputJSON.accelY;
-    var inputAccelZ = inputJSON.accelZ;
-    var inputbattery = inputJSON.accelZ;
-    var batteryPercent = inputbattery*100;
-    var inputClientId = inputJSON.clientId;
-    
-    if(inputAccelX<1){
-      console.log('fall');
-    }
-  }
-  else{
-    console.log('Not a JSON message')
-  }
-
+function detectFall(message){
+    if(isJSON(message)){
+        var inputJSON = JSON.parse(message);
+        var inputDateTime = inputJSON.datetime;
+        var inputAccelX = inputJSON.accelX;
+        var inputAccelY = inputJSON.accelY;
+        var inputAccelZ = inputJSON.accelZ;
+        var inputbattery = inputJSON.accelZ;
+        var batteryPercent = inputbattery*100;
+        var inputClientId = inputJSON.clientId;
+        
+        if(inputAccelX<-40 ||inputAccelY<-40 ||inputAccelZ<-40){
+          sendSOSMessage('server');
+        }
+      }
+      else{
+        console.log('Not a JSON message')
+      }
+}
 // function isJSON(message){
 //     try {
 //         JSON.parse(message);
@@ -400,7 +400,6 @@ if(isJSON(message)){
   //     console.log("Intention to exit was logged");
   //     client.end();
   // }
-});
 
 //getHeartbeatResponses(1456464385000,1456464387000);
 
@@ -470,5 +469,14 @@ function isJSON(message){
     }
     return true;
 };
+
+function sendSOSMessage(source){
+    if(source=='client'){
+
+    }
+    else{
+
+    }
+}
 
 getHeartbeatResponses(0, "now");
