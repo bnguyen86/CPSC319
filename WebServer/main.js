@@ -486,4 +486,47 @@ function sendSOSMessage(source, clientId, datetime, lat, lon){
     console.log("logging sos");
 }
 
-getHeartbeatResponses(0, "now");
+// getHeartbeatResponses(0, "now");
+
+function getServerIDs(){
+    var payload = {
+        "size": 0,
+        "aggs" : {
+            "id" : {
+                "terms" : { "field" : "clientId" }
+            }
+        }
+    }
+
+    var payloadString = JSON.stringify(payload);
+
+    var request = require('request');
+    var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+
+    request({
+        url: URL, 
+        method: 'POST',
+        body: payloadString
+        }, 
+
+        //the callback function when something is successfully retrieved
+        function(error, response, body){
+            if(error) {
+                console.log(error);
+            } else {
+                var responseObject = JSON.parse(body);
+                var buckets = responseObject.aggregations.id.buckets;
+                console.log(buckets);
+                var returnArray = []
+
+                for(var i=0;i<buckets.length;i++){
+                    returnArray.push(buckets[i].key);
+                }
+
+                console.log(returnArray);
+            }
+        });
+
+
+}
+// getServerIDs();
