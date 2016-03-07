@@ -143,6 +143,13 @@ function submitDateTime(){
 	return qDate;
 };
 
+socket.on('sos',function(data){
+	alert('SOS MESSAGE, SEND HELP');
+  	console.log('SOS RECEIVED');
+});
+
+
+
 function clearDiv(){
 	document.getElementById("date").innerHTML="";
 	document.getElementById("real-time").innerHTML="";
