@@ -5,7 +5,28 @@ md-sidenav {
 
 md-content {
 	height: 100%;
-	padding: 20px;
+	padding-top: 50px;
+	padding-left: 20px;
+	padding-right 20px;
+	padding-bottom: 50px;
+	text-align: center;
+}
+
+#user_dis .user-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid #8BDDDD;
+	outline: 1px;
+	background: #279C9C;
+	color: white;
 }
 
 #menu-links-container {
@@ -28,14 +49,21 @@ md-divider.menu{
 	text-align: right;
 }
 
-      .axis path,
-      .axis line {
-          fill: none;
-          stroke: black;
-          shape-rendering: crispEdges;
-      }
+#div-title {
+	color: #279C9C;
+	font-transform: uppercase;
+	font-size: 20px;
+	font-weight: bold;
+}
 
-      .axis text {
-          font-family: sans-serif;
-          font-size: 11px;
-      }
+.axis path,
+.axis line {
+	fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}

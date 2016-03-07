@@ -51,6 +51,7 @@ function userButtonCreation(parsed){
 		var id  =  parsed.clientIds[i].clientId;
 		element.tag = "uid";
 		element.id = id;
+		element.className = "user-btn";
 		element.innerHTML = id;
 		element.addEventListener("click", function(){
 			userSelection(this.id);
@@ -83,9 +84,11 @@ function query(event){
 		case 'clientIds':
 			// userSelection(curr_ID);
 			socket.emit('clientId',message);
+			document.getElementById("div-title").innerHTML = "PLEASE SELECT A USER TO VIEW";
 			document.getElementById("now").innerHTML= "";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			document.getElementById("date").innerHTML = "";
 			break;
 		case 'real-time':
 			var message = '{"clientId":'+ JSON.stringify(curr_ID) +'}';
@@ -100,6 +103,7 @@ function query(event){
 			socket.emit('battery',message);
 			break;
 		case 'accel':
+			document.getElementById("div-title").innerHTML = "ACCELEROMETER DATA";
 			if(document.getElementById("date").innerHTML==""){
 				dateTimePopUp();
 			} else{

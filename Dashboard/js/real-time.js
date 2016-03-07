@@ -8,6 +8,7 @@ function realTimeDisplay(data){
 
 	// }else{
 		// document.getElementsByClassName("graph").innerHTML="";
+	document.getElementById("div-title").innerHTML = "REAL TIME MOVEMENT";
 	document.getElementById("real-time").innerHTML = "";
 	document.getElementById("history").innerHTML = "";
 	//determine how long is xAxis

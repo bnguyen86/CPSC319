@@ -30,6 +30,7 @@
   <script src="./js/accel.js"></script>
   <!-- <script src="./js/maps.js"></script> -->
   <script src="./js/index.js"></script>
+  
 </head>
 
 <body ng-app="Dashboard" layout="row" ng-cloak>
@@ -57,12 +58,14 @@
 </md-sidenav>
 
 <md-content flex layout="column">
-	<ng-view>TEST CONTENT</ng-view>
+	<ng-view>
+	<div id="div-title">PLEASE SELECT A USER TO VIEW</div><br>
 	<div id="user_dis"></div>
-	<br>
+	<br><br>
 	<div id="date"></div>
 	<div class="graph" id="real-time"></div>
 	<div class="graph" id="history"></div>
+	</ng-view>
 </md-content>
 
 </body>
