@@ -326,15 +326,19 @@ client.on('message', function (topic, message) {
     return;
   }
 
+  if(fallDetected(message)){
+    sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientId, JSON.parse(message).lat, JSON.parse(message).lon);
+  };
+
   var messageJSON = JSON.parse(message.toString());
-  // console.log(messageJSON);
+  console.log(messageJSON);
 
   // console.log(message);
 	var id = generateUUID();
   	var stringMessage = message.toString();
 
     if(messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos'){
-        sendSOSMessage("client");
+        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, -1, -1);
     }
 			
  	//the following block will log the hearbeat to elasticsearch
@@ -363,24 +367,21 @@ client.on('message', function (topic, message) {
 });
 
 
-function detectFall(message){
+function fallDetected(message){
     if(isJSON(message)){
         var inputJSON = JSON.parse(message);
-        var inputDateTime = inputJSON.datetime;
         var inputAccelX = inputJSON.accelX;
         var inputAccelY = inputJSON.accelY;
         var inputAccelZ = inputJSON.accelZ;
-        var inputbattery = inputJSON.accelZ;
-        var batteryPercent = inputbattery*100;
         var inputClientId = inputJSON.clientId;
-        
-        if(inputAccelX<-40 ||inputAccelY<-40 ||inputAccelZ<-40){
-          sendSOSMessage('server');
+
+        if(inputAccelX<-20 ||inputAccelY<-20 ||inputAccelZ<-20){
+            return true;
         }
-      }
-      else{
-        console.log('Not a JSON message')
-      }
+    }
+    else {
+        return false;
+    }
 }
 // function isJSON(message){
 //     try {
@@ -466,19 +467,15 @@ function isJSON(message){
     return true;
 };
 
-// function sendSOSMessage(source){
-//     if(source=='client'){
-
-//     }
-//     else{
-
-//     }
-//     this.document.postMessage(source, source);
-// }
-
-function sendSOSMessage(source){
-    io.emit('sos', source);
-    console.log("logging Moki");
+function sendSOSMessage(source, clientId, datetime, lat, lon){
+    var payload = {
+        "clientId": clientId,
+        "datetime": datetime,
+        "lat": lat,
+        "lon": lon
+    }
+    io.emit('sos', payload);
+    console.log("logging sos");
 }
 
 getHeartbeatResponses(0, "now");
