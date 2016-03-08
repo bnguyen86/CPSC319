@@ -22,22 +22,24 @@ io = io.listen(server);
 //var io = require("socket.io")(80);
 
 io.on('connection',function(socket){
+    console.log('a machine has connected');
 
-    var usersJSON = userIDs();
+    // var usersJSON = userIDs();
     var currIntervalID;
     //future implementation: if possible, simplify on by getting event
     // var events = ['clientID','real_time','battery','rBatt','accel','rAccel','pos'];
 
-    console.log('a machine has connected');
 
     //display all users
-    socket.emit('clientIds',usersJSON);
-    console.log(usersJSON);
+    getClientIDs();
+    // socket.emit('clientIds',usersJSON);
+    // console.log(usersJSON);
 
 
     socket.on('clientId', function(data){
         clearInterval(currIntervalID);
-        socket.emit('clientIds',usersJSON);
+        getClientIDs();
+        // socket.emit('clientIds',usersJSON);
         // console.log(usersJOSN);
     });
 
@@ -45,9 +47,7 @@ io.on('connection',function(socket){
     //input: '{"clientID":String}'
     //output: '{"clientID":String, "accelX":int, "accelY":int, "accelZ"int}'
     socket.on('real-time', function(data){
-        if(currIntervalID != null){
-            clearInterval(currIntervalID);
-        };
+        clearInterval(currIntervalID);
         if(isJSON(data)){
             var parsed = JSON.parse(data);
             var curr_ID = parsed.clientId;
@@ -64,9 +64,7 @@ io.on('connection',function(socket){
     //input: '{"clientID":String, "datetime"Array[]}'
     //output: '{"clientID":String, "datetime":Array[], "battery":Array[]}'
     socket.on('battery',function(data){
-        if(currIntervalID != null){
-            clearInterval(currIntervalID)
-        };
+        clearInterval(currIntervalID);
         if(isJSON(data)){
             // console.log("Searching for battery data");
             //input & output values
@@ -87,9 +85,7 @@ io.on('connection',function(socket){
     //input: '{"clientID":String, "datetime"Array[]}'
     //output: '{"clientID":"abc", "datetime":Array[], "accelX":Array[], "accelY":Array[], "accelZ"Array[]}'
     socket.on('accel', function(data){
-        if(currIntervalID != null){
-            clearInterval(currIntervalID)
-        };
+        clearInterval(currIntervalID);
         if(isJSON(data)){
             //input & output values
             var parsed = JSON.parse(data);  
@@ -111,14 +107,57 @@ io.on('connection',function(socket){
     socket.on('pos', function(data){
     });
 
+    socket.on('stop-real', function(data){
+        clearInterval(currIntervalID);
+    })
+
     //helper functions
+    function getClientIDs(){
+        var payload = {
+            "size": 0,
+            "aggs" : {
+                "id" : {
+                    "terms" : { "field" : "clientId" }
+                }
+            }
+        }
+
+        var payloadString = JSON.stringify(payload);
+
+        var request = require('request');
+        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+
+        request({
+            url: URL, 
+            method: 'POST',
+            body: payloadString
+            }, 
+
+            //the callback function when something is successfully retrieved
+            function(error, response, body){
+                if(error) {
+                    console.log(error);
+                } else {
+                    var responseObject = JSON.parse(body);
+                    var buckets = responseObject.aggregations.id.buckets;
+                    var returnArray = []
+
+                    for(var i=0;i<buckets.length;i++){
+                        returnArray.push(buckets[i].key);
+                    }
+                    socket.emit('clientIds',returnArray);
+                    console.log(returnArray);
+                }
+            });
+    };
+
     //returns the list of cliendId
     //OUTPUT:
-    function userIDs(){
-        var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
-        // console.log(userIDs);
-        return userIDs;
-    };
+    // function userIDs(){
+    //     var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
+    //     // console.log(userIDs);
+    //     return userIDs;
+    // };
     function realTimeQ(curr_ID){
     //realTime mock code with needed input and expected output
         // var x = 0.8559271097183228;
@@ -224,9 +263,9 @@ io.on('connection',function(socket){
     			if(error) {
     	    		console.log(error);
     			} else {
-    				console.log("Found data");
+    				// console.log("Found data");
     				socket.emit('rBatt', body);
-    				//console.log(body);
+    				// console.log(body);
     				//message = body;
     				//console.log(message);
     			}
@@ -291,7 +330,7 @@ io.on('connection',function(socket){
                 if(error) {
                     console.log(error);
                 } else {
-                    console.log("Found data");
+                    // console.log("Found data");
                     socket.emit('rAccel', body);
                     //console.log(body);
                     //message = body;
@@ -488,44 +527,44 @@ function sendSOSMessage(source, clientId, datetime, lat, lon){
 
 // getHeartbeatResponses(0, "now");
 
-function getClientIDs(){
-    var payload = {
-        "size": 0,
-        "aggs" : {
-            "id" : {
-                "terms" : { "field" : "clientId" }
-            }
-        }
-    }
+// function getClientIDs(){
+//     var payload = {
+//         "size": 0,
+//         "aggs" : {
+//             "id" : {
+//                 "terms" : { "field" : "clientId" }
+//             }
+//         }
+//     }
 
-    var payloadString = JSON.stringify(payload);
+//     var payloadString = JSON.stringify(payload);
 
-    var request = require('request');
-    var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+//     var request = require('request');
+//     var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
 
-    request({
-        url: URL, 
-        method: 'POST',
-        body: payloadString
-        }, 
+//     request({
+//         url: URL, 
+//         method: 'POST',
+//         body: payloadString
+//         }, 
 
-        //the callback function when something is successfully retrieved
-        function(error, response, body){
-            if(error) {
-                console.log(error);
-            } else {
-                var responseObject = JSON.parse(body);
-                var buckets = responseObject.aggregations.id.buckets;
-                var returnArray = []
+//         //the callback function when something is successfully retrieved
+//         function(error, response, body){
+//             if(error) {
+//                 console.log(error);
+//             } else {
+//                 var responseObject = JSON.parse(body);
+//                 var buckets = responseObject.aggregations.id.buckets;
+//                 var returnArray = []
 
-                for(var i=0;i<buckets.length;i++){
-                    returnArray.push(buckets[i].key);
-                }
+//                 for(var i=0;i<buckets.length;i++){
+//                     returnArray.push(buckets[i].key);
+//                 }
 
-                console.log(returnArray);
-            }
-        });
+//                 console.log(returnArray);
+//             }
+//         });
 
 
-}
-getClientIDs();
+// }
+// getClientIDs();
