@@ -174,7 +174,11 @@ socket.on('sos',function(data){
 			blackout.style.display = 'none';
 		});
 		
+		if (popup.lastChild.className === "alert-btn") {
+			// do nothing
+		} else {
 		popup.appendChild(closeBtn);
+		}
 		
   	// } else{
         // console.log("SOS socket JSON incorrect");
