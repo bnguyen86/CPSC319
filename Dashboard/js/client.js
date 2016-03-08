@@ -91,6 +91,7 @@ function query(event){
 			document.getElementById("date").innerHTML = "";
 			break;
 		case 'real-time':
+			document.getElementById("date").innerHTML = "";
 			var message = '{"clientId":'+ JSON.stringify(curr_ID) +'}';
 			socket.emit('real-time',message);
 			break;
@@ -155,7 +156,26 @@ socket.on('sos',function(data){
   		var sosDateTime = data.datetime;
   		var sosLat = data.lat;
   		var sosLon = data.lon;
-		alert( sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.');
+/* 		alert( sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.'); */		
+		var popup = document.getElementById('light');
+		var blackout = document.getElementById('fade');
+		var alertmsg = document.getElementById('alertmsg');
+		
+		popup.style.display = 'block';
+		blackout.style.display = 'block';
+		alertmsg.innerHTML = sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.';
+		
+		var closeBtn = document.createElement("button");
+		closeBtn.className = "alert-btn";
+		closeBtn.innerHTML = "OKAY";
+		
+		closeBtn.addEventListener("click", function() {
+			popup.style.display = 'none';
+			blackout.style.display = 'none';
+		});
+		
+		popup.appendChild(closeBtn);
+		
   	// } else{
         // console.log("SOS socket JSON incorrect");
   	// }

@@ -29,6 +29,23 @@ md-content {
 	color: white;
 }
 
+#light .alert-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid #8BDDDD;
+	outline: 1px;
+	background: #279C9C;
+	color: white;
+}
+
 #menu-links-container {
 	padding: 10px;
 	color: #fff;
@@ -66,4 +83,36 @@ md-divider.menu{
 .axis text {
     font-family: sans-serif;
     font-size: 11px;
+}
+
+.black_overlay{
+	display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index:1001;
+    -moz-opacity: 0.8;
+    opacity:.80;
+    filter: alpha(opacity=80);
+}    
+
+.white_content {
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+	min-height: 40px;
+	min-width: 60px;
+    padding: 16px;
+	margin: 10px;
+    border: 1px solid black;
+    background-color: white;
+    z-index:1002;
+    overflow: auto;
+	text-transform: uppercase;
+	font-weight: lighter;
+	font-size: 15px;
 }

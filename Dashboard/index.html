@@ -29,8 +29,7 @@
   <script src="./js/battery.js"></script>
   <script src="./js/accel.js"></script>
   <!-- <script src="./js/maps.js"></script> -->
-  <script src="./js/index.js"></script>
-  
+  <script src="./js/index.js"></script>  
 </head>
 
 <body ng-app="Dashboard" layout="row" ng-cloak>
@@ -53,12 +52,16 @@
 				<br>
 			<md-divider class="menu"></md-divider><br>
 			<!-- <md-button onclick="mapDisplay('data')"> USER LOCATIONS </md-button><br> -->
-			<md-button> USER LOCATIONS </md-button>
+			<md-button ng-disabled="true"> USER LOCATIONS </md-button>
 	</div>
 </md-sidenav>
 
 <md-content flex layout="column">
 	<ng-view>
+	<div id="light" class="white_content">
+		<div id="alertmsg"></div>
+	</div>
+	<div id="fade" class="black_overlay"></div>
 	<div id="div-title">PLEASE SELECT A USER TO VIEW</div><br>
 	<div id="user_dis"></div>
 	<br><br>
