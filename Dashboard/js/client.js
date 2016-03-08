@@ -6,24 +6,39 @@ var qDate;
 // var rDateTime = [{"datetime":"1456869619000"},{"datetime":"1456869619500"},{"datetime":"1456869620000"},{"datetime":"1456869620500"}];
 
 //set Date values of query onLoad
-function dateTimePopUp(){
-	var se = ["start", "end"];
-	var date = document.getElementById("date");
-	var subButt = document.createElement("button");
-	var d = new Date();
-	for(i = 0; i < se.length; i++){
-		var element = document.createElement("input");
-		element.type = "datetime-local"
-		element.id = se[i];
-		date.appendChild(element);
+function dateTimePopUp(event){
+	if(curr_ID != null){
+		var se = ["start", "end"];
+		var date = document.getElementById("date");
+		var subButt = document.createElement("button");
+		var d = new Date();
+		//date and time
+		// for(i = 0; i < se.length; i++){
+		// 	var element = document.createElement("input");
+		// 	element.type = "datetime-local"
+		// 	element.id = se[i];
+		// 	date.appendChild(element);
+		// }
+		// document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
+		// document.getElementById("end").value = d.toISOString().substring(0,16);
+		//date, no time
+		for(i = 0; i < se.length; i++){
+			var element = document.createElement("input");
+			element.type = "date"
+			element.id = se[i];
+			date.appendChild(element);
+		}
+		// document.getElementById("start").value = d.getFullYear()+'-01-01';
+		document.getElementById("end").value = d.toISOString().substring(0,10);
+		subButt.addEventListener("click", function(){
+			submitDateTime(this.id);
+		});
+		subButt.innerHTML = "Submit";
+		subButt.id = event;
+		date.appendChild(subButt);
+	} else{
+		console.log("Please Choose an ID first");
 	}
-	document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
-	document.getElementById("end").value = d.toISOString().substring(0,16);
-	subButt.addEventListener("click", function(){
-		submitDateTime();
-	});
-	subButt.innerHTML = "Submit";
-	date.appendChild(subButt);
 
 }
 
@@ -31,24 +46,26 @@ function dateTimePopUp(){
 // INPUT: 
 // OUTPUT:
 socket.on('clientIds',function(data){
+	// console.log("clientIDs");
 	// console.log(data);
-	var parsed = JSON.parse(data);
+	// var parsed = JSON.parse(data);
+	// consol.log(parsed);
 	// console.log(parsed);
 	// if(document.getElementById("user_dis").childNodes.length == 0){
 	if(document.getElementById("user_dis").innerHTML==""){
-		userButtonCreation(parsed);
+		userButtonCreation(data);
 	} else{
 		console.log("Users buttons already loaded");
 	}
 });
 
 // displays the users available
-function userButtonCreation(parsed){
-	for(i = 0; i < parsed.clientIds.length; i++){
-		// console.log("parsed length: " + parsed.clientIds.length);
-		// console.log(parsed.clientIds[i].clientId);
+function userButtonCreation(data){
+	for(i = 0; i < data.length; i++){
+		// console.log("data length: " + data.clientIds.length);
+		// console.log(data.clientIds[i].clientId);
 		var element = document.createElement("button");
-		var id  =  parsed.clientIds[i].clientId;
+		var id  =  data[i];
 		element.tag = "uid";
 		element.id = id;
 		element.className = "user-btn";
@@ -74,15 +91,12 @@ function userSelection(id){
 
 
 //Query function called by the button
-function query(event){
-	var message = '{"clientID":'+JSON.stringify(curr_ID)+
-					', '+ qDate+'}';
-					// '",'+rDateTime+'}';
-					// console.log(message);
-					
+function query(event){			
+	var message = 'sent';
 	switch(event){
 		case 'clientIds':
 			// userSelection(curr_ID);
+			curr_ID = null;
 			socket.emit('clientId',message);
 			document.getElementById("div-title").innerHTML = "PLEASE SELECT A USER TO VIEW";
 			document.getElementById("now").innerHTML= "";
@@ -96,21 +110,22 @@ function query(event){
 			socket.emit('real-time',message);
 			break;
 		case 'battery':
-			if(document.getElementById("date").innerHTML==""){
-				dateTimePopUp();
-			} else{
-				console.log("Date Query already loaded, after submitting, press Battery again");
-			}
-			socket.emit('battery',message);
+			socket.emit('stop-real', message);
+			document.getElementById("div-title").innerHTML = "BATTERY DATA";
+			document.getElementById("date").innerHTML=""
+			dateTimePopUp('battery');
+			document.getElementById("real-time").innerHTML = "";
+			document.getElementById("history").innerHTML = "";
+			// socket.emit('battery',message);
 			break;
 		case 'accel':
+			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "ACCELEROMETER DATA";
-			if(document.getElementById("date").innerHTML==""){
-				dateTimePopUp();
-			} else{
-				console.log("Date Query already loaded, after submitting, press Accelerometer again");
-			}
-			socket.emit('accel',message);
+			document.getElementById("date").innerHTML="";
+			dateTimePopUp('accel');
+			document.getElementById("real-time").innerHTML = "";
+			document.getElementById("history").innerHTML = "";
+			// socket.emit('accel',message);
 			break;
 		case 'pos':
 			socket.emit('pos',message);
@@ -137,14 +152,28 @@ socket.on('rPos',function(data){
 });
 
 //Sets the dates to be used to query server/database
-function submitDateTime(){
+function submitDateTime(event){
 	var start = document.getElementById("start").value;
 	var end = document.getElementById("end").value;
 	pStart =Date.parse(start);
 	pEnd = Date.parse(end);
 	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
-	console.log("SUBMIT: "+qDate);
-	return qDate;
+	// console.log("SUBMIT: "+qDate);
+	// event = this.id;
+	console.log(event);
+	var message = '{"clientID":'+JSON.stringify(curr_ID)+
+				', '+ qDate+'}';
+				// '",'+rDateTime+'}';
+				console.log(message);
+	switch(event){
+		case 'battery':
+			socket.emit('battery',message);
+			break;
+		case 'accel':
+			socket.emit('accel',message);
+			break;
+	}
+	// return qDate;
 };
 
 socket.on('sos',function(data){
@@ -185,13 +214,11 @@ socket.on('sos',function(data){
   	// }
 });
 
-
-
-function clearDiv(){
-	document.getElementById("date").innerHTML="";
-	document.getElementById("real-time").innerHTML="";
-	document.getElementById("history").innerHTML="";
-}
+// function clearDiv(){
+// 	document.getElementById("date").innerHTML="";
+// 	document.getElementById("real-time").innerHTML="";
+// 	document.getElementById("history").innerHTML="";
+// }
 
 function isJSON(message){
     try {

@@ -5,7 +5,9 @@
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
 	// console.log(data);
-	clearDiv();
+	// clearDiv();
+	document.getElementById("real-time").innerHTML = "";
+	document.getElementById("history").innerHTML = "";
 	var margin = {
 		top: 20,
 		right: 50,

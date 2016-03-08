@@ -116,3 +116,14 @@ md-divider.menu{
 	font-weight: lighter;
 	font-size: 15px;
 }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.area {
+  fill: lightsteelblue;
+}

@@ -62,6 +62,9 @@ function batteryDisplay(data){
 
 
 		var line = d3.svg.line()
+			.defined(function(d){
+				return d.fields.battery != null;
+			})
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
 				return x(new Date(parseInt(d.fields.datetime)));
@@ -69,10 +72,15 @@ function batteryDisplay(data){
 			.y(function(d){
 				// console.log(y(d.battery));
 				return y(d.fields.battery);
-			})
-			.interpolate("line");
+			});
+			// .interpolate("line");
 
-			
+		var area = d3.svg.area()
+		    .defined(line.defined())
+		    .x(line.x())
+		    .y1(line.y())
+		    .y0(y(0));
+
 		var svg = d3.select('#history')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
@@ -97,9 +105,14 @@ function batteryDisplay(data){
 			// .text("Date");
 
 			svg.append('path')
+			.attr("class", "area")
+			.attr("d", area(data))
+			.attr('transform','translate(50,20)');
+
+			svg.append('path')
 			.attr("class", "line")
 			.attr("d", line(data))
-			.attr("stroke", "blue")
+			.attr("stroke", "steelblue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 			.attr('transform','translate(50,20)');
