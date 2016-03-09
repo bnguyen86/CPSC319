@@ -10,11 +10,11 @@ function batteryDisplay(data){
 	var margin = {
 		top: 20,
 		right: 50,
-		bottom: 30,
+		bottom: 50,
 		left: 50
 		};
 	var width = 1000 - margin.left - margin.right;
-	var height = 300 - margin.top - margin.bottom;
+	var height = 500 - margin.top - margin.bottom;
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
@@ -25,12 +25,12 @@ function batteryDisplay(data){
 		var xMin = new Date(parseInt(d3.min(data,function(d, i){
 				return d.fields.datetime;
 				})));
-		 // console.log(xMin);
+		 console.log(xMin);
 		//latest date
 		var xMax = new Date(parseInt(d3.max(data,function(d, i){
 				return d.fields.datetime;
 				})));
-		// console.log(xMax);
+		console.log(xMax);
 
 		//x axis (dateTime)
 		var x = d3.time.scale()
@@ -73,16 +73,14 @@ function batteryDisplay(data){
 				// console.log(y(d.battery));
 				return y(d.fields.battery);
 			});
-			// .interpolate("line");
 
 		var area = d3.svg.area()
-		    .defined(line.defined())
+		    // .defined(line.defined())
 		    .x(line.x())
 		    .y1(line.y())
 		    .y0(y(0));
 
-		var svg = d3.select('#history')
-			.append('svg')
+		var svg = d3.select('#history').append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('transform','translate('+margin.left+','+margin.top+')');
@@ -91,23 +89,29 @@ function batteryDisplay(data){
 			.attr('class', 'y axis')
 			.attr('transform','translate(50,20)')
 			.call(yAxis);
-			// .append("text")
-			// .attr("transform", "rotate(-90)")
-			// .style("text-anchor", "end")
-			// .text("Battery Precetage");
+			
+   			svg.append("text")
+	        .attr("transform", "rotate(-90)")
+	        .attr("y", 0)
+	        .attr("x",0 - ((height / 2)+ margin.top))
+	        .attr("dy", "1em")
+	        .style("text-anchor", "middle")
+	        .text("Battery Life");
 
 			svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate(50,'+(height+20)+')')
+			.attr('transform','translate('+margin.right+','+(height+margin.top)+')')
 			.call(xAxis);
-			// .append("text")
-			// .style("text-anchor", "end")
-			// .text("Date");
+			
+			svg.append("text")
+			.attr("transform", "translate("+(width/2) + " ," + (height+margin.bottom+margin.top) + ")")
+			.style("text-anchor", "middle")
+			.text("Date");
 
 			svg.append('path')
 			.attr("class", "area")
 			.attr("d", area(data))
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+margin.right+','+margin.top+')');
 
 			svg.append('path')
 			.attr("class", "line")
@@ -115,7 +119,7 @@ function batteryDisplay(data){
 			.attr("stroke", "steelblue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+margin.right+','+margin.top+')');
 	} else{
 		console.log("batteryDisplay JSON incorrect");
 		console.log(data);

@@ -13,23 +13,24 @@ function dateTimePopUp(event){
 		var subButt = document.createElement("button");
 		var d = new Date();
 		//date and time
-		// for(i = 0; i < se.length; i++){
-		// 	var element = document.createElement("input");
-		// 	element.type = "datetime-local"
-		// 	element.id = se[i];
-		// 	date.appendChild(element);
-		// }
-		// document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
-		// document.getElementById("end").value = d.toISOString().substring(0,16);
-		//date, no time
+//_+_ BUG (2)
 		for(i = 0; i < se.length; i++){
 			var element = document.createElement("input");
-			element.type = "date"
+			element.type = "datetime-local"
 			element.id = se[i];
 			date.appendChild(element);
 		}
+		document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
+		document.getElementById("end").value = d.toISOString().substring(0,16);
+		//date, no time
+		// for(i = 0; i < se.length; i++){
+		// 	var element = document.createElement("input");
+		// 	element.type = "date"
+		// 	element.id = se[i];
+		// 	date.appendChild(element);
+		// }
 		// document.getElementById("start").value = d.getFullYear()+'-01-01';
-		document.getElementById("end").value = d.toISOString().substring(0,10);
+		// document.getElementById("end").value = d.toISOString().substring(0,10);
 		subButt.addEventListener("click", function(){
 			submitDateTime(this.id);
 		});
@@ -113,18 +114,18 @@ function query(event){
 			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "BATTERY DATA";
 			document.getElementById("date").innerHTML=""
-			dateTimePopUp('battery');
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			dateTimePopUp('battery');
 			// socket.emit('battery',message);
 			break;
 		case 'accel':
 			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "ACCELEROMETER DATA";
 			document.getElementById("date").innerHTML="";
-			dateTimePopUp('accel');
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			dateTimePopUp('accel');
 			// socket.emit('accel',message);
 			break;
 		case 'pos':
@@ -156,7 +157,9 @@ function submitDateTime(event){
 	var start = document.getElementById("start").value;
 	var end = document.getElementById("end").value;
 	pStart =Date.parse(start);
+	console.log(pStart);
 	pEnd = Date.parse(end);
+	console.log(pEnd);
 	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
 	// console.log("SUBMIT: "+qDate);
 	// event = this.id;

@@ -19,6 +19,7 @@ function realTimeDisplay(data){
 		bottom: 30,
 		left: 50
 		};
+		
 	var width = 1000 - margin.left - margin.right;
 	var height = 300 - margin.top - margin.bottom;
 		if(isJSON(data)){

@@ -15,7 +15,7 @@ function accelDisplay(data){
 		left: 50
 		};
 	var width = 1000 - margin.left - margin.right;
-	var height = 300 - margin.top - margin.bottom;
+	var height = 500 - margin.top - margin.bottom;
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
@@ -29,7 +29,7 @@ function accelDisplay(data){
 		// console.log(d3.min(data,function(d, i){
 		// 		return d.fields.datetime;
 		// 		}));
-		 // console.log(xMin);
+		 console.log(xMin);
 		//latest date
 		var xMax = new Date(parseInt(d3.max(data,function(d, i){
 				return d.fields.datetime;
@@ -37,7 +37,7 @@ function accelDisplay(data){
 		// console.log(d3.max(data,function(d, i){
 		// 		return d.fields.datetime;
 		// 		}));		
-		// console.log(xMax);
+		console.log(xMax);
 
 		//x axis (dateTime)
 		var x = d3.time.scale()
