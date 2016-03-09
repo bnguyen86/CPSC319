@@ -3,11 +3,15 @@ package com.cs319.canary.canaryprotector;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -98,6 +102,19 @@ public class AdjustTransfer extends Fragment implements AdapterView.OnItemSelect
 
         int itemValue = Integer.valueOf(item);
         BackgroundServices.setDataTransferInterval(itemValue);
+
+
+        //Send transfer rate to server
+        JSONObject payload = new JSONObject();
+
+        try{
+            payload.put("type","t_rate");
+            payload.put("rate", itemValue);
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
+        Log.d("Transfer Rate String", payload.toString());
+        MqttClient.publish("team-mat-canary", payload.toString());
     }
 
     @Override
