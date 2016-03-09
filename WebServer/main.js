@@ -53,6 +53,7 @@ io.on('connection',function(socket){
             var curr_ID = parsed.clientId;
             currIntervalID = setInterval(function(){
                     realTimeQ(curr_ID);
+//_+_ FIXED (1)
                 }, 500);
         } else{
             console.log("real-time socket JSON incorrect");
@@ -66,13 +67,11 @@ io.on('connection',function(socket){
     socket.on('battery',function(data){
         clearInterval(currIntervalID);
         if(isJSON(data)){
-            // console.log("Searching for battery data");
             //input & output values
-            var parsed = JSON.parse(data);  
+            var parsed = JSON.parse(data);
             var curr_ID = parsed.clientID;
             var start = parsed.start;
             var end = parsed.end;
-            // console.log(dateTimeRec);
             //function to query server
             batteryQuery(curr_ID, start, end);
         } else{
@@ -171,7 +170,7 @@ io.on('connection',function(socket){
         // return message;
 
         var payload = {
-        "size": 100,
+        "size": 1000,
         "sort": [
              {
                  "datetime": 
@@ -223,7 +222,7 @@ io.on('connection',function(socket){
         console.log(end);
 
     	var payload = {
-    		"size": 5000,
+    		"size": 10000,
     		"sort": [
     		    {
     		        "datetime": 
@@ -290,7 +289,7 @@ io.on('connection',function(socket){
         // console.log(message);
         // return message;
         var payload = {
-            "size": 5000,
+            "size": 10000,
             "sort": [
                 {
                     "datetime": 
@@ -361,37 +360,38 @@ var client = mqtt.connect('mqtt://45.55.1.125', options);
 client.on('connect', function() {
   client.publish('team-mat-canary', null, {retain: true});
   client.subscribe('team-mat-canary');
-  console.log('connected to mqtt broker');
+  // console.log('connected to mqtt broker');
 }); 
 
 //called when a message event is received
 client.on('message', function (topic, message) {
   // message is Buffer 
-  console.log("Receiving message");
+  // console.log("Receiving message");
 
   if(message.toString()==""){
     return;
   }
 
   if(fallDetected(message)){
-    sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientId, JSON.parse(message).lat, JSON.parse(message).lon);
+    sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
   };
 
   var messageJSON = JSON.parse(message.toString());
-  console.log(messageJSON);
+  // console.log(messageJSON);
 
   // console.log(message);
 	var id = generateUUID();
   	var stringMessage = message.toString();
 
     if(messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos'){
+//_+_ BUG (1)
         sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, -1, -1);
     }
 			
  	//the following block will log the hearbeat to elasticsearch
  	//TODO: uncomment this when the android client sends the proper JSON
  	if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat'){
-	console.log("Logging heartbeat");
+	// console.log("Logging heartbeat");
  	var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
 	 	
  	var request = require('request');
@@ -405,8 +405,8 @@ client.on('message', function (topic, message) {
 				console.log("Error occurred");
 	    		console.log(error);
 			} else {
-				console.log("Body contents");
-	    		console.log(body);
+				// console.log("Body contents");
+	    		// console.log(body);
             }
         }
     );
@@ -429,16 +429,7 @@ function fallDetected(message){
     else {
         return false;
     }
-}
-// function isJSON(message){
-//     try {
-//         JSON.parse(message);
-//     } catch (e) {
-//         return false;
-//     }
-//     return true;
-//   }
-  
+}  
 
   // if (messageJSON.hasOwnProperty("status") && messageJSON.status === "disconnect"){
   //     console.log("Intention to exit was logged");
@@ -528,43 +519,43 @@ function sendSOSMessage(source, clientId, datetime, lat, lon){
 // getHeartbeatResponses(0, "now");
 
 // function getClientIDs(){
-//     var payload = {
-//         "size": 0,
-//         "aggs" : {
-//             "id" : {
-//                 "terms" : { "field" : "clientId" }
-//             }
-//         }
-//     }
+    //     var payload = {
+    //         "size": 0,
+    //         "aggs" : {
+    //             "id" : {
+    //                 "terms" : { "field" : "clientId" }
+    //             }
+    //         }
+    //     }
 
-//     var payloadString = JSON.stringify(payload);
+    //     var payloadString = JSON.stringify(payload);
 
-//     var request = require('request');
-//     var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
+    //     var request = require('request');
+    //     var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
 
-//     request({
-//         url: URL, 
-//         method: 'POST',
-//         body: payloadString
-//         }, 
+    //     request({
+    //         url: URL, 
+    //         method: 'POST',
+    //         body: payloadString
+    //         }, 
 
-//         //the callback function when something is successfully retrieved
-//         function(error, response, body){
-//             if(error) {
-//                 console.log(error);
-//             } else {
-//                 var responseObject = JSON.parse(body);
-//                 var buckets = responseObject.aggregations.id.buckets;
-//                 var returnArray = []
+    //         //the callback function when something is successfully retrieved
+    //         function(error, response, body){
+    //             if(error) {
+    //                 console.log(error);
+    //             } else {
+    //                 var responseObject = JSON.parse(body);
+    //                 var buckets = responseObject.aggregations.id.buckets;
+    //                 var returnArray = []
 
-//                 for(var i=0;i<buckets.length;i++){
-//                     returnArray.push(buckets[i].key);
-//                 }
+    //                 for(var i=0;i<buckets.length;i++){
+    //                     returnArray.push(buckets[i].key);
+    //                 }
 
-//                 console.log(returnArray);
-//             }
-//         });
+    //                 console.log(returnArray);
+    //             }
+    //         });
 
 
-// }
-// getClientIDs();
+    // }
+    // getClientIDs();
