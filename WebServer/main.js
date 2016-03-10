@@ -23,24 +23,14 @@ io = io.listen(server);
 
 io.on('connection',function(socket){
     console.log('a machine has connected');
-
-    // var usersJSON = userIDs();
     var currIntervalID;
-    //future implementation: if possible, simplify on by getting event
-    // var events = ['clientID','real_time','battery','rBatt','accel','rAccel','pos'];
-
 
     //display all users
     getClientIDs();
-    // socket.emit('clientIds',usersJSON);
-    // console.log(usersJSON);
-
 
     socket.on('clientId', function(data){
         clearInterval(currIntervalID);
         getClientIDs();
-        // socket.emit('clientIds',usersJSON);
-        // console.log(usersJOSN);
     });
 
     //once clientID is selected, display accel data
@@ -150,13 +140,6 @@ io.on('connection',function(socket){
             });
     };
 
-    //returns the list of cliendId
-    //OUTPUT:
-    // function userIDs(){
-    //     var userIDs = '{"clientIds":[{"clientId":"351559070571963"},{"clientId":"999999999999999"},{"clientId":"000000000000000"},{"clientId":"555555555555555"},{"clientId":"355136057747803"}]}';
-    //     // console.log(userIDs);
-    //     return userIDs;
-    // };
     function realTimeQ(curr_ID){
     //realTime mock code with needed input and expected output
         // var x = 0.8559271097183228;
@@ -385,7 +368,7 @@ client.on('message', function (topic, message) {
 
     if(messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos'){
 //_+_ BUG (1)
-        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, -1, -1);
+        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
     }
 			
  	//the following block will log the hearbeat to elasticsearch
