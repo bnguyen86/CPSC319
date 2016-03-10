@@ -118,7 +118,7 @@ io.on('connection', function(socket) {
     //@Wes: use this function to return all the heartbeats that fall within the start and end times
     function getHeartbeatResponses(start, end) {
         var payload = {
-            "size": 5000,
+            "size": 10000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
@@ -201,7 +201,7 @@ io.on('connection', function(socket) {
 
     function realTimeQ(curr_ID) {
         var payload = {
-            "size": 100,
+            "size": 1000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
@@ -241,7 +241,7 @@ io.on('connection', function(socket) {
         console.log(end);
 
         var payload = {
-            "size": 5000,
+            "size": 10000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
@@ -294,7 +294,7 @@ io.on('connection', function(socket) {
 
     function accelQuery(curr_ID, start, end) {
         var payload = {
-            "size": 5000,
+            "size": 10000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
