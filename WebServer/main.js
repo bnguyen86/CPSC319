@@ -466,3 +466,5 @@ function sendSOSMessage(source, clientId, datetime, lat, lon) {
 }
 
 //========================================== HELPER FUNCTIONS END
+
+module.exports = server;

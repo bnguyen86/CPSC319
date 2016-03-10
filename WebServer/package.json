@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,10 @@
     "mqtt": "^1.7.0",
     "request": "^2.69.0",
     "socket.io": "^1.4.5"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "mocha": "^2.4.5"
   }
 }
