@@ -13,15 +13,16 @@ function realTimeDisplay(data){
 	document.getElementById("history").innerHTML = "";
 	//determine how long is xAxis
 	var rate;
+	var range = 60000;
 	var margin = {
 		top: 20,
 		right: 50,
 		bottom: 30,
 		left: 50
 		};
-		
+
 	var width = 1000 - margin.left - margin.right;
-	var height = 300 - margin.top - margin.bottom;
+	var height = 500 - margin.top - margin.bottom;
 		if(isJSON(data)){
 		var data = JSON.parse(data);
 		var data = data.hits.hits;
@@ -39,8 +40,8 @@ function realTimeDisplay(data){
 		// console.log(xMax);
 
 			//x axis (dateTime)
-		var x = d3.time.scale()
-			.domain([(xMax-60000), xMax])
+		var x = d3.time.scale.utc()
+			.domain([(xMax-range), xMax])
 			// .domain(d3.extent(data,function(d){
 			// 	return d.fields.datetime;
 			// }))
@@ -48,9 +49,9 @@ function realTimeDisplay(data){
 
 		//y axis (range)
 		var y = d3.scale.linear()
-			.domain([-20,20])
+			.domain([-20,+20])
 			// .domain(d3.extent(data,function(d){
-			// 	return d.battery;
+			// 	return d.fields.battery;
 			// }))
 			.range([height, 0]);
 
@@ -60,7 +61,7 @@ function realTimeDisplay(data){
 			.scale(x)
 			.orient('bottom')
 			.ticks(3)
-			.tickFormat(d3.time.format("%x %X"));
+			.tickFormat(d3.time.format.utc("%x %X"));
 			
 		var yAxis = d3.svg.axis()
 			.scale(y)
@@ -74,10 +75,9 @@ function realTimeDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelX);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 		var lineY = d3.svg.line()
 			.x(function(d){
@@ -85,10 +85,9 @@ function realTimeDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelY);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 		var lineZ = d3.svg.line()
 			.x(function(d){
@@ -96,10 +95,9 @@ function realTimeDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 				.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelZ);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 
 		//Drawing			
@@ -111,20 +109,26 @@ function realTimeDisplay(data){
 
 			svg.append('g')
 			.attr('class', 'y axis')
-			.attr('transform','translate(50,20)')
+			.attr('transform','translate('+margin.left+','+margin.top+')')
 			.call(yAxis);
-			// .append("text")
-			// .attr("transform", "rotate(-90)")
-			// .style("text-anchor", "end")
-			// .text("Battery Precetage");
+
+   			svg.append("text")
+	        .attr("transform", "rotate(-90)")
+	        .attr("y", 0)
+	        .attr("x",0 - ((height / 2)+ margin.top))
+	        .attr("dy", "1em")
+	        .style("text-anchor", "middle")
+	        .text("G-Force");
 
 			svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate(50,'+(height/2+20)+')')
+			.attr('transform','translate('+margin.right+','+(height/2+margin.top)+')')
 			.call(xAxis);
-			// .append("text")
-			// .style("text-anchor", "end")
-			// .text("Date");
+
+			svg.append("text")
+			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
+			.style("text-anchor", "middle")
+			.text("Date & Time");
 
 			//AccelX
 			svg.append('path')
@@ -133,7 +137,7 @@ function realTimeDisplay(data){
 			.attr("stroke", "blue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+(margin.left + 20)+','+margin.top+')');
 			//AccelY
 			svg.append('path')
 			.attr("class", "line")
@@ -141,7 +145,7 @@ function realTimeDisplay(data){
 			.attr("stroke", "green")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+(margin.left + 20)+','+margin.top+')');
 			//AccelZ
 			svg.append('path')
 			.attr("class", "line")
@@ -149,7 +153,7 @@ function realTimeDisplay(data){
 			.attr("stroke", "red")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+(margin.left + 20)+','+margin.top+')');
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);

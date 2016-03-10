@@ -26,21 +26,15 @@ function accelDisplay(data){
 		var xMin = new Date(parseInt(d3.min(data,function(d, i){
 				return d.fields.datetime;
 				})));
-		// console.log(d3.min(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		}));
 		 console.log(xMin);
 		//latest date
 		var xMax = new Date(parseInt(d3.max(data,function(d, i){
 				return d.fields.datetime;
-				})));
-		// console.log(d3.max(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		}));		
+				})));	
 		console.log(xMax);
 
 		//x axis (dateTime)
-		var x = d3.time.scale()
+		var x = d3.time.scale.utc()
 			// .domain([xMin, xMax])
 			.domain(d3.extent(data,function(d){
 				return d.fields.datetime;
@@ -49,9 +43,9 @@ function accelDisplay(data){
 
 		//y axis (range)
 		var y = d3.scale.linear()
-			.domain([-20,20])
+			.domain([-20,+20])
 			// .domain(d3.extent(data,function(d){
-			// 	return d.battery;
+			// 	return d.fields.accelX;
 			// }))
 			.range([height, 0]);
 
@@ -75,7 +69,6 @@ function accelDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelX);
 			})
 			.interpolate("line");
@@ -86,7 +79,6 @@ function accelDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelY);
 			})
 			.interpolate("line");
@@ -97,7 +89,6 @@ function accelDisplay(data){
 				return x(new Date(parseInt(d.fields.datetime)));
 			})
 			.y(function(d){
-				// console.log(y(d.battery));
 				return y(d.fields.accelZ);
 			})
 			.interpolate("line");
@@ -112,20 +103,26 @@ function accelDisplay(data){
 
 			svg.append('g')
 			.attr('class', 'y axis')
-			.attr('transform','translate(50,20)')
+			.attr('transform','translate('+margin.right+','+margin.top+')')
 			.call(yAxis);
-			// .append("text")
-			// .attr("transform", "rotate(-90)")
-			// .style("text-anchor", "end")
-			// .text("Battery Precetage");
+
+   			svg.append("text")
+	        .attr("transform", "rotate(-90)")
+	        .attr("y", 0)
+	        .attr("x",0 - ((height / 2)+ margin.top))
+	        .attr("dy", "1em")
+	        .style("text-anchor", "middle")
+	        .text("G-Force");
 
 			svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate(50,'+(height/2+20)+')')
+			.attr('transform','translate('+margin.right+','+(height/2+margin.top)+')')
 			.call(xAxis);
-			// .append("text")
-			// .style("text-anchor", "end")
-			// .text("Date");
+
+			svg.append("text")
+			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
+			.style("text-anchor", "middle")
+			.text("Date & Time");
 
 			//AccelX
 			svg.append('path')
@@ -134,7 +131,7 @@ function accelDisplay(data){
 			.attr("stroke", "blue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+margin.right+','+margin.top+')');
 			//AccelY
 			svg.append('path')
 			.attr("class", "line")
@@ -142,7 +139,7 @@ function accelDisplay(data){
 			.attr("stroke", "green")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');
+			.attr('transform','translate('+margin.right+','+margin.top+')');
 			//AccelZ
 			svg.append('path')
 			.attr("class", "line")
@@ -150,7 +147,7 @@ function accelDisplay(data){
 			.attr("stroke", "red")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate(50,20)');			
+			.attr('transform','translate('+margin.right+','+margin.top+')');
 
 	} else{
 		console.log("accelDisplay JSON incorrect");

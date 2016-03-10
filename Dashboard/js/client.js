@@ -11,6 +11,24 @@ function dateTimePopUp(event){
 		var se = ["start", "end"];
 		var date = document.getElementById("date");
 		var subButt = document.createElement("button");
+		function formatLocalDate() {
+		    var now = new Date(),
+		        tzo = -now.getTimezoneOffset(),
+		        dif = tzo >= 0 ? '+' : '-',
+		        pad = function(num) {
+		            var norm = Math.abs(Math.floor(num));
+		            return (norm < 10 ? '0' : '') + norm;
+		        };
+		    return now.getFullYear() 
+		        + '-' + pad(now.getMonth()+1)
+		        + '-' + pad(now.getDate())
+		        + 'T' + pad(now.getHours())
+		        + ':' + pad(now.getMinutes()) 
+		        + ':' + pad(now.getSeconds()) 
+		        + dif + pad(tzo / 60) 
+		        + ':' + pad(tzo % 60);
+		    console.log(now);
+		}
 		var d = new Date();
 		//date and time
 //_+_ BUG (2)
@@ -20,8 +38,9 @@ function dateTimePopUp(event){
 			element.id = se[i];
 			date.appendChild(element);
 		}
+		console.log(formatLocalDate());
 		document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
-		document.getElementById("end").value = d.toISOString().substring(0,16);
+		document.getElementById("end").value = formatLocalDate().substring(0,16);
 		//date, no time
 		// for(i = 0; i < se.length; i++){
 		// 	var element = document.createElement("input");
@@ -163,7 +182,7 @@ function submitDateTime(event){
 	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
 	// console.log("SUBMIT: "+qDate);
 	// event = this.id;
-	console.log(event);
+	// console.log(event);
 	var message = '{"clientID":'+JSON.stringify(curr_ID)+
 				', '+ qDate+'}';
 				// '",'+rDateTime+'}';
