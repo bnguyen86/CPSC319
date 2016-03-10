@@ -95,6 +95,7 @@ public class HomeFragment extends Fragment implements AdapterView.OnClickListene
 
         BackgroundServices.sendMessage("Help me now!!!",
                             String.valueOf(now.toMillis(true)),
+                            DataCollectorService.getLocation(),
                             BackgroundServices.getClientId());
     }
 
