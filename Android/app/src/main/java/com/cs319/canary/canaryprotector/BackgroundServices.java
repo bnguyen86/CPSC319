@@ -214,7 +214,7 @@ public class BackgroundServices extends IntentService {
         return payload.toString();
     }
 
-    public static void sendMessage(String message, String datetime, String clientId){
+    public static void sendMessage(String message, String datetime, double[] latlon, String clientId){
         JSONObject payload = new JSONObject();
 
         try{
@@ -222,6 +222,8 @@ public class BackgroundServices extends IntentService {
             payload.put("datetime", datetime);
             payload.put("message", message);
             payload.put("clientId", clientId);
+            payload.put("lat", latlon[0]);
+            payload.put("lon", latlon[1]);
         } catch(JSONException e){
             e.printStackTrace();
         }
