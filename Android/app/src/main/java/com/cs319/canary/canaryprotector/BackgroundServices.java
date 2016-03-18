@@ -88,7 +88,8 @@ public class BackgroundServices extends IntentService {
                                                           String.valueOf(now.toMillis(true)),
                                                           DataCollectorService.getAccelValues(),
                                                           DataCollectorService.getBatteryPct(),
-                                                          DataCollectorService.getLocation());
+                                                          DataCollectorService.getLocation(),
+                                                          dataTransferInterval);
 
                                                   //TODO: need to pull items off of local data store and send those instead
                                                   MqttClient.publish(topic, payload);
@@ -120,7 +121,8 @@ public class BackgroundServices extends IntentService {
                                   String.valueOf(now.toMillis(true)),
                                   DataCollectorService.getAccelValues(),
                                   DataCollectorService.getBatteryPct(),
-                                  DataCollectorService.getLocation());
+                                  DataCollectorService.getLocation(),
+                                  dataTransferInterval);
 
                           LocalDataManager.WriteToFile(payload);
 
@@ -194,7 +196,7 @@ public class BackgroundServices extends IntentService {
     }
 
 
-    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct, double[] latlon){
+    public static String createJsonData(String clientId, String datetime, float[] accelValues, float batteryPct, double[] latlon, int transferRate){
         JSONObject payload = new JSONObject();
 
         try{
@@ -207,6 +209,7 @@ public class BackgroundServices extends IntentService {
             payload.put("clientId", clientId);
             payload.put("lat", latlon[0]);
             payload.put("lon", latlon[1]);
+            payload.put("transferRate", transferRate);
         } catch(JSONException e){
             e.printStackTrace();
         }
