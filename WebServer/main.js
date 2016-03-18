@@ -241,7 +241,7 @@ io.on('connection', function(socket) {
         console.log(end);
 
         var payload = {
-            "size": 10000,
+            "size": 9000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
@@ -294,7 +294,7 @@ io.on('connection', function(socket) {
 
     function accelQuery(curr_ID, start, end) {
         var payload = {
-            "size": 10000,
+            "size": 9000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
