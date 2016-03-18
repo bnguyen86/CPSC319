@@ -12,10 +12,10 @@ function dateTimePopUp(event){
 		var date = document.getElementById("date");
 		var subButt = document.createElement("button");
 		function formatLocalDate() {
-		    var now = new Date(),
-		        tzo = -now.getTimezoneOffset(),
-		        dif = tzo >= 0 ? '+' : '-',
-		        pad = function(num) {
+		    var now = new Date();
+		    var tzo = -now.getTimezoneOffset();
+			var dif = tzo >= 0 ? '+' : '-';
+		    var pad = function(num) {
 		            var norm = Math.abs(Math.floor(num));
 		            return (norm < 10 ? '0' : '') + norm;
 		        };
@@ -23,8 +23,8 @@ function dateTimePopUp(event){
 		        + '-' + pad(now.getMonth()+1)
 		        + '-' + pad(now.getDate())
 		        + 'T' + pad(now.getHours())
-		        + ':' + pad(now.getMinutes()) 
-		        + ':' + pad(now.getSeconds()) 
+		        + ':' + pad(now.getMinutes())
+		        + ':' + pad(now.getSeconds())
 		        + dif + pad(tzo / 60) 
 		        + ':' + pad(tzo % 60);
 		    console.log(now);
@@ -39,7 +39,7 @@ function dateTimePopUp(event){
 			date.appendChild(element);
 		}
 		console.log(formatLocalDate());
-		document.getElementById("start").value = d.getFullYear()+'-01-01T00:00';
+		document.getElementById("start").value = d.getUTCFullYear()+'-01-01T00:00';
 		document.getElementById("end").value = formatLocalDate().substring(0,16);
 		//date, no time
 		// for(i = 0; i < se.length; i++){
@@ -118,6 +118,7 @@ function query(event){
 			// userSelection(curr_ID);
 			curr_ID = null;
 			socket.emit('clientId',message);
+			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "PLEASE SELECT A USER TO VIEW";
 			document.getElementById("now").innerHTML= "";
 			document.getElementById("real-time").innerHTML = "";
@@ -125,6 +126,7 @@ function query(event){
 			document.getElementById("date").innerHTML = "";
 			break;
 		case 'real-time':
+			socket.emit('stop-real', message);
 			document.getElementById("date").innerHTML = "";
 			var message = '{"clientId":'+ JSON.stringify(curr_ID) +'}';
 			socket.emit('real-time',message);
@@ -148,6 +150,7 @@ function query(event){
 			// socket.emit('accel',message);
 			break;
 		case 'pos':
+			socket.emit('stop-real', message);
 			socket.emit('pos',message);
 			break;
 	}
@@ -155,7 +158,13 @@ function query(event){
 
 // displays the selected users real-time accel data
 socket.on('rRealTime',function(data){
-	realTimeDisplay(data);
+	// if(document.getElementById("div-title").innerHTML != "REAL TIME MOVEMENT" && document.getElementById("real-time").innerHTML == ""){
+		realTimeDisplay(data);
+	// }else if(document.getElementById("div-title").innerHTML == "REAL TIME MOVEMENT" && document.getElementById("real-time").innerHTML != ""){
+	// 	redrawGraph(data);
+	// } else{
+	// 	console.log("Switched Query");
+	// }
 });
 
 //display/render data
@@ -173,11 +182,12 @@ socket.on('rPos',function(data){
 
 //Sets the dates to be used to query server/database
 function submitDateTime(event){
+	offset = ((new Date().getTimezoneOffset() * 60 * 1000));
 	var start = document.getElementById("start").value;
 	var end = document.getElementById("end").value;
-	pStart =Date.parse(start);
+	pStart =Date.parse(start) + offset;
 	console.log(pStart);
-	pEnd = Date.parse(end);
+	pEnd = Date.parse(end) + offset;
 	console.log(pEnd);
 	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
 	// console.log("SUBMIT: "+qDate);

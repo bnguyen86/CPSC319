@@ -10,7 +10,7 @@ function batteryDisplay(data){
 	var margin = {
 		top: 20,
 		right: 50,
-		bottom: 50,
+		bottom: 70,
 		left: 50
 		};
 	var width = 1000 - margin.left - margin.right;
@@ -54,11 +54,12 @@ function batteryDisplay(data){
 			.scale(x)
 			.orient('bottom')
 			.ticks(3)
-			.tickFormat(d3.time.format.utc("%x %X"));
+			.tickFormat(d3.time.format("%x %X"));
+			
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient('left')
-			.ticks(3);
+			.ticks(5);
 
 
 		var line = d3.svg.line()
@@ -80,17 +81,19 @@ function batteryDisplay(data){
 		    .y1(line.y())
 		    .y0(y(0));
 
-		var svg = d3.select('#history').append('svg')
+		var graph = d3.select('#history').append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
-			svg.append('g')
+			graph.append('g')
 			.attr('class', 'y axis')
-			.attr('transform','translate('+margin.right+','+margin.top+')')
+			.attr("stroke-width", 1)
+			.attr('transform','translate('+margin.left+','+margin.top+')')
 			.call(yAxis);
 			
-   			svg.append("text")
+   			graph.append("text")
+	        .attr("class", "legend")
 	        .attr("transform", "rotate(-90)")
 	        .attr("y", 0)
 	        .attr("x",0 - ((height / 2)+ margin.top))
@@ -98,28 +101,38 @@ function batteryDisplay(data){
 	        .style("text-anchor", "middle")
 	        .text("Battery Life");
 
-			svg.append('g')
+			graph.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate('+margin.right+','+(height+margin.top)+')')
+			.attr("stroke-width", 1)
+			.attr('transform','translate('+margin.left+','+(height+margin.top)+')')
 			.call(xAxis);
 			
-			svg.append("text")
+			graph.append("text")
+	        .attr("class", "legend")
 			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
 			.style("text-anchor", "middle")
 			.text("Date & Time");
 
-			svg.append('path')
+			//clipPath
+			graph.append('clipPath')
+			.attr("id","rect-clip")
+			.append("rect")
+			.attr("width", width)
+			.attr("height", height);
+
+			graph.append('path')
 			.attr("class", "area")
 			.attr("d", area(data))
-			.attr('transform','translate('+(margin.right+1)+','+margin.top+')');
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
 
-			svg.append('path')
+			graph.append('path')
 			.attr("class", "line")
 			.attr("d", line(data))
 			.attr("stroke", "steelblue")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate('+margin.right+','+margin.top+')');
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
 
 	} else{
 		console.log("batteryDisplay JSON incorrect");

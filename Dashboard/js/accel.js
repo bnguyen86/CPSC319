@@ -5,17 +5,20 @@
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
 	// console.log(data);
-	// clearDiv();
 	document.getElementById("real-time").innerHTML = "";
 	document.getElementById("history").innerHTML = "";
 	var margin = {
 		top: 20,
 		right: 50,
-		bottom: 30,
+		bottom: 70,
 		left: 50
 		};
 	var width = 1000 - margin.left - margin.right;
 	var height = 500 - margin.top - margin.bottom;
+	var lines = ["X","Y","Z"];
+	var lineX;
+	var lineY;
+	var lineZ;
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
@@ -23,15 +26,15 @@ function accelDisplay(data){
 		// console.log(data);
 
 		//earliest date
-		var xMin = new Date(parseInt(d3.min(data,function(d, i){
-				return d.fields.datetime;
-				})));
-		 console.log(xMin);
-		//latest date
-		var xMax = new Date(parseInt(d3.max(data,function(d, i){
-				return d.fields.datetime;
-				})));	
-		console.log(xMax);
+		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
+		// 		return d.fields.datetime;
+		// 		})));
+		//  console.log(xMin);
+		// //latest date
+		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
+		// 		return d.fields.datetime;
+		// 		})));	
+		// console.log(xMax);
 
 		//x axis (dateTime)
 		var x = d3.time.scale.utc()
@@ -60,8 +63,7 @@ function accelDisplay(data){
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient('left')
-			.ticks(3);
-
+			.ticks(5);
 
 		var lineX = d3.svg.line()
 			.x(function(d){
@@ -71,7 +73,7 @@ function accelDisplay(data){
 			.y(function(d){
 				return y(d.fields.accelX);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 		var lineY = d3.svg.line()
 			.x(function(d){
@@ -81,7 +83,7 @@ function accelDisplay(data){
 			.y(function(d){
 				return y(d.fields.accelY);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 		var lineZ = d3.svg.line()
 			.x(function(d){
@@ -91,22 +93,24 @@ function accelDisplay(data){
 			.y(function(d){
 				return y(d.fields.accelZ);
 			})
-			.interpolate("line");
+			.interpolate("linear");
 
 
 		//Drawing			
-		var svg = d3.select('#history')
+		var graph = d3.select('#history')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
-			svg.append('g')
+			graph.append('g')
 			.attr('class', 'y axis')
+			.attr("stroke-width", 1)
 			.attr('transform','translate('+margin.right+','+margin.top+')')
 			.call(yAxis);
 
-   			svg.append("text")
+   			graph.append("text")
+	        .attr("class", "legend")
 	        .attr("transform", "rotate(-90)")
 	        .attr("y", 0)
 	        .attr("x",0 - ((height / 2)+ margin.top))
@@ -114,41 +118,120 @@ function accelDisplay(data){
 	        .style("text-anchor", "middle")
 	        .text("G-Force");
 
-			svg.append('g')
+			graph.append('g')
 			.attr('class', 'x axis')
-			.attr('transform','translate('+margin.right+','+(height/2+margin.top)+')')
+			.attr("stroke-width", 1)
+			.attr('transform','translate('+margin.left+','+(height+margin.top)+')')
 			.call(xAxis);
 
-			svg.append("text")
+			graph.append("text")
+			.attr("class", "legend")
 			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
 			.style("text-anchor", "middle")
 			.text("Date & Time");
 
+			//clipPath
+			graph.append('clipPath')
+			.attr("id","rect-clip")
+			.append("rect")
+			.attr("width", width)
+			.attr("height", height);
+
 			//AccelX
-			svg.append('path')
+			graph.append('path')
 			.attr("class", "line")
+			.attr("id", "lineX")
 			.attr("d", lineX(data))
 			.attr("stroke", "blue")
-			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate('+margin.right+','+margin.top+')');
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+margin.left+','+margin.top+')');
 			//AccelY
-			svg.append('path')
+			graph.append('path')
 			.attr("class", "line")
+			.attr("id", "lineY")
 			.attr("d", lineY(data))
 			.attr("stroke", "green")
-			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate('+margin.right+','+margin.top+')');
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+margin.left+','+margin.top+')');
 			//AccelZ
-			svg.append('path')
+			graph.append('path')
 			.attr("class", "line")
+			.attr("id", "lineZ")
 			.attr("d", lineZ(data))
 			.attr("stroke", "red")
-			.attr("stroke-width", 1)
 			.attr("fill", "none")
-			.attr('transform','translate('+margin.right+','+margin.top+')');
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+margin.left+','+margin.top+')');
 
+
+			//Legend
+			graph.append("text")
+			.attr("x", (width/2))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legX")
+			.style("fill", "blue")
+			.style("opactiy", 1)
+			.on("click",function(){
+				if(document.getElementById("legX").opacity == 1){
+					d3.select("#lineX")
+					.transition().duration(100)
+					.style("opacity", 0);
+					document.getElementById("legX").opacity = 0.5;
+				} else{
+					d3.select("#lineX")
+					.transition().duration(100)
+					.style("opacity", 1);
+					document.getElementById("legX").opacity = 1;
+				};
+			})
+			.text("lineX");
+
+			graph.append("text")
+			.attr("x", (margin.left + (width/2)))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legY")
+			.style("fill", "green")
+			.style("opactiy", 1)
+			.on("click",function(){
+				if(document.getElementById("legY").opacity == 1){
+					d3.select("#lineY")
+					.transition().duration(100)
+					.style("opacity", 0);
+					document.getElementById("legY").opacity = 0.5;
+				} else{
+					d3.select("#lineY")
+					.transition().duration(100)
+					.style("opacity", 1);
+					document.getElementById("legY").opacity = 1;
+				};
+			})
+			.text("lineY");
+
+			graph.append("text")
+			.attr("x", ((margin.left*2) + (width/2)))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legZ")
+			.style("fill", "red")
+			.style("opactiy", 1)
+			.on("click",function(){
+				if(document.getElementById("legZ").opacity == 1){
+					d3.select("#lineZ")
+					.transition().duration(100)
+					.style("opacity", 0);
+					document.getElementById("legZ").opacity = 0.5;
+				} else{
+					d3.select("#lineZ")
+					.transition().duration(100)
+					.style("opacity", 1);
+					document.getElementById("legZ").opacity = 1;
+				};
+			})
+			.text("lineZ");
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);
