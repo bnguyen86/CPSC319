@@ -2,9 +2,12 @@ language: node_js
 node_js:
     - "node"
 sudo: required
-#script: node_modules/karma/bin/karma start --single-run
+env:
+  - TEST_DIR=Dashboard
+  - TEST_DIR=WebServer
+script: cd $TEST_DIR && npm install --dev && npm test
 before_install:
 #    - export DISPLAY=:99.0
 #    - sh -e /etc/init.d/xvfb start
-before_script:
-#    - npm install
+#before_script:
+#    - npm install --dev
