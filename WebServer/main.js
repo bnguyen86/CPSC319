@@ -14,7 +14,7 @@ var options = {
 }
 
 //========================================== GLOBAL VARIABLES END
-//GIT TEST
+
 //========================================== CONNECTIONS
 
 // Create HTTP server & socket connection
@@ -226,7 +226,7 @@ io.on('connection', function(socket) {
                 if (error) {
                     console.log(error);
                 } else {
-                    console.log("Found data");
+                    console.log("Found data: Real-Time");
                     socket.emit('rRealTime', body);
                 }
             });
@@ -279,7 +279,7 @@ io.on('connection', function(socket) {
                 if (error) {
                     console.log(error);
                 } else {
-                    console.log("Found data");
+                    console.log("Found data: Battery");
                     socket.emit('rBatt', body);
                     //console.log(body);
                     //message = body;
@@ -332,7 +332,7 @@ io.on('connection', function(socket) {
                 if (error) {
                     console.log(error);
                 } else {
-                    console.log("Found data");
+                    console.log("Found data: Accel");
                     socket.emit('rAccel', body);
                     //console.log(body);
                     //message = body;
@@ -343,7 +343,9 @@ io.on('connection', function(socket) {
         //return message;
         // }
     };
-
+    socket.on('disconnect',function(){
+        clearInterval(currIntervalID);
+    });
     //========================================== ELASTICSEARCH QUERIES END
 
 });
@@ -466,5 +468,3 @@ function sendSOSMessage(source, clientId, datetime, lat, lon) {
 }
 
 //========================================== HELPER FUNCTIONS END
-
-module.exports = server;
