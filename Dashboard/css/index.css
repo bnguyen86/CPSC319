@@ -1,6 +1,20 @@
+@font-face{
+	font-family: Roboto;
+	src: url(RobotoTTF/Roboto-Regular.ttf);
+}
+
+body {
+	font-family: Roboto;
+}
+
 md-sidenav {
 	background: #279C9C;
 	height: 100%;
+}
+
+.md-sidenav-left md-whiteframe-z2{
+	font-family: Roboto;
+	
 }
 
 md-content {
@@ -74,15 +88,24 @@ md-divider.menu{
 }
 
 .axis path,
-.axis line {
+.axis line,
+.axis text {
 	fill: none;
     stroke: black;
+    font-family: Roboto;
+    font-size: 11px;
     shape-rendering: crispEdges;
 }
 
-.axis text {
-    font-family: sans-serif;
-    font-size: 11px;
+.area {
+  fill: lightsteelblue;
+}
+
+.legend {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
 }
 
 .black_overlay{
@@ -115,15 +138,4 @@ md-divider.menu{
 	text-transform: uppercase;
 	font-weight: lighter;
 	font-size: 15px;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.area {
-  fill: lightsteelblue;
 }

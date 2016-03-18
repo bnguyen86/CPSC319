@@ -1,0 +1,272 @@
+@font-face{
+	font-family: Roboto;
+	src: url(RobotoTTF/Roboto-Regular.ttf);
+}
+
+body {
+	font-family: Roboto;
+}
+
+md-sidenav {
+	background: dimgray;
+	height: 100%;
+}
+
+.md-sidenav-left md-whiteframe-z2{
+	font-family: Roboto;
+	
+}
+
+md-content {
+	height: 100%;
+	padding-top: 50px;
+	padding-left: 20px;
+	padding-right 20px;
+	padding-bottom: 50px;
+	text-align: center;
+}
+
+#user_dis .user-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid black;
+	outline: 1px;
+	background: gold;
+	color: black;
+}
+
+#light .alert-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid dimgray;
+	outline: 1px;
+	background: gold;
+	color: black;
+}
+
+.white_content {
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+	min-height: 40px;
+	min-width: 60px;
+    padding: 16px;
+	margin: 10px;
+    border: 1px solid black;
+    background-color: white;
+    z-index:1002;
+    overflow: auto;
+	text-transform: uppercase;
+	font-weight: lighter;
+	font-size: 15px;
+}
+
+
+#menu-links-container {
+	padding: 10px;
+	color: black;
+	text-transform: uppercase;
+	text-align: center;
+	width: 300px;
+}
+
+md-divider.menu{
+	border: 1px solid cornsilk;
+}
+
+#div-title {
+	color: dimgray;
+	font-transform: uppercase;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.axis path,
+.axis line,
+.axis text {
+	fill: none;
+    stroke: black;
+    font-family: Roboto;
+    font-size: 11px;
+    shape-rendering: crispEdges;
+}
+
+.area {
+  fill: lightsteelblue;
+}@font-face{
+	font-family: Roboto;
+	src: url(RobotoTTF/Roboto-Regular.ttf);
+}
+
+body {
+	font-family: Roboto;
+}
+
+md-content{
+	background: ghostwhite;
+}
+
+md-sidenav {
+	background: dimgray;
+	height: 100%;
+}
+
+.md-sidenav-left md-whiteframe-z2{
+	font-family: Roboto;
+	
+}
+
+md-content {
+	height: 100%;
+	padding-top: 50px;
+	padding-left: 20px;
+	padding-right 20px;
+	padding-bottom: 50px;
+	text-align: center;
+}
+
+#user_dis .user-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid black;
+	outline: 1px;
+	background: gold;
+	color: black;
+}
+
+#light .alert-btn{
+	padding: 0 6px 0 6px;
+	margin: 6px 8px 6px 8px;
+	min-width: 88px;
+	min-height: 30px;
+	border-radius: 3px;
+	font-size: 15px;
+	font-weight: lighter;
+	text-align: center;
+	text-transform: uppercase;
+	text-decoration: none;
+	border: 1px solid dimgray;
+	outline: 1px;
+	background: gold;
+	color: black;
+}
+
+.white_content {
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+	min-height: 40px;
+	min-width: 60px;
+    padding: 16px;
+	margin: 10px;
+    border: 1px solid black;
+    background-color: white;
+    z-index:1002;
+    overflow: auto;
+	text-transform: uppercase;
+	font-weight: lighter;
+	font-size: 15px;
+}
+
+
+#menu-links-container {
+	padding: 10px;
+	color: black;
+	text-transform: uppercase;
+	text-align: center;
+	width: 300px;
+}
+
+md-divider.menu{
+	border: 1px solid cornsilk;
+}
+
+#div-title {
+	color: dimgray;
+	font-transform: uppercase;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.axis path,
+.axis line,
+.axis text {
+	fill: none;
+    stroke: black;
+    font-family: Roboto;
+    font-size: 11px;
+    shape-rendering: crispEdges;
+}
+
+.area {
+  fill: lightsteelblue;
+}
+
+.legend {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.black_overlay{
+	display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index:1001;
+    -moz-opacity: 0.8;
+    opacity:.80;
+    filter: alpha(opacity=80);
+}    
+
+
+.legend {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.black_overlay{
+	display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index:1001;
+    -moz-opacity: 0.8;
+    opacity:.80;
+    filter: alpha(opacity=80);
+}    
