@@ -55,7 +55,7 @@ function batteryDisplay(data){
 			.orient('bottom')
 			.ticks(3)
 			.tickFormat(d3.time.format("%x %X"));
-			
+
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient('left')
@@ -80,6 +80,16 @@ function batteryDisplay(data){
 		    .x(line.x())
 		    .y1(line.y())
 		    .y0(y(0));
+
+		// var areaColor = d3.svg.area()
+		// 	.x(function(d){
+		// 		console.log(d.fields.datetime)
+		// 		return d.fields.datetime;
+		// 	})
+		// 	.y(function(d){
+		// 		console.log(d.fields.transferRate);
+		// 		return d.fields.transferRate;
+		// 	})
 
 		var graph = d3.select('#history').append('svg')
 			.attr('width', width + margin.left + margin.right)
@@ -120,11 +130,6 @@ function batteryDisplay(data){
 			.attr("width", width)
 			.attr("height", height);
 
-			graph.append('path')
-			.attr("class", "area")
-			.attr("d", area(data))
-			.attr("clip-path", "url(#rect-clip)")
-			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
 
 			graph.append('path')
 			.attr("class", "line")
@@ -133,6 +138,78 @@ function batteryDisplay(data){
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
 			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+
+			graph.append('path')
+			.data(data)
+			.attr("class", "area")
+			.attr("d", area(data))
+			.attr("clip-path", "url(#rect-clip)")
+			.style("fill", function(d){
+				console.log(d);
+				console.log(d.fields.transferRate);
+				switch(d.fields.transferRate){
+					case 1:
+						return "coral";
+						break;
+					case 10:
+						return "cornflowerblue";
+						break;
+					case 100:
+						return "greenyellow";
+						break;
+					case 500:
+						return "lemonchiffon";
+						break;
+					case 1000:
+						return "lightcrimson";
+						break;
+					case 2000:
+						return "steelblue";
+						break;
+					case 5000:
+						return "limegreen";
+						break;
+					case 10000:
+						return "khaki";
+						break;
+				}
+			})
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+
+			// graph.selectAll("area")
+			// .attr("class", "area")
+			// .attr("d", areaColor(data))
+			// .append("path")
+			// .style("fill", function(d){
+			// 	console.log(d);
+			// 	console.log(d.fields.transferRate);
+			// 	switch(d.fields.transferRate){
+			// 		case "1":
+			// 			return "coral";
+			// 			break;
+			// 		case [10]:
+			// 			return "cornflowerblue";
+			// 			break;
+			// 		case [100]:
+			// 			return "greenyellow";
+			// 			break;
+			// 		case [500]:
+			// 			return "lemonchiffon";
+			// 			break;
+			// 		case [1000]:
+			// 			return "lightcrimson";
+			// 			break;
+			// 		case [2000]:
+			// 			return "steelblue";
+			// 			break;
+			// 		case [5000]:
+			// 			return "limegreen";
+			// 			break;
+			// 		case [10000]:
+			// 			return "khaki";
+			// 			break;
+			// 	}
+			// });
 
 	} else{
 		console.log("batteryDisplay JSON incorrect");
