@@ -63,7 +63,7 @@ public class BackgroundServices extends IntentService {
         clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
 
-        //setDataCollectionTimer(clientId, getDataCollectionInterval());
+        setDataCollectionTimer(clientId, getDataCollectionInterval());
         setDataTransferTimer(clientId, getDataTransferInterval());
         setReconnectTimer();
         setLocalDataTransferTimer(clientId);
@@ -114,18 +114,20 @@ public class BackgroundServices extends IntentService {
         collectionTimer.scheduleAtFixedRate(new TimerTask() {
                       @Override
                       public void run() {
-                          Time now = new Time();
-                          now.setToNow();
+                          if(MqttClient.client != null && !MqttClient.client.isConnected())
+                          {
+                              Time now = new Time();
+                              now.setToNow();
 
-                          String payload = createJsonData(cId,
-                                  String.valueOf(now.toMillis(true)),
-                                  DataCollectorService.getAccelValues(),
-                                  DataCollectorService.getBatteryPct(),
-                                  DataCollectorService.getLocation(),
-                                  dataTransferInterval);
+                              String payload = createJsonData(cId,
+                                      String.valueOf(now.toMillis(true)),
+                                      DataCollectorService.getAccelValues(),
+                                      DataCollectorService.getBatteryPct(),
+                                      DataCollectorService.getLocation(),
+                                      dataTransferInterval);
 
-                          LocalDataManager.WriteToFile(payload);
-
+                              LocalDataManager.WriteToFile(payload);
+                          }
                       }
                   },
                 //Set how long before to start calling the TimerTask (in milliseconds)

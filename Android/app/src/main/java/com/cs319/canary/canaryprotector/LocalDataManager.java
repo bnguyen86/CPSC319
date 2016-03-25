@@ -61,7 +61,7 @@ public class LocalDataManager {
     {
         //System.out.println("TRYING TO WRITE " + stringToWrite);
 
-        if(file.length() > 50 * 1024) // 50kb max
+        if(file.length() > 500 * 1024) // 500kb max
         {
             System.out.println("FILE TOO BIG, SKIPPING");
             return;
