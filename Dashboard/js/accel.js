@@ -176,7 +176,6 @@ function accelDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legX")
 			.style("fill", "blue")
-			// .style("opacity", 1)
 			.on("click",function(){
 				if(d3.select("#lineX").style("opacity") == 1){
 					// console.log(d3.select("#lineX").style("opacity"))
@@ -200,7 +199,6 @@ function accelDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legY")
 			.style("fill", "green")
-			// .style("opacity", 1)
 			.on("click",function(){
 				if(d3.select("#lineY").style("opacity") == 1){
 					// console.log(document.getElementById("legY").opacity)
@@ -224,7 +222,6 @@ function accelDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legZ")
 			.style("fill", "red")
-			// .style("opacity", 1)
 			.on("click",function(event){
 				if(d3.select("#lineZ").style("opacity") == 1){
 					// console.log("legZ opacity 1")

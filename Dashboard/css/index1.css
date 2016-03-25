@@ -159,7 +159,21 @@ md-divider.menu{
     -moz-opacity: 0.8;
     opacity:.80;
     filter: alpha(opacity=80);
-}    
+} 
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+}
+ .graph{
+ 	top:20px;
+ 	left:50px;
+ }  
 /*
 #logo-close{
 	opacity: none;

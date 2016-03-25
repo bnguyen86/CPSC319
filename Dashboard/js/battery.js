@@ -19,6 +19,12 @@ function batteryDisplay(data){
 	if(isJSON(data)){
 		var data = JSON.parse(data);
 		var data = data.hits.hits;
+		// var dataTest = [1,1000];
+		var bisectDateTime = d3.bisector(function(d) { 
+			console.log(d.fields.datetime);
+			// console.log(d);
+			return d.fields.datetime;
+		}).left;
 		// console.log(data);
 
 		//earliest date
@@ -96,6 +102,7 @@ function batteryDisplay(data){
 			.attr('height', height + margin.top + margin.bottom)
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
+
 			graph.append('g')
 			.attr('class', 'y axis')
 			.attr("stroke-width", 1)
@@ -134,85 +141,169 @@ function batteryDisplay(data){
 			graph.append('path')
 			.attr("class", "line")
 			.attr("d", line(data))
-			.attr("stroke", "steelblue")
+			.attr("stroke", "black")
 			.attr("stroke-width", 1)
 			.attr("fill", "none")
+			// .on("mouseover", function(d){
+			// 	console.log(d);
+			// 	console.log(data[100]);
+			// 	// d3.select(this).select("text").style("visibility", "visible")
+			// 	data.fields();
+			// })
+			// .on("mouseout", function(d){
+			// 	d3.select(this).select("text").style("visibility", "hidden")
+			// })
 			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+
 
 			graph.append('path')
 			.data(data)
+			// .data(data, function(d){
+			// 	console.log(d);
+			// 	return d;
+			// })
 			.attr("class", "area")
 			.attr("d", area(data))
 			.attr("clip-path", "url(#rect-clip)")
-			.style("fill", function(d){
-				console.log(d);
-				console.log(d.fields.transferRate);
-				switch(d.fields.transferRate){
-					case 1:
-						return "coral";
-						break;
-					case 10:
-						return "cornflowerblue";
-						break;
-					case 100:
-						return "greenyellow";
-						break;
-					case 500:
-						return "lemonchiffon";
-						break;
-					case 1000:
-						return "lightcrimson";
-						break;
-					case 2000:
-						return "steelblue";
-						break;
-					case 5000:
-						return "limegreen";
-						break;
-					case 10000:
-						return "khaki";
-						break;
-				}
-			})
+			.style("fill", "lightsteelblue")
 			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
 
-			// graph.selectAll("area")
-			// .attr("class", "area")
-			// .attr("d", areaColor(data))
-			// .append("path")
-			// .style("fill", function(d){
-			// 	console.log(d);
-			// 	console.log(d.fields.transferRate);
-			// 	switch(d.fields.transferRate){
-			// 		case "1":
-			// 			return "coral";
-			// 			break;
-			// 		case [10]:
-			// 			return "cornflowerblue";
-			// 			break;
-			// 		case [100]:
-			// 			return "greenyellow";
-			// 			break;
-			// 		case [500]:
-			// 			return "lemonchiffon";
-			// 			break;
-			// 		case [1000]:
-			// 			return "lightcrimson";
-			// 			break;
-			// 		case [2000]:
-			// 			return "steelblue";
-			// 			break;
-			// 		case [5000]:
-			// 			return "limegreen";
-			// 			break;
-			// 		case [10000]:
-			// 			return "khaki";
-			// 			break;
-			// 	}
-			// });
+		var focus = graph.append('g')
+			.attr("class", "focus")
+			.style("display", "none")
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+			
+			focus.append("circle")
+			.attr("r", 5.5)
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+			focus.append("circle")
+			.attr("r", 2)
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+
+			focus.append("text")
+			.attr("id", "dateTimeLabel")
+			.attr("x", 10)
+			.attr("dy", "0.35em")
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+			focus.append("text")
+			.attr("id", "batteryLabel")
+			.attr("x", 10)
+			.attr("dy", "1.35em")
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+			focus.append("text")
+			.attr("id", "tansferRateLabel")
+			.attr("x", 10)
+			.attr("dy", "2.35em")
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+			
+			graph.append("rect")
+			.attr("class", "overlay")
+			.attr("width", width)
+			.attr("height", height)
+			.on("mouseover", function(){
+				focus.style("display", null);
+			})
+			.on("mouseout", function(){
+				focus.style("display", "none");
+			})
+			.on("mousemove", mouseMove)
+			.attr('transform','translate('+(margin.left+1)+','+margin.top+')');
+
+	function mouseMove(){
+		// console.log(data);
+		// var dataSorted = data.sort(function(a,b){
+		// 	if(a.fields.datetime[0] < b.fields.datetime[0]){
+		// 		return -1;
+		// 	} 
+		// 	if(a.fields.datetime[0] < b.fields.datetime[0]){
+		// 		return 1;
+		// 	}
+		// 	return 0;
+		// })
+		// console.log(x.invert(d3.mouse(this)[0]));
+		var x0 = Date.parse(x.invert(d3.mouse(this)[0]));//date in millisec
+		var lo = 0;//index
+		var hi = (data.length)-1;//data.length
+		// console.log(x0);
+		while(lo < hi){
+			var mid = lo + hi >>> 1;
+			if ((parseInt(data[mid].fields.datetime[0])- x0) < 0){//descending order
+					hi = mid;
+			} else{
+				lo = mid + 1;
+			}
+			// console.log(lo);
+			// console.log(new Date(parseInt(data[lo].fields.datetime[0])));
+		} d = data[lo];
+		// var i = bisectDateTime(data.sort(d3.ascending), x0);
+		// var d0 = data[i-1];
+		// var d1 = data[i];
+		// console.log(x.invert(d3.mouse(this)[0]));
+		// console.log(x0);
+		// console.log(i);
+		// console.log(d0);
+		// console.log(d1);
+		// var d = x0 - d0.datetime > d1.datetime - x0 ? d1 : d0;
+		// console.log(d.fields.size);
+
+		focus.attr("transform", "translate("+x(new Date(parseInt(d.fields.datetime)))+"," + y(d.fields.battery)+")");
+		// for(var i = 0; i < d.fields.length; i++){
+		// 	focus.select
+		// }
+		// console.log(d);
+		subStringDate = (new Date(parseInt(d.fields.datetime))).toString().substring(0,24);
+		focus.select("#dateTimeLabel").text("Date Time: "+subStringDate);
+		// document.getElementById("dateTimeLabel").innerHTML= ("Date Time: "+d.fields.datetime[0]);
+		focus.select("#batteryLabel").text("Battery: "+(Math.round(d.fields.battery*100)) + "%");
+		if(d.fields.transferRate != null){
+			focus.select("#tansferRateLabel").text("Transfer Rate: "+ d.fields.transferRate[0]);
+		}else{
+			focus.select("#tansferRateLabel").text("Transfer Rate: null");
+		}
+	};
+	// 		graph.selectAll("area")
+	// 		.data(dataTest)
+	// 		.enter().append("area")
+	// 		.attr("class", "area")
+	// 		// .attr("d", area(data))
+	// 		.style("fill", function(d){
+	// 			// console.log(d);
+	// 			// console.log(d.fields.transferRate[0]);
+	// //make an array of 
+	// 			// switch(d.fields.transferRate[0]){
+	// 			console.log(d);
+	// 			console.log(d[0]);
+	// 			switch(d){
+	// 				case 1:
+	// 					return "lightcoral";
+	// 					break;
+	// 				case 10:
+	// 					return "cornflowerblue";
+	// 					break;
+	// 				case 100:
+	// 					return "greenyellow";
+	// 					break;
+	// 				case 500:
+	// 					return "lemonchiffon";
+	// 					break;
+	// 				case 1000:
+	// 					return "lightsalmon";
+	// 					break;
+	// 				case 2000:
+	// 					return "lightsteelblue";
+	// 					break;
+	// 				case 5000:
+	// 					return "limegreen";
+	// 					break;
+	// 				case 10000:
+	// 					return "khaki";
+	// 					break;
+	// 			}
+	// 		});
 
 	} else{
 		console.log("batteryDisplay JSON incorrect");
 		console.log(data);
 	}
 };
+
