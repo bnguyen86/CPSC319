@@ -1,6 +1,7 @@
 package com.cs319.canary.canaryprotector;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks{
@@ -22,7 +24,6 @@ public class MainActivity extends AppCompatActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,40 @@ public class MainActivity extends AppCompatActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView connectionText = (TextView) findViewById(R.id.connection_text);
+                                if (connectionText != null) {
+                                    if(MqttClient.client == null || !MqttClient.client.isConnected())
+                                    {
+                                        connectionText.setText("Status: Disconnected from server");
+                                        connectionText.setTextColor(Color.RED);
+                                    }
+                                    else
+                                    {
+                                        connectionText.setText("Status: Connected to server");
+                                        connectionText.setTextColor(Color.GREEN);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 
     @Override

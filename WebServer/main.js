@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 //========================================== GLOBAL VARIABLES
+var URLsearch = "http://45.55.1.125:9200/message/heartbeat/_search"
+var URL_log = "http://45.55.1.125:9200/message/heartbeat/";
 var http = require('http'),
     io = require('socket.io');
 var request = require('request');
@@ -142,9 +144,8 @@ io.on('connection', function(socket) {
         }
 
         var payloadString = JSON.stringify(payload);
-        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
         request({
-                url: URL,
+                url: URLsearch,
                 method: 'POST',
                 body: payloadString
             }, //the callback function when something is successfully retrieved
@@ -173,10 +174,8 @@ io.on('connection', function(socket) {
 
         var payloadString = JSON.stringify(payload);
 
-        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
-
         request({
-                url: URL,
+                url: URLsearch,
                 method: 'POST',
                 body: payloadString
             },
@@ -215,10 +214,9 @@ io.on('connection', function(socket) {
             }
         }
         var payloadString = JSON.stringify(payload);
-        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
         var message;
         request({
-                url: URL,
+                url: URLsearch,
                 method: 'POST',
                 body: payloadString
             }, //the callback function when something is successfully retrieved
@@ -247,7 +245,7 @@ io.on('connection', function(socket) {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'datetime', 'battery'],
+            "fields": ['clientId', 'datetime', 'battery', 'transferRate'],
             "query": {
                 "filtered": {
                     "query": {
@@ -268,10 +266,9 @@ io.on('connection', function(socket) {
         }
 
         var payloadString = JSON.stringify(payload);
-        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
         var message;
         request({
-                url: URL,
+                url: URLsearch,
                 method: 'POST',
                 body: payloadString
             }, //the callback function when something is successfully retrieved
@@ -321,10 +318,9 @@ io.on('connection', function(socket) {
         }
 
         var payloadString = JSON.stringify(payload);
-        var URL = "http://45.55.1.125:9200/message/heartbeat/_search"
         var message;
         request({
-                url: URL,
+                url: URLsearch,
                 method: 'POST',
                 body: payloadString
             }, //the callback function when something is successfully retrieved
@@ -396,11 +392,9 @@ client.on('message', function(topic, message) {
     //TODO: uncomment this when the android client sends the proper JSON
     if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'heartbeat') {
         console.log("Logging heartbeat");
-        var URL = "http://45.55.1.125:9200/message/heartbeat/" + id;
-
 
         request({
-                url: URL,
+                url: URL_log + id,
                 method: 'PUT',
                 body: stringMessage
             }, //the callback function when something is successfully stored in elasticsearch

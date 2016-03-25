@@ -20,4 +20,15 @@
         android:layout_alignParentStart="true"
         android:layout_alignTop="@+id/section_label" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status: "
+        android:id="@+id/connection_text"
+        android:layout_below="@+id/sos_button"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5px"
+        android:editable="false" />
+
 </RelativeLayout>
