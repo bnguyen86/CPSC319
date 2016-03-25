@@ -15,10 +15,10 @@ function accelDisplay(data){
 		};
 	var width = 1000 - margin.left - margin.right;
 	var height = 500 - margin.top - margin.bottom;
-	var lines = ["X","Y","Z"];
-	var lineX;
-	var lineY;
-	var lineZ;
+	// var lines = ["X","Y","Z"];
+	// var lineX;
+	// var lineY;
+	// var lineZ;
 
 	if(isJSON(data)){
 		var data = JSON.parse(data);
@@ -144,6 +144,7 @@ function accelDisplay(data){
 			.attr("d", lineX(data))
 			.attr("stroke", "blue")
 			.attr("fill", "none")
+			.style("opacity", 1)
 			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 			//AccelY
@@ -153,6 +154,7 @@ function accelDisplay(data){
 			.attr("d", lineY(data))
 			.attr("stroke", "green")
 			.attr("fill", "none")
+			.style("opacity", 1)
 			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 			//AccelZ
@@ -162,73 +164,80 @@ function accelDisplay(data){
 			.attr("d", lineZ(data))
 			.attr("stroke", "red")
 			.attr("fill", "none")
+			.style("opacity", 1)
 			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
 
-			//Legend
+			//LineX Legend
 			graph.append("text")
 			.attr("x", (width/2))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
 			.attr("class", "legend")
 			.attr("id", "legX")
 			.style("fill", "blue")
-			.style("opactiy", 1)
+			// .style("opacity", 1)
 			.on("click",function(){
-				if(document.getElementById("legX").opacity == 1){
+				if(d3.select("#lineX").style("opacity") == 1){
+					// console.log(d3.select("#lineX").style("opacity"))
 					d3.select("#lineX")
 					.transition().duration(100)
 					.style("opacity", 0);
-					document.getElementById("legX").opacity = 0.5;
+					// document.getElementById("legX").opacity = 0.5;
 				} else{
+					// console.log(document.getElementById("legX").opacity)
 					d3.select("#lineX")
 					.transition().duration(100)
 					.style("opacity", 1);
-					document.getElementById("legX").opacity = 1;
+					// document.getElementById("legX").opacity = 1;
 				};
 			})
 			.text("lineX");
-
+			//lineY Legend
 			graph.append("text")
 			.attr("x", (margin.left + (width/2)))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
 			.attr("class", "legend")
 			.attr("id", "legY")
 			.style("fill", "green")
-			.style("opactiy", 1)
+			// .style("opacity", 1)
 			.on("click",function(){
-				if(document.getElementById("legY").opacity == 1){
+				if(d3.select("#lineY").style("opacity") == 1){
+					// console.log(document.getElementById("legY").opacity)
 					d3.select("#lineY")
 					.transition().duration(100)
 					.style("opacity", 0);
-					document.getElementById("legY").opacity = 0.5;
+					// document.getElementById("legY").opacity = 0.5;
 				} else{
+					// console.log(document.getElementById("legY").opacity)
 					d3.select("#lineY")
 					.transition().duration(100)
 					.style("opacity", 1);
-					document.getElementById("legY").opacity = 1;
+					// document.getElementById("legY").opacity = 1;
 				};
 			})
 			.text("lineY");
-
+			//lineZ Legend
 			graph.append("text")
 			.attr("x", ((margin.left*2) + (width/2)))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
 			.attr("class", "legend")
 			.attr("id", "legZ")
 			.style("fill", "red")
-			.style("opactiy", 1)
-			.on("click",function(){
-				if(document.getElementById("legZ").opacity == 1){
+			// .style("opacity", 1)
+			.on("click",function(event){
+				if(d3.select("#lineZ").style("opacity") == 1){
+					// console.log("legZ opacity 1")
 					d3.select("#lineZ")
 					.transition().duration(100)
 					.style("opacity", 0);
-					document.getElementById("legZ").opacity = 0.5;
+					// document.getElementById("legZ").opacity = 0.5;
 				} else{
+					// console.log("legZ opacity 0")
 					d3.select("#lineZ")
 					.transition().duration(100)
 					.style("opacity", 1);
-					document.getElementById("legZ").opacity = 1;
+					// document.getElementById("legZ").opacity = 1;
 				};
 			})
 			.text("lineZ");
