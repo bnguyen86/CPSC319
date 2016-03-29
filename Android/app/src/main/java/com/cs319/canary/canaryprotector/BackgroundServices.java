@@ -217,6 +217,7 @@ public class BackgroundServices extends IntentService {
             payload.put("lat", latlon[0]);
             payload.put("lon", latlon[1]);
             payload.put("transferRate", transferRate);
+            payload.put("clientName",clientName);
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -234,6 +235,7 @@ public class BackgroundServices extends IntentService {
             payload.put("clientId", clientId);
             payload.put("lat", latlon[0]);
             payload.put("lon", latlon[1]);
+            payload.put("clientName",clientName);
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -261,6 +263,6 @@ public class BackgroundServices extends IntentService {
 
     public void setClientName(){
         SharedPreferences pref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE);
-        this.clientName = pref.getString(WelcomeActivity.CLIENT_NAME,"");
+        this.clientName = pref.getString(WelcomeActivity.CLIENT_NAME,"anonymous");
     }
 }
