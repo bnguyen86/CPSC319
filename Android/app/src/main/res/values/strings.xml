@@ -29,4 +29,7 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="message_welcome">Welcome to Canary Protector!</string>
+    <string name="button_submit">submit</string>
+    <string name="hint_username">Please enter your name</string>
 </resources>

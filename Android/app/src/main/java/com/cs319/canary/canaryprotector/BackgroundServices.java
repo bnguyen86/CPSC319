@@ -3,6 +3,7 @@ package com.cs319.canary.canaryprotector;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.text.format.Time;
 
@@ -32,6 +33,7 @@ public class BackgroundServices extends IntentService {
     }
 
     private static String clientId;
+    private static String clientName;
     private static final String topic = "team-mat-canary";
 
     private static int dataCollectionInterval = 1000;
@@ -62,6 +64,9 @@ public class BackgroundServices extends IntentService {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
+
+        //set client name
+        setClientName();
 
         setDataCollectionTimer(clientId, getDataCollectionInterval());
         setDataTransferTimer(clientId, getDataTransferInterval());
@@ -252,5 +257,10 @@ public class BackgroundServices extends IntentService {
     public static void setDataTransferInterval(int dataTransferInterval) {
         BackgroundServices.dataTransferInterval = dataTransferInterval;
         setDataTransferTimer(clientId, getDataTransferInterval());
+    }
+
+    public void setClientName(){
+        SharedPreferences pref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE);
+        this.clientName = pref.getString(WelcomeActivity.CLIENT_NAME,"");
     }
 }
