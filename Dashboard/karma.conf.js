@@ -19,7 +19,8 @@ module.exports = function(config) {
       'node_modules/angular/angular*.js',
       'node_modules/socket.io/node_modules/socket.io-client/socket.io.js',
       'js/*.js',
-      'tests/*.js'      
+      'tests/*.js',
+      'index.html' 
     ],
 
 
