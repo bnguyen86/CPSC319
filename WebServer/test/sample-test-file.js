@@ -28,7 +28,7 @@ describe('Class to be Tested', function() {
 	  done(); //call this after you are done with tests
 	});
 
-    it('ANTOHER UNIT TEST', function(done) {
+    it('ANOTHER UNIT TEST', function(done) {
         //WRITE YOUR ACTUAL TESTS HERE
         //http://chaijs.com/guide/styles/ for more examples
 
