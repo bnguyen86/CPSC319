@@ -166,7 +166,8 @@ io.on('connection', function(socket) {
             "aggs": {
                 "id": {
                     "terms": {
-                        "field": "clientId"
+                        "field": "clientId",
+                        // "field": "clientName"
                     }
                 }
             }
