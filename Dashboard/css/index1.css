@@ -110,7 +110,6 @@ md-divider.menu{
     font-family: Roboto;
     font-size: 11px;
     shape-rendering: crispEdges;
-
 }
 
 /*.area {
@@ -173,7 +172,13 @@ md-divider.menu{
  .graph{
  	top:20px;
  	left:50px;
- }  
+}
+
+.brush .extent{
+	stroke: #fff;
+	fill-opacity: .125;
+	shape-rendering: crispEdges;
+}
 /*
 #logo-close{
 	opacity: none;

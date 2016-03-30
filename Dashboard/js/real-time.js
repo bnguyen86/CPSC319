@@ -13,7 +13,7 @@ function realTimeDisplay(data){
 	var margin = {
 		top: 20,
 		right: 50,
-		bottom: 70,
+		bottom: 100,
 		left: 50
 		};
 
@@ -35,7 +35,7 @@ function realTimeDisplay(data){
 				})));
 		// console.log(xMax);
 
-			//x axis (dateTime)
+//=======================================================X Axis (dateTime)
 		var x = d3.time.scale.utc()
 			.domain([(xMax-range), xMax])
 			// .domain(d3.extent(data,function(d){
@@ -43,7 +43,7 @@ function realTimeDisplay(data){
 			// }))
 			.range([0, width]);
 
-		//y axis (range)
+//=======================================================Y Axis (Range)
 		var y = d3.scale.linear()
 			.domain([-20,+20])
 			// .domain(d3.extent(data,function(d){
@@ -52,7 +52,7 @@ function realTimeDisplay(data){
 			.range([height, 0]);
 
 
-		//Axis
+//=======================================================Axises display
 		var xAxis = d3.svg.axis()
 			.scale(x)
 			.orient('bottom')
@@ -64,7 +64,7 @@ function realTimeDisplay(data){
 			.orient('left')
 			.ticks(5);
 
-
+//=======================================================Paths (Lines and Areas)
 		var lineX = d3.svg.line()
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
@@ -101,23 +101,135 @@ function realTimeDisplay(data){
 		// }else{
 		// 	redrawGraph(data);
 		// };
+//=======================================================DRAWING
 		var graph = d3.select('#real-time')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom)
+			.attr('height', height + margin.top + margin.bottom);
+
+//=======================================================clipPath & Sizes
+			graph.append('clipPath')
+			.attr("id","rect-clip")
+			.append("rect")
+			.attr("width", width)
+			.attr("height", height);
+
+//=======================================================DRAWING PATHS
+//=======================================================AccelX
+			graph.append('path')
+			.attr("class", "line")
+			.attr("id", "lineX")
+			.attr("d", lineX(data))
+			.attr("stroke", "blue")
+			.attr("fill", "none")
+			.style("opacity", 1)
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+margin.left+','+margin.top+')');
+//=======================================================AccelY
+			graph.append('path')
+			.attr("class", "line")
+			.attr("id", "lineY")
+			.attr("d", lineY(data))
+			.attr("stroke", "green")
+			.attr("fill", "none")
+			.style("opacity", 1)
+			.attr("clip-path", "url(#rect-clip)")
+			.attr('transform','translate('+margin.left+','+margin.top+')');
+//=======================================================AccelZ
+			graph.append('path')
+			.attr("class", "line")
+			.attr("id", "lineZ")
+			.attr("d", lineZ(data))
+			.attr("stroke", "red")
+			.attr("fill", "none")
+			.style("opacity", 1)
+			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
+
+//=======================================================LineX Legend
+			graph.append("text")
+			.attr("x", (width/2))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legX")
+			.style("fill", "blue")
+			.on("click",function(){
+				if(d3.select("#lineX").style("opacity") == 1){
+					// console.log(d3.select("#lineX").style("opacity"))
+					d3.select("#lineX")
+					.transition().duration(100)
+					.style("opacity", 0);
+					// document.getElementById("legX").opacity = 0.5;
+				} else{
+					// console.log(document.getElementById("legX").opacity)
+					d3.select("#lineX")
+					.transition().duration(100)
+					.style("opacity", 1);
+					// document.getElementById("legX").opacity = 1;
+				};
+			})
+			.text("lineX");
+
+//=======================================================lineY Legend
+			graph.append("text")
+			.attr("x", (margin.left + (width/2)))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legY")
+			.style("fill", "green")
+			.on("click",function(){
+				if(d3.select("#lineY").style("opacity") == 1){
+					// console.log(document.getElementById("legY").opacity)
+					d3.select("#lineY")
+					.transition().duration(100)
+					.style("opacity", 0);
+					// document.getElementById("legY").opacity = 0.5;
+				} else{
+					// console.log(document.getElementById("legY").opacity)
+					d3.select("#lineY")
+					.transition().duration(100)
+					.style("opacity", 1);
+					// document.getElementById("legY").opacity = 1;
+				};
+			})
+			.text("lineY");
+
+//=======================================================lineZ Legend
+			graph.append("text")
+			.attr("x", ((margin.left*2) + (width/2)))
+			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
+			.attr("class", "legend")
+			.attr("id", "legZ")
+			.style("fill", "red")
+			.on("click",function(event){
+				if(d3.select("#lineZ").style("opacity") == 1){
+					// console.log("legZ opacity 1")
+					d3.select("#lineZ")
+					.transition().duration(100)
+					.style("opacity", 0);
+					// document.getElementById("legZ").opacity = 0.5;
+				} else{
+					// console.log("legZ opacity 0")
+					d3.select("#lineZ")
+					.transition().duration(100)
+					.style("opacity", 1);
+					// document.getElementById("legZ").opacity = 1;
+				};
+			})
+			.text("lineZ");
+
+//=======================================================DRAWING AXISES
 			graph.append('g')
 			.attr('class', 'y axis')
 			.attr("stroke-width", 1)
 			.attr('transform','translate('+margin.left+','+margin.top+')')
-			.call(yAxis);
-
-   			graph.append("text")
+			.call(yAxis)
+			.append("text")
    			.attr("class", "legend")
 	        .attr("transform", "rotate(-90)")
-	        .attr("y", 0)
-	        .attr("x",0 - ((height / 2)+ margin.top))
+	        .attr("y", -(margin.left))
+	        .attr("x",0 - (height / 2))
 	        .attr("dy", "1em")
 	        .style("text-anchor", "middle")
 	        .text("G-Force");
@@ -128,68 +240,12 @@ function realTimeDisplay(data){
 			.attr('transform','translate('+margin.left+','+(height+margin.top)+')')
 			.call(xAxis);
 
-			graph.append("text")
-			.attr("class", "legend")
-			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
-			.style("text-anchor", "middle")
-			.text("Date & Time");
-
-			//clipPath
-			graph.append('clipPath')
-			.attr("id","rect-clip")
-			.append("rect")
-			.attr("width", width)
-			.attr("height", height);
-
-			//AccelX
-			graph.append('path')
-			.attr("class", "line")
-			.attr("d", lineX(data))
-			.attr("stroke", "blue")
-			.attr("fill", "none")
-			.attr("clip-path", "url(#rect-clip)")
-			.attr('transform','translate('+margin.left+','+margin.top+')');
-			//AccelY
-			graph.append('path')
-			.attr("class", "line")
-			.attr("d", lineY(data))
-			.attr("stroke", "green")
-			.attr("fill", "none")
-			.attr("clip-path", "url(#rect-clip)")
-			.attr('transform','translate('+margin.left+','+margin.top+')');
-			//AccelZ
-			graph.append('path')
-			.attr("class", "line")
-			.attr("d", lineZ(data))
-			.attr("stroke", "red")
-			.attr("fill", "none")
-			.attr("clip-path", "url(#rect-clip)")
-			.attr('transform','translate('+margin.left+','+margin.top+')');
-
-			//Legend
-			graph.append("text")
-			.attr("x", (width/2))
-			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
-			.attr("class", "legend")
-			.attr("id", "legX")
-			.style("fill", "blue")
-			.text("lineX");
-
-			graph.append("text")
-			.attr("x", (margin.left + (width/2)))
-			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
-			.attr("class", "legend")
-			.attr("id", "legY")
-			.style("fill", "green")
-			.text("lineY");
-
-			graph.append("text")
-			.attr("x", ((margin.left*2) + (width/2)))
-			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
-			.attr("class", "legend")
-			.attr("id", "legZ")
-			.style("fill", "red")
-			.text("lineZ");
+			// graph.append("text")
+			// .attr("class", "legend")
+			// .attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
+			// .style("text-anchor", "middle")
+			// .text("Date & Time");
+			
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);
