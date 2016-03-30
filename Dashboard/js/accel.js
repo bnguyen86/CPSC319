@@ -1,7 +1,5 @@
 //accel JSON object into graph
 //INPUT: JSON Object
-//		ex) '[{"datetime":String, "accelX":float, "accelY":float, "accelZ":float, "clientID":String},*(__n)]'
-//			where __n is the total number of data points
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
 	// console.log(data);

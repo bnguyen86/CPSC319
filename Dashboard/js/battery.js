@@ -1,7 +1,5 @@
 //battery JSON object into graph
 //INPUT: JSON Object
-//		ex) '[{"datetime":String, "battery":float, clientID":String},*(__n)]'
-//			where __n is the total number of data points
 //OUTPUT: battery percentage graph
 function batteryDisplay(data){
 	// console.log(data);

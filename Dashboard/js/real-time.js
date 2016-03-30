@@ -1,6 +1,5 @@
 //real-time JSON object into graph
 //INPUT: JSON Object
-//		ex) '[{"datetime":String, "battery":float, clientID":String}]'
 //OUTPUT: accel with update graph
 function realTimeDisplay(data){
 	// console.log(data);
@@ -245,7 +244,7 @@ function realTimeDisplay(data){
 			// .attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
 			// .style("text-anchor", "middle")
 			// .text("Date & Time");
-			
+
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);
