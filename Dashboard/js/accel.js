@@ -1,7 +1,5 @@
 //accel JSON object into graph
 //INPUT: JSON Object
-//		ex) '[{"datetime":String, "accelX":float, "accelY":float, "accelZ":float, "clientID":String},*(__n)]'
-//			where __n is the total number of data points
 //OUTPUT: accel graph with all three dimensions
 function accelDisplay(data){
 	// console.log(data);
@@ -10,7 +8,7 @@ function accelDisplay(data){
 	var margin = {
 		top: 20,
 		right: 50,
-		bottom: 70,
+		bottom: 100,
 		left: 50
 		};
 	var width = 1000 - margin.left - margin.right;
@@ -25,18 +23,7 @@ function accelDisplay(data){
 		var data = data.hits.hits;
 		// console.log(data);
 
-		//earliest date
-		// var xMin = new Date(parseInt(d3.min(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));
-		//  console.log(xMin);
-		// //latest date
-		// var xMax = new Date(parseInt(d3.max(data,function(d, i){
-		// 		return d.fields.datetime;
-		// 		})));	
-		// console.log(xMax);
-
-		//x axis (dateTime)
+//=======================================================X Axis (dateTime)
 		var x = d3.time.scale.utc()
 			// .domain([xMin, xMax])
 			.domain(d3.extent(data,function(d){
@@ -44,7 +31,7 @@ function accelDisplay(data){
 			}))
 			.range([0, width]);
 
-		//y axis (range)
+//=======================================================Y Axis (Range)
 		var y = d3.scale.linear()
 			.domain([-20,+20])
 			// .domain(d3.extent(data,function(d){
@@ -53,7 +40,7 @@ function accelDisplay(data){
 			.range([height, 0]);
 
 
-		//Axis
+//=======================================================Axises display
 		var xAxis = d3.svg.axis()
 			.scale(x)
 			.orient('bottom')
@@ -65,6 +52,7 @@ function accelDisplay(data){
 			.orient('left')
 			.ticks(5);
 
+//=======================================================Paths (Lines and Areas)
 		var lineX = d3.svg.line()
 			.x(function(d){
 				// console.log(x(new Date(parseInt(d.datetime))));
@@ -96,48 +84,21 @@ function accelDisplay(data){
 			.interpolate("linear");
 
 
-		//Drawing			
+//=======================================================DRAWING		
 		var graph = d3.select('#history')
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom)
-			.attr('transform','translate('+margin.left+','+margin.top+')');
+			.attr('height', height + margin.top + margin.bottom);
 
-			graph.append('g')
-			.attr('class', 'y axis')
-			.attr("stroke-width", 1)
-			.attr('transform','translate('+margin.right+','+margin.top+')')
-			.call(yAxis);
-
-   			graph.append("text")
-	        .attr("class", "legend")
-	        .attr("transform", "rotate(-90)")
-	        .attr("y", 0)
-	        .attr("x",0 - ((height / 2)+ margin.top))
-	        .attr("dy", "1em")
-	        .style("text-anchor", "middle")
-	        .text("G-Force");
-
-			graph.append('g')
-			.attr('class', 'x axis')
-			.attr("stroke-width", 1)
-			.attr('transform','translate('+margin.left+','+(height+margin.top)+')')
-			.call(xAxis);
-
-			graph.append("text")
-			.attr("class", "legend")
-			.attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
-			.style("text-anchor", "middle")
-			.text("Date & Time");
-
-			//clipPath
+//=======================================================clipPath & Sizes
 			graph.append('clipPath')
 			.attr("id","rect-clip")
 			.append("rect")
 			.attr("width", width)
 			.attr("height", height);
 
-			//AccelX
+//=======================================================DRAWING PATHS
+//=======================================================AccelX
 			graph.append('path')
 			.attr("class", "line")
 			.attr("id", "lineX")
@@ -147,7 +108,7 @@ function accelDisplay(data){
 			.style("opacity", 1)
 			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
-			//AccelY
+//=======================================================AccelY
 			graph.append('path')
 			.attr("class", "line")
 			.attr("id", "lineY")
@@ -157,7 +118,7 @@ function accelDisplay(data){
 			.style("opacity", 1)
 			.attr("clip-path", "url(#rect-clip)")
 			.attr('transform','translate('+margin.left+','+margin.top+')');
-			//AccelZ
+//=======================================================AccelZ
 			graph.append('path')
 			.attr("class", "line")
 			.attr("id", "lineZ")
@@ -169,7 +130,7 @@ function accelDisplay(data){
 			.attr('transform','translate('+margin.left+','+margin.top+')');
 
 
-			//LineX Legend
+//=======================================================LineX Legend
 			graph.append("text")
 			.attr("x", (width/2))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
@@ -192,7 +153,8 @@ function accelDisplay(data){
 				};
 			})
 			.text("lineX");
-			//lineY Legend
+
+//=======================================================lineY Legend
 			graph.append("text")
 			.attr("x", (margin.left + (width/2)))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
@@ -215,7 +177,8 @@ function accelDisplay(data){
 				};
 			})
 			.text("lineY");
-			//lineZ Legend
+
+//=======================================================lineZ Legend
 			graph.append("text")
 			.attr("x", ((margin.left*2) + (width/2)))
 			.attr("y", (height + margin.top + ((margin.top + margin.bottom)/2)))
@@ -238,6 +201,31 @@ function accelDisplay(data){
 				};
 			})
 			.text("lineZ");
+
+//=======================================================DRAWING AXISES
+			graph.append('g')
+			.attr('class', 'y axis')
+			.attr("stroke-width", 1)
+			.attr('transform','translate('+margin.right+','+margin.top+')')
+			.call(yAxis)
+			.append("text")
+	        .attr("transform", "rotate(-90)")
+	        .attr("y", -(margin.left))
+	        .attr("x",0 - (height / 2))
+	        .attr("dy", "1em")
+	        .style("text-anchor", "middle")
+	        .text("G-Force");
+
+			graph.append('g')
+			.attr('class', 'x axis')
+			.attr("stroke-width", 1)
+			.attr('transform','translate('+margin.left+','+(height+margin.top)+')')
+			.call(xAxis);
+			// .append("text")
+			// .attr("class", "legend")
+			// .attr("transform", "translate("+((width+margin.left+margin.right)/2) + " ," + (height+margin.bottom+margin.top) + ")")
+			// .style("text-anchor", "middle")
+			// .text("Date & Time");
 	} else{
 		console.log("accelDisplay JSON incorrect");
 		console.log(data);

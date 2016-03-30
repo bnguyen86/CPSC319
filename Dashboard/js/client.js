@@ -37,6 +37,7 @@ function dateTimePopUp(event){
 			element.type = "datetime-local"
 			element.id = se[i];
 			date.appendChild(element);
+			// date.appendChild(document.createElement("br"));
 		}
 		console.log(formatLocalDate());
 		document.getElementById("start").value = d.getUTCFullYear()+'-01-01T00:00';
@@ -67,7 +68,7 @@ function dateTimePopUp(event){
 // OUTPUT:
 socket.on('clientIds',function(data){
 	// console.log("clientIDs");
-	// console.log(data);
+	console.log(data);
 	// var parsed = JSON.parse(data);
 	// consol.log(parsed);
 	// console.log(parsed);
@@ -105,6 +106,7 @@ function userSelection(id){
 	var message = '{"clientId":'+ JSON.stringify(id) +'}';
 	document.getElementById("now").innerHTML="Current User: "+curr_ID;
 	document.getElementById("user_dis").innerHTML="";
+	document.getElementById("real-time").innerHTML = " ";	
 	socket.emit('real-time',message);
 };
 
@@ -126,45 +128,62 @@ function query(event){
 			document.getElementById("date").innerHTML = "";
 			break;
 		case 'real-time':
+		if(curr_ID != null){
 			socket.emit('stop-real', message);
+			document.getElementById("real-time").innerHTML = " ";
 			document.getElementById("date").innerHTML = "";
 			var message = '{"clientId":'+ JSON.stringify(curr_ID) +'}';
 			socket.emit('real-time',message);
+		}else{
+			console.log("REAL-TIME: Please Choose an ID first");
+		}
 			break;
 		case 'battery':
+		if(curr_ID != null){		
 			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "BATTERY DATA";
 			document.getElementById("date").innerHTML=""
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
 			dateTimePopUp('battery');
-			// socket.emit('battery',message);
+		}else{
+			console.log("BATTERY: Please Choose an ID first");
+		}
 			break;
 		case 'accel':
+		if(curr_ID != null){		
 			socket.emit('stop-real', message);
 			document.getElementById("div-title").innerHTML = "ACCELEROMETER DATA";
 			document.getElementById("date").innerHTML="";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
 			dateTimePopUp('accel');
-			// socket.emit('accel',message);
+		}else{
+			console.log("ACCEL: Please Choose an ID first");
+		}
 			break;
 		case 'pos':
+		if(curr_ID != null){		
 			socket.emit('stop-real', message);
+			document.getElementById("div-title").innerHTML = "MAP";
+			document.getElementById("date").innerHTML="";
+			document.getElementById("real-time").innerHTML = "";
+			document.getElementById("history").innerHTML = "";
 			socket.emit('pos',message);
+		}else{
+			console.log("MAP: Please Choose an ID first");
+		}			
 			break;
 	}
 };
 
 // displays the selected users real-time accel data
 socket.on('rRealTime',function(data){
-	// if(document.getElementById("div-title").innerHTML != "REAL TIME MOVEMENT" && document.getElementById("real-time").innerHTML == ""){
+	if(document.getElementById("real-time").innerHTML != ""){
 		realTimeDisplay(data);
-	// }else if(document.getElementById("div-title").innerHTML == "REAL TIME MOVEMENT" && document.getElementById("real-time").innerHTML != ""){
-	// 	redrawGraph(data);
-	// } else{
-	// 	console.log("Switched Query");
-	// }
+	} else{
+		console.log("Switched Query");
+	}
 });
 
 //display/render data
@@ -191,8 +210,6 @@ function submitDateTime(event){
 	console.log(pEnd);
 	qDate = '"start":"'+pStart+'", "end":"'+pEnd+'"';
 	// console.log("SUBMIT: "+qDate);
-	// event = this.id;
-	// console.log(event);
 	var message = '{"clientID":'+JSON.stringify(curr_ID)+
 				', '+ qDate+'}';
 				// '",'+rDateTime+'}';

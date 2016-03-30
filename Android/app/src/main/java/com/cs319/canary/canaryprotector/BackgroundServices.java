@@ -3,6 +3,7 @@ package com.cs319.canary.canaryprotector;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.text.format.Time;
 
@@ -32,6 +33,7 @@ public class BackgroundServices extends IntentService {
     }
 
     private static String clientId;
+    private static String clientName;
     private static final String topic = "team-mat-canary";
 
     private static int dataCollectionInterval = 1000;
@@ -63,7 +65,10 @@ public class BackgroundServices extends IntentService {
         clientId = tm.getDeviceId();
         MqttClient.connect(getApplicationContext(), getString(R.string.broker_url), 1883, clientId);
 
-        //setDataCollectionTimer(clientId, getDataCollectionInterval());
+        //set client name
+        setClientName();
+
+        setDataCollectionTimer(clientId, getDataCollectionInterval());
         setDataTransferTimer(clientId, getDataTransferInterval());
         setReconnectTimer();
         setLocalDataTransferTimer(clientId);
@@ -114,18 +119,20 @@ public class BackgroundServices extends IntentService {
         collectionTimer.scheduleAtFixedRate(new TimerTask() {
                       @Override
                       public void run() {
-                          Time now = new Time();
-                          now.setToNow();
+                          if(MqttClient.client != null && !MqttClient.client.isConnected())
+                          {
+                              Time now = new Time();
+                              now.setToNow();
 
-                          String payload = createJsonData(cId,
-                                  String.valueOf(now.toMillis(true)),
-                                  DataCollectorService.getAccelValues(),
-                                  DataCollectorService.getBatteryPct(),
-                                  DataCollectorService.getLocation(),
-                                  dataTransferInterval);
+                              String payload = createJsonData(cId,
+                                      String.valueOf(now.toMillis(true)),
+                                      DataCollectorService.getAccelValues(),
+                                      DataCollectorService.getBatteryPct(),
+                                      DataCollectorService.getLocation(),
+                                      dataTransferInterval);
 
-                          LocalDataManager.WriteToFile(payload);
-
+                              LocalDataManager.WriteToFile(payload);
+                          }
                       }
                   },
                 //Set how long before to start calling the TimerTask (in milliseconds)
@@ -210,6 +217,7 @@ public class BackgroundServices extends IntentService {
             payload.put("lat", latlon[0]);
             payload.put("lon", latlon[1]);
             payload.put("transferRate", transferRate);
+            payload.put("clientName",clientName);
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -227,6 +235,7 @@ public class BackgroundServices extends IntentService {
             payload.put("clientId", clientId);
             payload.put("lat", latlon[0]);
             payload.put("lon", latlon[1]);
+            payload.put("clientName",clientName);
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -250,5 +259,10 @@ public class BackgroundServices extends IntentService {
     public static void setDataTransferInterval(int dataTransferInterval) {
         BackgroundServices.dataTransferInterval = dataTransferInterval;
         setDataTransferTimer(clientId, getDataTransferInterval());
+    }
+
+    public void setClientName(){
+        SharedPreferences pref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE);
+        this.clientName = pref.getString(WelcomeActivity.CLIENT_NAME,"anonymous");
     }
 }
