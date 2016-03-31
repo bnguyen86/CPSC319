@@ -192,7 +192,7 @@ io.on('connection', function(socket) {
                     var bucketsName = responseObject.aggregations;
                     var returnArray = []
 
-                    for (var i = 0; i < buckets.length; i++) {
+                    for (var i = 0; i < bucketsID.length; i++) {
                         returnArray.push(bucketsID[i].key);
                         returnArray.push(bucketsName[i].key);
                     }
