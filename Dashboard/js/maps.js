@@ -4,8 +4,8 @@
 //INPUT: JSON Object
 //			where __n is the total number of data points
 //OUTPUT: map with user
-function mapDisplay(data){
-	var margin = {
+function mapDisplay(){
+/* 	var margin = {
 		top: 20,
 		right: 50,
 		bottom: 30,
@@ -18,8 +18,12 @@ function mapDisplay(data){
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
 			.attr('height', height + margin.top + margin.bottom)
-			.attr('transform','translate('+margin.left+','+margin.top+')');
-
+			.attr('transform','translate('+margin.left+','+margin.top+')'); */
+	var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: -34.397, lng: 150.644},
+    zoom: 8
+  });
+			
 	// initialize();
 };
 

@@ -234,14 +234,33 @@ socket.on('sos',function(data){
   		var sosDateTime = data.datetime;
   		var sosLat = data.lat;
   		var sosLon = data.lon;
-/* 		alert( sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.'); */		
+		var sosLoc = {lat: sosLat, lng: sosLon};
+		
 		var popup = document.getElementById('light');
 		var blackout = document.getElementById('fade');
 		var alertmsg = document.getElementById('alertmsg');
 		
 		popup.style.display = 'block';
 		blackout.style.display = 'block';
-		alertmsg.innerHTML = sosClientId + ' sent a SOS message, send help to ' + sosLat +', ' + sosLon + '.';
+		alertmsg.innerHTML = '<b>' + sosClientId + '</b>' + ' sent a SOS message. <br> Send help to <b>' + sosLat + ', ' + sosLon + '</b>';
+		
+		function plotLoc() {
+			var alertmap = new google.maps.Map(document.getElementById('alertmap'), {
+				center: {lat: 49.246292, lng: -123.116226},
+				zoom: 15
+			});
+			
+			alertmap.panTo(sosLoc);
+			
+			var marker = new google.maps.Marker({
+				position: sosLoc,
+				map: alertmap,
+				title: 'SOS Location'
+			});
+			
+		}
+		
+		plotLoc();
 		
 		var closeBtn = document.createElement("button");
 		closeBtn.className = "alert-btn";
