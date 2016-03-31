@@ -163,18 +163,16 @@ io.on('connection', function(socket) {
     function getClientIDs() {
         var payload = {
             "size": 0,
-            "aggs": [
+            "aggs": {
                 "id": {
                     "terms": {
                         "field": "clientId"
-                    }
-                },
-                "name": {
-                    "terms": {
+                    },
+                    "name": {
                         "field": "clientName"
                     }
                 }
-            ]
+            }
         }
 
         var payloadString = JSON.stringify(payload);
@@ -191,8 +189,8 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     var responseObject = JSON.parse(body);
-                    var bucketsID = responseObject.aggregations[0]buckets;
-                    var bucketsName = responseObject.aggregations.[1].buckets;
+                    var bucketsID = responseObject.aggregations.id.buckets;
+                    var bucketsName = responseObject.aggregations.name.buckets;
                     var returnArray = []
 
                     for (var i = 0; i < bucketsID.length; i++) {
