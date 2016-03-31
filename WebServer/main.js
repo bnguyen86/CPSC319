@@ -454,8 +454,9 @@ client.on('message', function(topic, message) {
 //========================================== MESSAGE RECEIVING AND ANALYSIS END
 
 //========================================== HELPER FUNCTIONS
+module.exports = {
 
-function generateUUID() {
+generateUUID: function() {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = (d + Math.random() * 16) % 16 | 0;
@@ -463,9 +464,9 @@ function generateUUID() {
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
-};
+},
 
-function fallDetected(message) {
+fallDetected: function(message) {
     if (isJSON(message)) {
         var inputJSON = JSON.parse(message);
         var inputAccelX = inputJSON.accelX;
@@ -479,18 +480,18 @@ function fallDetected(message) {
     } else {
         return false;
     }
-}
+},
 
-function isJSON(message) {
+isJSON: function(message) {
     try {
         JSON.parse(message);
     } catch (e) {
         return false;
     }
     return true;
-};
+},
 
-function sendSOSMessage(source, clientId, clientName, datetime, lat, lon) {
+sendSOSMessage: function(source, clientId, clientName, datetime, lat, lon) {
     var payload = {
         "clientId": clientId,
         "clientName": clientName,
@@ -501,5 +502,5 @@ function sendSOSMessage(source, clientId, clientName, datetime, lat, lon) {
     io.emit('sos', payload);
     console.log("logging sos");
 }
-
+};
 //========================================== HELPER FUNCTIONS END
