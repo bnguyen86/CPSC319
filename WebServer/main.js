@@ -166,7 +166,8 @@ io.on('connection', function(socket) {
             "aggs": {
                 "id": {
                     "terms": {
-                        "cid": "clientId"
+                        "field": "clientId",
+                        "field": "clientName"
                     }
                 }
             }
@@ -186,15 +187,14 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     var responseObject = JSON.parse(body);
-                    var bucketsID = responseObject.aggregations.id.buckets;
-                    var bucketsName = responseObject.aggregations;
+                    var buckets = responseObject.aggregations.id.buckets;
                     var returnArray = []
 
-                    for (var i = 0; i < bucketsID.length; i++) {
-                        returnArray.push(bucketsID[i].key);
-                        // returnArray.push(bucketsName[i].key);
+                    for (var i = 0; i < buckets.length; i++) {
+                        returnArray.push(buckets[i].key);
                     }
                     socket.emit('clientIds', returnArray);
+                    console.log(returnArray);
                 }
             });
     };
