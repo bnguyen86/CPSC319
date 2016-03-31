@@ -193,7 +193,7 @@ io.on('connection', function(socket) {
                     for (var i = 0; i < buckets.length; i++) {
                         returnArray.push(buckets[i].key);
                     }
-                    socket.emit('clientIds', 'clientName', returnArray);
+                    socket.emit('clientIds', returnArray);
                     console.log(returnArray);
                 }
             });
