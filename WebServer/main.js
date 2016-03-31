@@ -191,6 +191,7 @@ io.on('connection', function(socket) {
                     var returnArray = []
 
                     for (var i = 0; i < buckets.length; i++) {
+                        returnArray.push(buckets[i].value);
                         returnArray.push(buckets[i].key);
                     }
                     socket.emit('clientIds', returnArray);
