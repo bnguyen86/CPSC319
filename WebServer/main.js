@@ -167,8 +167,10 @@ io.on('connection', function(socket) {
                 "id": {
                     "terms": {
                         "field": "clientId"
-                    },
-                    "name": {
+                    }
+                },
+                "name": {
+                    "terms": {
                         "field": "clientName"
                     }
                 }
