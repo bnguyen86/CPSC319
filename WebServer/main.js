@@ -166,12 +166,13 @@ io.on('connection', function(socket) {
             "aggs": {
                 "id": {
                     "terms": {
-                        "cid": "clientId",
-                        "cname": "clientName"
+                        "cid": "clientId"
                     }
                 }
             }
         }
+
+        console.log(payloadString);
 
         var payloadString = JSON.stringify(payload);
 
@@ -187,9 +188,8 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     var responseObject = JSON.parse(body);
-                    console.log(responseObject);
-                    var bucketsID = responseObject.aggregations.id.terms.cid.buckets;
-                    var bucketsName = responseObject.aggregations.id.terms.cname;
+                    var bucketsID = responseObject.aggregations;
+                    var bucketsName = responseObject.aggregations;
                     var returnArray = []
 
                     for (var i = 0; i < buckets.length; i++) {
@@ -197,7 +197,6 @@ io.on('connection', function(socket) {
                         returnArray.push(bucketsName[i].key);
                     }
                     socket.emit('clientIds', returnArray);
-                    console.log(returnArray);
                 }
             });
     };
