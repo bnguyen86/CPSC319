@@ -375,7 +375,7 @@ client.on('message', function(topic, message) {
     }
 
     if (fallDetected(message)) {
-        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientId, JSON.parse(message).lat, JSON.parse(message).lon);
+        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).lat, JSON.parse(message).lon);
     };
 
     var messageJSON = JSON.parse(message.toString());
@@ -451,9 +451,10 @@ function isJSON(message) {
     return true;
 };
 
-function sendSOSMessage(source, clientId, datetime, lat, lon) {
+function sendSOSMessage(source, clientId, clientName, datetime, lat, lon) {
     var payload = {
         "clientId": clientId,
+        "clientName": clientName
         "datetime": datetime,
         "lat": lat,
         "lon": lon
