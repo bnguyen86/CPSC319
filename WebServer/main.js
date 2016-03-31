@@ -454,7 +454,7 @@ function isJSON(message) {
 function sendSOSMessage(source, clientId, clientName, datetime, lat, lon) {
     var payload = {
         "clientId": clientId,
-        "clientName": clientName
+        "clientName": clientName,
         "datetime": datetime,
         "lat": lat,
         "lon": lon
