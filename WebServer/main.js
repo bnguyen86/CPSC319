@@ -167,7 +167,7 @@ io.on('connection', function(socket) {
                 "id": {
                     "terms": {
                         "field": "clientId",
-                        // "field": "clientName"
+                        "field": "clientName"
                     }
                 }
             }
@@ -193,7 +193,7 @@ io.on('connection', function(socket) {
                     for (var i = 0; i < buckets.length; i++) {
                         returnArray.push(buckets[i].key);
                     }
-                    socket.emit('clientIds', returnArray);
+                    socket.emit('clientIds', 'clientName', returnArray);
                     console.log(returnArray);
                 }
             });
@@ -207,7 +207,7 @@ io.on('connection', function(socket) {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'datetime', 'accelX', 'accelY', 'accelZ'],
+            "fields": ['clientId', 'clientName', 'datetime', 'accelX', 'accelY', 'accelZ'],
             "query": {
                 "term": {
                     "clientId": curr_ID
@@ -246,7 +246,7 @@ io.on('connection', function(socket) {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'datetime', 'battery', 'transferRate'],
+            "fields": ['clientId', 'clientName', 'datetime', 'battery', 'transferRate'],
             "query": {
                 "filtered": {
                     "query": {
@@ -298,7 +298,7 @@ io.on('connection', function(socket) {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'datetime', 'accelX', 'accelY', 'accelZ'],
+            "fields": ['clientId', 'clientName', 'datetime', 'accelX', 'accelY', 'accelZ'],
             "query": {
                 "filtered": {
                     "query": {
@@ -386,7 +386,7 @@ client.on('message', function(topic, message) {
     var stringMessage = message.toString();
 
     if (messageJSON.hasOwnProperty('type') && messageJSON.type === 'sos') {
-        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
+        sendSOSMessage('client', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
     }
 
     //the following block will log the hearbeat to elasticsearch
