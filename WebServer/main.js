@@ -187,8 +187,8 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     var responseObject = JSON.parse(body);
-                    var bucketsID = responseObject.aggregations.cid.buckets;
-                    var bucketsName = responseObject.aggregations.cname.buckets;
+                    var bucketsID = responseObject.aggregations.id.terms.cid.buckets;
+                    var bucketsName = responseObject.aggregations.id.terms.cname.buckets;
                     var returnArray = []
 
                     for (var i = 0; i < buckets.length; i++) {
