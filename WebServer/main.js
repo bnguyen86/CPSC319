@@ -166,8 +166,7 @@ io.on('connection', function(socket) {
             "aggs": {
                 "id": {
                     "terms": {
-                        "field": "clientId",
-                        "field": "clientName"
+                        "field": "clientId"
                     }
                 }
             }
@@ -375,7 +374,7 @@ client.on('message', function(topic, message) {
     }
 
     if (fallDetected(message)) {
-        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).lat, JSON.parse(message).lon);
+        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
     };
 
     var messageJSON = JSON.parse(message.toString());
