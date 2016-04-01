@@ -36,10 +36,12 @@ io.on('connection', function(socket) {
 
     //display all users
     getClientIDs();
+    getClientNames();
 
     socket.on('clientId', function(data) {
         clearInterval(currIntervalID);
         getClientIDs();
+        getClientNames();
     });
 
     //once clientID is selected, display accel data
@@ -211,6 +213,44 @@ io.on('connection', function(socket) {
                         returnArray.push(buckets[i].key);
                     }
                     socket.emit('clientIds', returnArray);
+                    console.log(returnArray);
+                }
+            });
+    };
+
+    function getClientNames() {
+        var payload = {
+            "size": 0,
+            "aggs": {
+                "id": {
+                    "terms": {
+                        "field": "clientName"
+                    }
+                }
+            }
+        }
+
+        var payloadString = JSON.stringify(payload);
+
+        request({
+                url: URLsearch,
+                method: 'POST',
+                body: payloadString
+            },
+
+            //the callback function when something is successfully retrieved
+            function(error, response, body) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var responseObject = JSON.parse(body);
+                    var buckets = responseObject.aggregations.id.buckets;
+                    var returnArray = []
+
+                    for (var i = 0; i < buckets.length; i++) {
+                        returnArray.push(buckets[i].key);
+                    }
+                    socket.emit('clientName', returnArray);
                     console.log(returnArray);
                 }
             });
