@@ -29,56 +29,11 @@
 	  <script src="./js/real-time.js"></script>
 	  <script src="./js/battery.js"></script>
 	  <script src="./js/accel.js"></script>
-	  <!-- <script src="./js/maps.js"></script> -->
+	  <script src="./js/maps.js"></script>
 	  <script src="./js/index.js"></script>
 	  <script src="./js/sos.js"></script>
 
 	</head>
-
-<<<<<<< HEAD
-<body ng-app="Dashboard" layout="row" ng-cloak>
-<div id="splash">
-</div>
-<md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-is-locked-open="true">
-	<div id="menu-links-container">
-		<img id="logo-open" src="./img/protector-logo-open-ft.png" width="200" height="200"/>
-		<!-- <img id="logo-close" src="./img/protector-logo-close-ft.png" width="200" height="200"/> -->
-		<img src="./img/protector-logo-text.png" width="200" height="25"/>
-		<!-- <h1 id="menutitle"></h1> -->
-			<p id="now"></p>
-			<md-button onclick="query('clientIds')"> USERS </md-button>
-				<br>
-			<md-divider class="menu"></md-divider><br>
-			<md-button onclick="query('real-time')"> REAL-TIME GRAPH </md-button>
-				<br>
-				<md-divider class="menu"></md-divider><br>
-			<md-button onclick="query('accel')"> ACCELEROMETER GRAPH </md-button>
-				<br>
-			<md-divider class="menu"></md-divider><br>
-			<md-button onclick="query('battery')"> BATTERY GRAPH </md-button>
-				<br>
-			<md-divider class="menu"></md-divider><br>
-			<md-button onclick="query('pos')"> USER LOCATION </md-button>
-	</div>
-</md-sidenav>
-
-<md-content flex layout="column">
-	<ng-view>
-	<div id="light" class="white_content"><center>
-		<div id="alertmsg"></div><br>
-		<div id="alertmap"></div><br></center>
-	</div>
-	<div id="fade" class="black_overlay"></div>
-	<div id="div-title">PLEASE SELECT A USER TO VIEW</div><br>
-	<div id="user_dis"></div>
-	<br><br>
-	<div id="date"></div>
-	<div class="graph" id="real-time"></div>
-	<center><div id="map"></div></center>
-	<div class="graph" id="history"></div>
-	</ng-view>
-</md-content>
-=======
 	<body ng-app="Dashboard" layout="row" ng-cloak>
 		<div id="splash">
 		</div>
@@ -101,8 +56,7 @@
 					<md-button onclick="query('battery')"> BATTERY GRAPH </md-button>
 						<br>
 					<md-divider class="menu"></md-divider><br>
-					<!-- <md-button onclick="mapDisplay('data')"> USER LOCATIONS </md-button><br> -->
-					<md-button ng-disabled="true"> USER LOCATION </md-button>
+					<md-button onclick="query('pos')"> USER LOCATION </md-button>
 			</div>
 	</md-sidenav>
 
@@ -119,7 +73,6 @@
 							<div id="alertmap"></div>
 			        	</center>
 					</div> -->
->>>>>>> 06c0d1c9049ad1a7d58edd98497f8755f106ecd7
 
 				<div id="light" class="white_content" ng-cloak>
 				  <md-content id="alert">
