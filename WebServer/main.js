@@ -123,10 +123,11 @@ io.on('connection', function(socket) {
             //input & output values
             var parsed = JSON.parse(data);
             var curr_ID = parsed.clientID;
-            var start = parsed.start;
-            var end = parsed.end;
+			console.log(data);
+            /* var start = parsed.start;
+            var end = parsed.end; */
             //function to query server
-            posQuery(curr_ID, start, end);
+            posQuery(curr_ID);
             // socket.emit('rAccel',message);
         } else {
             console.log("pos socket JSON incorrect");
@@ -464,11 +465,11 @@ io.on('connection', function(socket) {
     function posQuery(curr_ID) {
         var payload = {
             "size": 1,
-            "sort": [{
+             "sort": [{
                 "datetime": {
                     "order": "desc"
                 }
-            }],
+            }], 
             "fields": ['clientId', 'lat', 'lon'],
             "query": {
                 "filtered": {
@@ -501,8 +502,8 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     console.log("Found data: POS");
+					console.log(body);
                     socket.emit('rPOS', body);
-                    //console.log(body);
                     //message = body;
                     //console.log(message);
                 }
