@@ -205,6 +205,69 @@ io.on('connection', function(socket) {
             });
     };
 
+    //@Douglas and @Wes, this will return the clientId / clientName array we discussed
+    function getClientIdArray(){
+        console.log('attempting to get the array');
+        //###
+        var payload = {
+            "size": 0,
+            "aggs": {
+                "id1_count": {
+                    "terms": { "field": "clientId" },
+                    "aggs": {
+                        "id2_count": {
+                            "terms": { "field": "clientName" }
+                        }  
+                   }
+                }  
+            }
+        }
+        var payloadString = JSON.stringify(payload);
+        request({
+                url: URLsearch,
+                method: 'POST',
+                body: payloadString
+            },
+
+            //the callback function when something is successfully retrieved
+            function(error, response, body) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var responseObject = JSON.parse(body);
+                    // console.log('the client array object is ' + JSON.stringify(responseObject));
+                    var buckets = responseObject.aggregations.id1_count.buckets;
+                    // console.log('buckets ' + JSON.stringify(buckets));
+
+                    var returnArray = [];
+                    console.log('buckets ' + JSON.stringify(buckets));
+                    for (var i = 0; i<buckets.length; i++){
+                        var aggregationObject = buckets[i];
+                        // console.log('a bucket entry: ' + JSON.stringify(aggregationObject));
+ 
+                        var clientId = aggregationObject.key;
+                        var subBuckets = aggregationObject.id2_count.buckets;
+                        for (var a = 0; a<subBuckets.length; a++){
+                            var clientName = subBuckets[a].key
+                            returnArray.push(clientId);
+                            returnArray.push(clientName);
+
+                            // var returnObject = {}
+                            // returnObject.clientId = clientId;
+                            // returnObject.clientName = clientName;
+                            // // console.log('ADDING: ' + JSON.stringify(returnObject));
+                            // returnArray.push(returnObject);
+
+                        }
+
+                    }
+                    console.log('the return array is: ' + JSON.stringify(returnArray));
+
+                    return returnArray;
+                }
+            });
+    }
+
     function realTimeQ(curr_ID) {
         var payload = {
             "size": 1000,
@@ -364,7 +427,10 @@ client.on('connect', function() {
     });
     client.subscribe('team-mat-canary');
     console.log('connected to mqtt broker');
+
 });
+
+
 
 //========================================== CONNECTIONS END
 
