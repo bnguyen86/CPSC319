@@ -542,7 +542,7 @@ function fallDetected(message) {
         var inputAccelZ = inputJSON.accelZ;
         var inputClientId = inputJSON.clientId;
 
-        if (inputAccelX < -20 || inputAccelY < -20 || inputAccelZ < -20) {
+        if (inputAccelX < -17 || inputAccelY < -17 || inputAccelZ < -17) {
             return true;
         }
     } else {
