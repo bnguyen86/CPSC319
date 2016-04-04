@@ -54,7 +54,7 @@ public class BackgroundServices extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // Initialize LocalDataManager
-        LocalDataManager.DataManagerInitialize(getApplicationContext(), "CanaryTestFile.txt");
+        LocalDataManager.DataManagerInitialize(getApplicationContext(), "CanaryLocalData.txt");
 
         //Set up data collector
         Intent dataCollectorServiceIntent = new Intent(this, DataCollectorService.class);
@@ -162,7 +162,7 @@ public class BackgroundServices extends IntentService {
                 //Set how long before to start calling the TimerTask (in milliseconds)
                 0,
                 //Set the amount of time between each execution (in milliseconds)
-                10000);
+                5000);
     }
 
     private static void setLocalDataTransferTimer(String clientId){
@@ -199,7 +199,7 @@ public class BackgroundServices extends IntentService {
                 //Set how long before to start calling the TimerTask (in milliseconds)
                 0,
                 //Set the amount of time between each execution (in milliseconds)
-                60000);
+                10000);
     }
 
 
