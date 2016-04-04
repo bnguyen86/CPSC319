@@ -36,10 +36,12 @@ io.on('connection', function(socket) {
 
     //display all users
     getClientIDs();
+    getClientNames();
 
     socket.on('clientId', function(data) {
         clearInterval(currIntervalID);
         getClientIDs();
+        getClientNames();
     });
 
     //once clientID is selected, display accel data
@@ -113,52 +115,70 @@ io.on('connection', function(socket) {
     //listen for GPS query
     //input:
     //output:
-    socket.on('pos', function(data) {});
+    socket.on('pos', function(data) {
+                if (currIntervalID != null) {
+            clearInterval(currIntervalID)
+        };
+        if (isJSON(data)) {
+            //input & output values
+            var parsed = JSON.parse(data);
+            var curr_ID = parsed.clientID;
+            var start = parsed.start;
+            var end = parsed.end;
+            //function to query server
+            posQuery(curr_ID, start, end);
+            // socket.emit('rAccel',message);
+        } else {
+            console.log("pos socket JSON incorrect");
+            //console.log(data);
+        }
+    });
 
     //========================================== ELASTICSEARCH QUERIES
 
     //@Wes: use this function to return all the heartbeats that fall within the start and end times
-    function getHeartbeatResponses(start, end) {
-        var payload = {
-            "size": 10000,
-            "sort": [{
-                "datetime": {
-                    "order": "desc"
-                }
-            }],
-            "query": {
-                "filtered": {
-                    "query": {
-                        "match_all": {}
-                    },
-                    "filter": {
-                        "range": {
-                            "datetime": {
-                                "to": end,
-                                "from": start
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    //TEMPLATE
+    // function getHeartbeatResponses(start, end) {
+    //     var payload = {
+    //         "size": 10000,
+    //         "sort": [{
+    //             "datetime": {
+    //                 "order": "desc"
+    //             }
+    //         }],
+    //         "query": {
+    //             "filtered": {
+    //                 "query": {
+    //                     "match_all": {}
+    //                 },
+    //                 "filter": {
+    //                     "range": {
+    //                         "datetime": {
+    //                             "to": end,
+    //                             "from": start
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        var payloadString = JSON.stringify(payload);
-        request({
-                url: URLsearch,
-                method: 'POST',
-                body: payloadString
-            }, //the callback function when something is successfully retrieved
-            function(error, response, body) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    //console.log(body);
-                }
-            });
-        // }
+    //     var payloadString = JSON.stringify(payload);
+    //     request({
+    //             url: URLsearch,
+    //             method: 'POST',
+    //             body: payloadString
+    //         }, //the callback function when something is successfully retrieved
+    //         function(error, response, body) {
+    //             if (error) {
+    //                 console.log(error);
+    //             } else {
+    //                 //console.log(body);
+    //             }
+    //         });
+    //     // }
 
-    };
+    // };
 
     function getClientIDs() {
         var payload = {
@@ -168,8 +188,41 @@ io.on('connection', function(socket) {
                     "terms": {
                         "field": "clientId"
                     }
-                },
-                "name": {
+                }
+            }
+        }
+
+        var payloadString = JSON.stringify(payload);
+
+        request({
+                url: URLsearch,
+                method: 'POST',
+                body: payloadString
+            },
+
+            //the callback function when something is successfully retrieved
+            function(error, response, body) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var responseObject = JSON.parse(body);
+                    var buckets = responseObject.aggregations.id.buckets;
+                    var returnArray = []
+
+                    for (var i = 0; i < buckets.length; i++) {
+                        returnArray.push(buckets[i].key);
+                    }
+                    socket.emit('clientIds', returnArray);
+                    console.log(returnArray);
+                }
+            });
+    };
+
+    function getClientNames() {
+        var payload = {
+            "size": 0,
+            "aggs": {
+                "id": {
                     "terms": {
                         "field": "clientName"
                     }
@@ -191,15 +244,13 @@ io.on('connection', function(socket) {
                     console.log(error);
                 } else {
                     var responseObject = JSON.parse(body);
-                    var bucketsID = responseObject.aggregations.id.buckets;
-                    var bucketsName = responseObject.aggregations.name.buckets;
+                    var buckets = responseObject.aggregations.id.buckets;
                     var returnArray = []
 
-                    for (var i = 0; i < bucketsID.length; i++) {
-                        returnArray.push(bucketsID[i].key);
-                        returnArray.push(bucketsName[i].key);
+                    for (var i = 0; i < buckets.length; i++) {
+                        returnArray.push(buckets[i].key);
                     }
-                    socket.emit('clientIds', returnArray);
+                    socket.emit('clientName', returnArray);
                     console.log(returnArray);
                 }
             });
@@ -276,7 +327,7 @@ io.on('connection', function(socket) {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'clientName', 'datetime', 'accelX', 'accelY', 'accelZ'],
+            "fields": ['clientId', 'clientName', 'datetime', 'accelX', 'accelY', 'accelZ', 'lat', 'lon'],
             "query": {
                 "term": {
                     "clientId": curr_ID
@@ -309,13 +360,13 @@ io.on('connection', function(socket) {
         console.log(end);
 
         var payload = {
-            "size": 9000,
+            "size": 5000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'clientName', 'datetime', 'battery', 'transferRate'],
+            "fields": ['clientId', 'datetime', 'battery', 'transferRate'],
             "query": {
                 "filtered": {
                     "query": {
@@ -361,13 +412,13 @@ io.on('connection', function(socket) {
 
     function accelQuery(curr_ID, start, end) {
         var payload = {
-            "size": 9000,
+            "size": 5000,
             "sort": [{
                 "datetime": {
                     "order": "desc"
                 }
             }],
-            "fields": ['clientId', 'clientName', 'datetime', 'accelX', 'accelY', 'accelZ'],
+            "fields": ['clientId', 'datetime', 'accelX', 'accelY', 'accelZ'],
             "query": {
                 "filtered": {
                     "query": {
@@ -400,6 +451,57 @@ io.on('connection', function(socket) {
                 } else {
                     console.log("Found data: Accel");
                     socket.emit('rAccel', body);
+                    //console.log(body);
+                    //message = body;
+                    //console.log(message);
+                }
+            });
+        //console.log("Message = " + body);
+        //return message;
+        // }
+    };
+
+    function posQuery(curr_ID) {
+        var payload = {
+            "size": 1,
+            "sort": [{
+                "datetime": {
+                    "order": "desc"
+                }
+            }],
+            "fields": ['clientId', 'lat', 'lon'],
+            "query": {
+                "filtered": {
+                    "query": {
+                        "term": {
+                            "clientId": curr_ID
+                        }
+                    }/* ,
+                    "filter": {
+                        "range": {
+                            "datetime": {
+                                "to": end,
+                                "from": start
+                            }
+                        }
+                    } */
+                }
+            }
+        }
+
+        var payloadString = JSON.stringify(payload);
+        var message;
+        request({
+                url: URLsearch,
+                method: 'POST',
+                body: payloadString
+            }, //the callback function when something is successfully retrieved
+            function(error, response, body) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("Found data: POS");
+                    socket.emit('rPOS', body);
                     //console.log(body);
                     //message = body;
                     //console.log(message);
@@ -447,7 +549,7 @@ client.on('message', function(topic, message) {
     }
 
     if (fallDetected(message)) {
-        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).lat, JSON.parse(message).lon);
+        sendSOSMessage('server', JSON.parse(message).clientId, JSON.parse(message).clientName, JSON.parse(message).datetime, JSON.parse(message).lat, JSON.parse(message).lon);
     };
 
     var messageJSON = JSON.parse(message.toString());
@@ -506,7 +608,7 @@ function fallDetected(message) {
         var inputAccelZ = inputJSON.accelZ;
         var inputClientId = inputJSON.clientId;
 
-        if (inputAccelX < -20 || inputAccelY < -20 || inputAccelZ < -20) {
+        if (inputAccelX < -17 || inputAccelY < -17 || inputAccelZ < -17) {
             return true;
         }
     } else {

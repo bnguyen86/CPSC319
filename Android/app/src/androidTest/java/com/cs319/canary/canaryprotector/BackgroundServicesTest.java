@@ -64,8 +64,11 @@ public class BackgroundServicesTest {
 
     @Test
     public void testDataCollectionInterval() throws Exception {
+        BackgroundServices.setDataCollectionInterval(2000);
+        assertEquals(2000, BackgroundServices.getDataCollectionInterval());
 
-
+        BackgroundServices.setDataCollectionInterval(1);
+        assertEquals(1, BackgroundServices.getDataCollectionInterval());
     }
 
 

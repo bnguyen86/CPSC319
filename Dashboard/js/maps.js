@@ -1,39 +1,42 @@
-//STOP. DON'T LOOK. IT'S BEEN POSTPONED!
+function displayLastLoc(data) {
+	console.log("HERE");
+	console.log(data);
+};
+/* function displayLastLoc(data) {
+	if (isJSON(data)) {
+		var data = JSON.parse(data);
+		var data = data.hits.hits;
+		var currLat = data[999].fields.lat[0];
+		var currLon = data[999].fields.lon[0];
+		console.log("lat: " + currLat + " lon: " + currLon);
+		
+		plotLoc(currLat, currLon);
+		
+	} else {
+		
+		var map = new google.maps.Map(document.getElementById('map'), {
+		center: {lat: 49.246292, lng: -123.116226},
+		zoom: 15
+	});
+		
+	}
+};
 
-//map JSON object into graph
-//INPUT: JSON Object
-//			where __n is the total number of data points
-//OUTPUT: map with user
-function mapDisplay(){
-/* 	var margin = {
-		top: 20,
-		right: 50,
-		bottom: 30,
-		left: 50
-		};
-	var width = 1000 - margin.left - margin.right;
-	var height = 300 - margin.top - margin.bottom;
-
-	var svg = d3.select('#history')
-			.append('svg')
-			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom)
-			.attr('transform','translate('+margin.left+','+margin.top+')'); */
+function plotLoc(lat, lon) {
+	currLoc = {lat: lat, lng: lon};
+	
 	var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},
-    zoom: 8
-  });
-			
-	// initialize();
+		center: {lat: 49.246292, lng: -123.116226},
+		zoom: 15
+	});
+	
+	map.panTo(currLoc);
+	
+	var marker = new google.maps.Marker({
+		position: currLoc,
+		map: map,
+		title: 'Current Location'
+	});
 };
 
-function initialize(){
-	var mapProp = {
-	center: new google.maps.LatLng(51.508742, -0.120850),
-	zoom: 5,
-mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-var map = new google.maps.Map(document.getElementById("history"), mapProp);
-};
-
-google.maps.event.addDomListener(window, 'load', initialize);
+ */
