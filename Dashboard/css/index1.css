@@ -20,13 +20,6 @@ md-sidenav {
 	font-family: Roboto;	
 }
 
-/*
-#map {
-	/*display: none;
-	height: 500px;
-	width: 700px;
-}*/
-
 
 md-content {
 	height: 100%;
@@ -154,10 +147,6 @@ md-divider.menu{
     shape-rendering: crispEdges;
 }
 
-/*.area {
-  fill: lightsteelblue;
-}*/
-
 .legend {
     font-family: Roboto;
     font-size: 16px;
@@ -180,14 +169,6 @@ md-divider.menu{
     filter: alpha(opacity=80);
 }    
 
-
-.legend {
-    font-family: Roboto;
-    font-size: 16px;
-    font-weight: bold;
-    text-anchor: middle;
-}
-
 .overlay {
   fill: none;
   pointer-events: all;
@@ -199,6 +180,8 @@ md-divider.menu{
 }
 
 .graph{
+	font-family: Roboto;
+	font-size: 20px;
  	top:20px;
  	left:50px;
 }

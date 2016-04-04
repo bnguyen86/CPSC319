@@ -45,6 +45,7 @@ function plotLoc(lat, lon) {
 	var marker = new google.maps.Marker({
 		position: currLoc,
 		map: map,
+		// icon: "",
 		title: 'Last Known Location'
 	});
 };

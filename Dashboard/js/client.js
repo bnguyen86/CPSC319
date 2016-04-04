@@ -31,7 +31,6 @@ function dateTimePopUp(event){
 		}
 		var d = new Date();
 		//date and time
-//_+_ BUG (2)
 		for(i = 0; i < se.length; i++){
 			var element = document.createElement("input");
 			element.type = "datetime-local"
@@ -70,9 +69,7 @@ socket.on('clientIds',function(data){
 	// console.log("clientIDs");
 	console.log(data);
 	// var parsed = JSON.parse(data);
-	// consol.log(parsed);
 	// console.log(parsed);
-	// if(document.getElementById("user_dis").childNodes.length == 0){
 	if(document.getElementById("user_dis").innerHTML==""){
 		userButtonCreation(data);
 	} else{
@@ -90,12 +87,13 @@ function userButtonCreation(data){
 		element.tag = "uid";
 		element.id = id;
 		element.className = "user-btn";
-		element.innerHTML = id;
+		element.innerHTML = data[(i+1)];
 		element.addEventListener("click", function(){
 			userSelection(this.id);
 		});
 		var dis_loc = document.getElementById("user_dis");
 		dis_loc.appendChild(element);
+		i++;
 	}
 };
 
@@ -175,7 +173,7 @@ function query(event){
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
 			document.getElementById("history").removeAttribute("style");
-			
+
 			
 			message = '{"clientID":'+JSON.stringify(curr_ID)+'}';
 			console.log(message);
