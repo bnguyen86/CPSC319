@@ -465,11 +465,11 @@ io.on('connection', function(socket) {
     function posQuery(curr_ID) {
         var payload = {
             "size": 1,
-/*             "sort": [{
+             "sort": [{
                 "datetime": {
                     "order": "desc"
                 }
-            }], */
+            }], 
             "fields": ['clientId', 'lat', 'lon'],
             "query": {
                 "filtered": {
