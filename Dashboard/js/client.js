@@ -2,6 +2,7 @@ var socket = io('http://45.55.1.125:5555/');
 // var socket = io();
 var curr_ID;
 var qDate;
+var lastSOSID;
 // var qDate = '"start": "1456869619000", "end": "1456869620500"';
 // var rDateTime = [{"datetime":"1456869619000"},{"datetime":"1456869619500"},{"datetime":"1456869620000"},{"datetime":"1456869620500"}];
 
@@ -208,7 +209,16 @@ socket.on('rPOS',function(data){
 });
 
 socket.on('sos',function(data){
-	sosDisplay(data);
+	if(lastSOSID === null) {
+		sosDisplay(data);
+		lastSOSID = data.clientId;
+	} else if (lastSOSID != data.clientId) {
+		sosAppend(data);
+		lastSOSID = data.clientId;
+	} else {
+		sosDisplay(data);
+		lastSOSID = data.clientId;
+	}
 });
 
 //Sets the dates to be used to query server/database
