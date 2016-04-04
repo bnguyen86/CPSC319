@@ -6,6 +6,7 @@ function realTimeDisplay(data){
 	document.getElementById("div-title").innerHTML = "REAL TIME MOVEMENT";
 	document.getElementById("real-time").innerHTML = "";
 	document.getElementById("history").innerHTML = "";
+	document.getElementById("history").removeAttribute("style");
 	//determine how long is xAxis
 	var rate;
 	var range = 60000;

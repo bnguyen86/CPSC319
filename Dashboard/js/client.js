@@ -125,8 +125,9 @@ function query(event){
 			document.getElementById("now").innerHTML= "";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			document.getElementById("history").removeAttribute("style");
 			document.getElementById("date").innerHTML = "";
-			document.getElementById("map").innerHTML = "";
+			// document.getElementById("map").innerHTML = "";
 			break;
 		case 'real-time':
 		if(curr_ID != null){
@@ -146,6 +147,7 @@ function query(event){
 			document.getElementById("date").innerHTML=""
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			document.getElementById("history").removeAttribute("style");
 			dateTimePopUp('battery');
 		}else{
 			console.log("BATTERY: Please Choose an ID first");
@@ -158,6 +160,8 @@ function query(event){
 			document.getElementById("date").innerHTML="";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
+			document.getElementById("history").removeAttribute("style");
+
 			dateTimePopUp('accel');
 		}else{
 			console.log("ACCEL: Please Choose an ID first");
@@ -166,19 +170,14 @@ function query(event){
 		case 'pos':
 		if(curr_ID != null){		
 			socket.emit('stop-real', message);
-			
-			document.getElementById("div-title").innerHTML = "LAST USER LOCATION";
+			document.getElementById("div-title").innerHTML = "LAST KNOWN LOCATION";
 			document.getElementById("date").innerHTML="";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
-				
-/* 			var map = new google.maps.Map(document.getElementById('map'), {
-			center: {lat: 49.246292, lng: -123.116226},
-			zoom: 12
-			}); */
+			document.getElementById("history").removeAttribute("style");
 			
-			console.log("map query");
-			message = JSON.stringify(curr_ID);
+			
+			message = '{"clientID":'+JSON.stringify(curr_ID)+'}';
 			console.log(message);
 			socket.emit('pos', message);
 		}else{
@@ -207,7 +206,6 @@ socket.on('rAccel',function(data){
 });
 
 socket.on('rPOS',function(data){
-	console.log("map");
 	displayLastLoc(data);
 });
 

@@ -22,10 +22,11 @@ md-sidenav {
 
 /*
 #map {
+	/*display: none;
 	height: 500px;
 	width: 700px;
-}
-*/
+}*/
+
 
 md-content {
 	height: 100%;
