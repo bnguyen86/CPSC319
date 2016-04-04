@@ -199,6 +199,10 @@ socket.on('rPos',function(data){
 	mapDisplay(data);
 });
 
+socket.on('sos',function(data){
+	sosDisplay(data);
+});
+
 //Sets the dates to be used to query server/database
 function submitDateTime(event){
 	offset = ((new Date().getTimezoneOffset() * 60 * 1000));
@@ -221,73 +225,16 @@ function submitDateTime(event){
 		case 'accel':
 			socket.emit('accel',message);
 			break;
+		case 'pos':
+			socket.emit('pos',message);
+			break;
 	}
 	// return qDate;
 };
 
-socket.on('sos',function(data){
-  	// console.log('SOS RECEIVED');
-  	// if(isJSON(data)){
-  		console.log(data);
-  		// var sosParsed = JSON.parsed(data);
-  		var sosClientId = data.clientId;
-  		var sosDateTime = data.datetime;
-  		var sosLat = data.lat;
-  		var sosLon = data.lon;
-		var sosLoc = {lat: sosLat, lng: sosLon};
-		
-		var popup = document.getElementById('light');
-		var blackout = document.getElementById('fade');
-		var alertmsg = document.getElementById('alertmsg');
-		
-		popup.style.display = 'block';
-		blackout.style.display = 'block';
-		alertmsg.innerHTML = '<b>' + sosClientId + '</b>' + ' sent a SOS message. <br> Send help to <b>' + sosLat + ', ' + sosLon + '</b>';
-		
-		function plotLoc() {
-			var alertmap = new google.maps.Map(document.getElementById('alertmap'), {
-				center: {lat: 49.246292, lng: -123.116226},
-				zoom: 15
-			});
-			
-			alertmap.panTo(sosLoc);
-			
-			var marker = new google.maps.Marker({
-				position: sosLoc,
-				map: alertmap,
-				title: 'SOS Location'
-			});
-			
-		}
-		
-		plotLoc();
-		
-		var closeBtn = document.createElement("button");
-		closeBtn.className = "alert-btn";
-		closeBtn.innerHTML = "OKAY";
-		
-		closeBtn.addEventListener("click", function() {
-			popup.style.display = 'none';
-			blackout.style.display = 'none';
-		});
-		
-		if (popup.lastChild.className === "alert-btn") {
-			// do nothing
-		} else {
-		popup.appendChild(closeBtn);
-		}
-		
-  	// } else{
-        // console.log("SOS socket JSON incorrect");
-  	// }
-});
 
-// function clearDiv(){
-// 	document.getElementById("date").innerHTML="";
-// 	document.getElementById("real-time").innerHTML="";
-// 	document.getElementById("history").innerHTML="";
-// }
 
+//HELPER FUNCTIONS
 function isJSON(message){
     try {
         JSON.parse(message);
