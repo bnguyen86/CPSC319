@@ -56,8 +56,7 @@
 			<md-button onclick="query('battery')"> BATTERY GRAPH </md-button>
 				<br>
 			<md-divider class="menu"></md-divider><br>
-			<!-- <md-button onclick="mapDisplay('data')"> USER LOCATIONS </md-button><br> -->
-			<md-button ng-disabled="true"> USER LOCATION </md-button>
+			<md-button onclick="query('pos')"> USER LOCATION </md-button>
 	</div>
 </md-sidenav>
 
@@ -65,16 +64,16 @@
 	<ng-view>
 	<div id="light" class="white_content"><center>
 		<div id="alertmsg"></div><br>
-		<div id="alertmap"></div></center>
+		<div id="alertmap"></div><br></center>
 	</div>
 	<div id="fade" class="black_overlay"></div>
 	<div id="div-title">PLEASE SELECT A USER TO VIEW</div><br>
 	<div id="user_dis"></div>
 	<br><br>
 	<div id="date"></div>
-	<div class="graph" id="real-time"> </div>
+	<div class="graph" id="real-time"></div>
+	<center><div id="map"></div></center>
 	<div class="graph" id="history"></div>
-	<div id="map"></div>
 	</ng-view>
 </md-content>
 

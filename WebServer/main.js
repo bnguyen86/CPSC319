@@ -398,9 +398,9 @@ io.on('connection', function(socket) {
         // }
     };
 
-    function posQuery(curr_ID, start, end) {
+    function posQuery(curr_ID) {
         var payload = {
-            "size": 5000,
+            "size": 1,
             "sort": [{
                 "datetime": {
                     "order": "desc"
@@ -413,7 +413,7 @@ io.on('connection', function(socket) {
                         "term": {
                             "clientId": curr_ID
                         }
-                    },
+                    }/* ,
                     "filter": {
                         "range": {
                             "datetime": {
@@ -421,7 +421,7 @@ io.on('connection', function(socket) {
                                 "from": start
                             }
                         }
-                    }
+                    } */
                 }
             }
         }

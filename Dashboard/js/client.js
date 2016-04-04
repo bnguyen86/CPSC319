@@ -126,6 +126,7 @@ function query(event){
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
 			document.getElementById("date").innerHTML = "";
+			document.getElementById("map").innerHTML = "";
 			break;
 		case 'real-time':
 		if(curr_ID != null){
@@ -165,11 +166,21 @@ function query(event){
 		case 'pos':
 		if(curr_ID != null){		
 			socket.emit('stop-real', message);
-			document.getElementById("div-title").innerHTML = "MAP";
+			
+			document.getElementById("div-title").innerHTML = "LAST USER LOCATION";
 			document.getElementById("date").innerHTML="";
 			document.getElementById("real-time").innerHTML = "";
 			document.getElementById("history").innerHTML = "";
-			socket.emit('pos',message);
+				
+/* 			var map = new google.maps.Map(document.getElementById('map'), {
+			center: {lat: 49.246292, lng: -123.116226},
+			zoom: 12
+			}); */
+			
+			console.log("map query");
+			message = JSON.stringify(curr_ID);
+			console.log(message);
+			socket.emit('pos', message);
 		}else{
 			console.log("MAP: Please Choose an ID first");
 		}			
@@ -195,8 +206,9 @@ socket.on('rAccel',function(data){
 	accelDisplay(data);
 });
 
-socket.on('rPos',function(data){
-	mapDisplay(data);
+socket.on('rPOS',function(data){
+	console.log("map");
+	displayLastLoc(data);
 });
 
 //Sets the dates to be used to query server/database
