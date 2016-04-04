@@ -1,5 +1,3 @@
-var alertmap;
-
 function sosDisplay(data) {
 	
 	// DATA
@@ -54,7 +52,13 @@ function plotLoc(lat, lon) {
  		zoom: 15
  	});
 	
-	addMarker(lat, lon);
+	alertmap.panTo({lat: lat, lng: lon});
+	
+	var marker = new google.maps.Marker({
+		position: {lat: lat, lng: lon},
+		map: alertmap, 
+		title: "SOS LOCATION"
+	});
  			
 };
  
@@ -62,8 +66,8 @@ function addMarker(lat, lon) {
 	
 	var marker = new google.maps.Marker({
 		position: {lat: lat, lng: lon},
-		map: alertmap,
-		title: 'SOS Location'
 	});
+	
+	marker.setMap(alertmap);
 	
 };
