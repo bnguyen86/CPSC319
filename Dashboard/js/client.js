@@ -84,7 +84,7 @@ function userButtonCreation(data){
 		// console.log("data length: " + data.clientIds.length);
 		// console.log(data.clientIds[i].clientId);
 		var element = document.createElement("button");
-		var id  =  data[(i+1)];
+		var id  =  data[i];
 		element.tag = "uid";
 		element.id = id;
 		element.className = "user-btn";
