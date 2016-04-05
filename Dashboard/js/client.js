@@ -71,7 +71,7 @@ socket.on('clientIds',function(data){
 	console.log(data);
 	// var parsed = JSON.parse(data);
 	// console.log(parsed);
-	if(document.getElementById("user_dis").innerHTML==""){
+	if(document.getElementById("user_dis").innerHTML === ""){
 		userButtonCreation(data);
 	} else{
 		console.log("Users buttons already loaded");
