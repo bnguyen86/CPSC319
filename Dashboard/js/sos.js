@@ -1,7 +1,7 @@
 function sosDisplay(data) {
 	
 	// DATA
-	var sosClientId = data.clientId;
+	var sosClientId = data.clientName;
 	var sosDateTime = data.datetime;
  	var sosLat = data.lat;
  	var sosLon = data.lon;
@@ -35,7 +35,7 @@ function sosDisplay(data) {
 function sosAppend(data) {
 	console.log("append another sos");
 	
-	var sosClientId = data.clientId;
+	var sosClientId = data.clientName;
 	var sosLat = data.lat;
 	var sosLon = data.lon;
 	var alertmsg = document.getElementById('alertmsg');
