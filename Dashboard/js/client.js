@@ -90,7 +90,7 @@ function userButtonCreation(data){
 		element.className = "user-btn";
 		element.innerHTML = data[(i+1)];
 		element.addEventListener("click", function(){
-			userSelection(this.id);
+			userSelection(this.id, this.innerHTML);
 		});
 		var dis_loc = document.getElementById("user_dis");
 		dis_loc.appendChild(element);
@@ -99,11 +99,11 @@ function userButtonCreation(data){
 };
 
 // returns the user selected
-function userSelection(id){
+function userSelection(id, innerHTML){
 	curr_ID = id;
 	console.log("selected clientId: " + id);
 	var message = '{"clientId":'+ JSON.stringify(id) +'}';
-	document.getElementById("now").innerHTML="Current User: "+curr_ID;
+	document.getElementById("now").innerHTML="Current User: "+ innerHTML + " ("+curr_ID+")";
 	document.getElementById("user_dis").innerHTML="";
 	document.getElementById("real-time").innerHTML = " ";	
 	socket.emit('real-time',message);

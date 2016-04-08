@@ -154,21 +154,6 @@ function realTimeDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legX")
 			.style("fill", "blue")
-			.on("click",function(){
-				if(d3.select("#lineX").style("opacity") == 1){
-					// console.log(d3.select("#lineX").style("opacity"))
-					d3.select("#lineX")
-					.transition().duration(100)
-					.style("opacity", 0);
-					// document.getElementById("legX").opacity = 0.5;
-				} else{
-					// console.log(document.getElementById("legX").opacity)
-					d3.select("#lineX")
-					.transition().duration(100)
-					.style("opacity", 1);
-					// document.getElementById("legX").opacity = 1;
-				};
-			})
 			.text("lineX");
 
 //=======================================================lineY Legend
@@ -178,21 +163,6 @@ function realTimeDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legY")
 			.style("fill", "green")
-			.on("click",function(){
-				if(d3.select("#lineY").style("opacity") == 1){
-					// console.log(document.getElementById("legY").opacity)
-					d3.select("#lineY")
-					.transition().duration(100)
-					.style("opacity", 0);
-					// document.getElementById("legY").opacity = 0.5;
-				} else{
-					// console.log(document.getElementById("legY").opacity)
-					d3.select("#lineY")
-					.transition().duration(100)
-					.style("opacity", 1);
-					// document.getElementById("legY").opacity = 1;
-				};
-			})
 			.text("lineY");
 
 //=======================================================lineZ Legend
@@ -202,21 +172,6 @@ function realTimeDisplay(data){
 			.attr("class", "legend")
 			.attr("id", "legZ")
 			.style("fill", "red")
-			.on("click",function(event){
-				if(d3.select("#lineZ").style("opacity") == 1){
-					// console.log("legZ opacity 1")
-					d3.select("#lineZ")
-					.transition().duration(100)
-					.style("opacity", 0);
-					// document.getElementById("legZ").opacity = 0.5;
-				} else{
-					// console.log("legZ opacity 0")
-					d3.select("#lineZ")
-					.transition().duration(100)
-					.style("opacity", 1);
-					// document.getElementById("legZ").opacity = 1;
-				};
-			})
 			.text("lineZ");
 
 //=======================================================DRAWING AXISES
