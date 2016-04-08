@@ -35,13 +35,15 @@ io.on('connection', function(socket) {
     var currIntervalID;
 
     //display all users
-    getClientIDs();
-    getClientNames();
+    // getClientIDs();
+    // getClientNames();
+    getClientIdArray();
 
     socket.on('clientId', function(data) {
         clearInterval(currIntervalID);
-        getClientIDs();
-        getClientNames();
+        // getClientIDs();
+        // getClientNames();
+        getClientIdArray();
     });
 
     //once clientID is selected, display accel data
@@ -123,7 +125,7 @@ io.on('connection', function(socket) {
             //input & output values
             var parsed = JSON.parse(data);
             var curr_ID = parsed.clientID;
-			console.log(data);
+			// console.log(data);
             /* var start = parsed.start;
             var end = parsed.end; */
             //function to query server
@@ -181,85 +183,85 @@ io.on('connection', function(socket) {
 
     // };
 
-    function getClientIDs() {
-        var payload = {
-            "size": 0,
-            "aggs": {
-                "id": {
-                    "terms": {
-                        "field": "clientId"
-                    }
-                }
-            }
-        }
+    // function getClientIDs() {
+    //     var payload = {
+    //         "size": 0,
+    //         "aggs": {
+    //             "id": {
+    //                 "terms": {
+    //                     "field": "clientId"
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        var payloadString = JSON.stringify(payload);
+    //     var payloadString = JSON.stringify(payload);
 
-        request({
-                url: URLsearch,
-                method: 'POST',
-                body: payloadString
-            },
+    //     request({
+    //             url: URLsearch,
+    //             method: 'POST',
+    //             body: payloadString
+    //         },
 
-            //the callback function when something is successfully retrieved
-            function(error, response, body) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    var responseObject = JSON.parse(body);
-                    var buckets = responseObject.aggregations.id.buckets;
-                    var returnArray = []
+    //         //the callback function when something is successfully retrieved
+    //         function(error, response, body) {
+    //             if (error) {
+    //                 console.log(error);
+    //             } else {
+    //                 var responseObject = JSON.parse(body);
+    //                 var buckets = responseObject.aggregations.id.buckets;
+    //                 var returnArray = []
 
-                    for (var i = 0; i < buckets.length; i++) {
-                        returnArray.push(buckets[i].key);
-                    }
-                    socket.emit('clientIds', returnArray);
-                    console.log(returnArray);
-                }
-            });
-    };
+    //                 for (var i = 0; i < buckets.length; i++) {
+    //                     returnArray.push(buckets[i].key);
+    //                 }
+    //                 // socket.emit('clientIds', returnArray);
+    //                 console.log(returnArray);
+    //             }
+    //         });
+    // };
 
-    function getClientNames() {
-        var payload = {
-            "size": 0,
-            "aggs": {
-                "id": {
-                    "terms": {
-                        "field": "clientName"
-                    }
-                }
-            }
-        }
+    // function getClientNames() {
+    //     var payload = {
+    //         "size": 0,
+    //         "aggs": {
+    //             "id": {
+    //                 "terms": {
+    //                     "field": "clientName"
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        var payloadString = JSON.stringify(payload);
+    //     var payloadString = JSON.stringify(payload);
 
-        request({
-                url: URLsearch,
-                method: 'POST',
-                body: payloadString
-            },
+    //     request({
+    //             url: URLsearch,
+    //             method: 'POST',
+    //             body: payloadString
+    //         },
 
-            //the callback function when something is successfully retrieved
-            function(error, response, body) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    var responseObject = JSON.parse(body);
-                    var buckets = responseObject.aggregations.id.buckets;
-                    var returnArray = []
+    //         //the callback function when something is successfully retrieved
+    //         function(error, response, body) {
+    //             if (error) {
+    //                 console.log(error);
+    //             } else {
+    //                 var responseObject = JSON.parse(body);
+    //                 var buckets = responseObject.aggregations.id.buckets;
+    //                 var returnArray = []
 
-                    for (var i = 0; i < buckets.length; i++) {
-                        returnArray.push(buckets[i].key);
-                    }
-                    socket.emit('clientName', returnArray);
-                    console.log(returnArray);
-                }
-            });
-    };
+    //                 for (var i = 0; i < buckets.length; i++) {
+    //                     returnArray.push(buckets[i].key);
+    //                 }
+    //                 // socket.emit('clientName', returnArray);
+    //                 console.log(returnArray);
+    //             }
+    //         });
+    // };
 
     //@Douglas and @Wes, this will return the clientId / clientName array we discussed
     function getClientIdArray(){
-        console.log('attempting to get the array');
+        // console.log('attempting to get the array');
         //###
         var payload = {
             "size": 0,
@@ -292,7 +294,7 @@ io.on('connection', function(socket) {
                     // console.log('buckets ' + JSON.stringify(buckets));
 
                     var returnArray = [];
-                    console.log('buckets ' + JSON.stringify(buckets));
+                    // console.log('buckets ' + JSON.stringify(buckets));
                     for (var i = 0; i<buckets.length; i++){
                         var aggregationObject = buckets[i];
                         // console.log('a bucket entry: ' + JSON.stringify(aggregationObject));
@@ -313,9 +315,9 @@ io.on('connection', function(socket) {
                         }
 
                     }
-                    console.log('the return array is: ' + JSON.stringify(returnArray));
-
-                    return returnArray;
+                    // console.log('the return array is: ' + JSON.stringify(returnArray));
+                    socket.emit("clientIds", returnArray);
+                    // return returnArray;
                 }
             });
     }
@@ -612,6 +614,13 @@ function fallDetected(message) {
         if (inputAccelX < -17 || inputAccelY < -17 || inputAccelZ < -17) {
             return true;
         }
+        // var threshold= Math.sqrt((inputAccelX^2)+(inputAccelY^2)+(inputAccelZ^2))
+        // var threshold= Math.abs(Math.abs(inputAccelX^2)+
+        //                         Math.abs(inputAccelY^2)+
+        //                         Math.abs(inputAccelZ^2))
+        // if(threshold > 17 && ((threshold == threshold+3)|| (threshold == threshold-3)){
+        //     return true;
+        // }
     } else {
         return false;
     }
